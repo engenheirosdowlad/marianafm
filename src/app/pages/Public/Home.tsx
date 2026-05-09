@@ -5,34 +5,69 @@ import { NewsSection } from '../../components/NewsSection';
 import { TopRequests } from '../../components/TopRequests';
 import { Advertisers } from '../../components/Advertisers';
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '../../components/ui/carousel';
+import { Radio, Video, Headphones } from 'lucide-react';
+import { usePlayer } from '../../context/PlayerContext';
 // import { motion } from 'framer-motion';
 const motion = { div: 'div' } as any;
 
 export default function Home() {
+  const { activePlayer, setActivePlayer } = usePlayer();
+
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <h2 className="text-white font-bold text-2xl mb-6 flex items-center gap-2">
-        <span className="w-2 h-8 bg-blue-500 rounded-full animate-pulse"></span>
-        VEJA AO VIVO!
-      </h2>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <div className="lg:col-span-2">
-          <div className="bg-slate-800/50 backdrop-blur-md rounded-2xl overflow-hidden border border-slate-700/50 shadow-2xl">
-            <VideoPlayer />
-          </div>
+      <div className="flex flex-col items-center mb-6">
+        {/* Badge */}
+        <div className="inline-flex items-center gap-1.5 bg-blue-500/10 border border-blue-500/20 px-3 py-1 rounded-full text-blue-400 text-[10px] font-black uppercase tracking-wider mb-3">
+          <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse" />
+          No Ar Agora
         </div>
 
-        <div className="hidden lg:block">
-          <div className="bg-slate-800/50 backdrop-blur-md rounded-2xl overflow-hidden border border-slate-700/50 shadow-2xl h-full">
-            <AudioPlayer />
-          </div>
+        {/* Toggle Switch */}
+        <div className="bg-slate-100 dark:bg-slate-800/90 p-1 rounded-full border border-slate-200 dark:border-white/5 flex items-center gap-1 shadow-lg">
+          <button
+            onClick={() => setActivePlayer('audio')}
+            className={`px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 ${
+              activePlayer === 'audio' 
+                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' 
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            <Headphones size={14} />
+            OUVIR
+          </button>
+          <button
+            onClick={() => setActivePlayer('video')}
+            className={`px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 ${
+              activePlayer === 'video' 
+                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' 
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            <Video size={14} />
+            VER TRANSMISSÃO
+          </button>
         </div>
       </div>
+
+      <div className={`mx-auto mb-10 transition-all duration-500 ${activePlayer === 'audio' ? 'max-w-md' : 'max-w-5xl'}`}>
+        <div className="bg-slate-800/50 backdrop-blur-md rounded-2xl overflow-hidden border border-slate-700/50 shadow-2xl">
+          {activePlayer === 'audio' ? (
+            <div className="p-6">
+              <AudioPlayer />
+            </div>
+          ) : (
+            <VideoPlayer />
+          )}
+        </div>
+      </div>
+
+
+
 
       <Carousel className="w-full mb-10" opts={{ loop: true }}>
         <CarouselContent>

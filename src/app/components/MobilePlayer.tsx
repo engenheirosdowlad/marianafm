@@ -1,40 +1,14 @@
-import { useState, useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Play, Pause, Volume2, Radio } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePlayer } from '../context/PlayerContext';
 
 export function MobilePlayer() {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(0.7);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [streamUrl, setStreamUrl] = useState("https://link.radio.br:18630/stream");
-
-  useEffect(() => {
-    const storedStream = localStorage.getItem('audioStreamUrl');
-    if (storedStream) setStreamUrl(storedStream);
-  }, []);
-
-  useEffect(() => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.play().catch(err => {
-          console.error("Erro ao reproduzir áudio:", err);
-          setIsPlaying(false);
-        });
-      } else {
-        audioRef.current.pause();
-      }
-    }
-  }, [isPlaying]);
-
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume;
-    }
-  }, [volume]);
-
+  const { isPlaying, setIsPlaying, volume, setVolume, activePlayer } = usePlayer();
   return (
     <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-900/90 backdrop-blur-lg border-t border-white/5 p-3 shadow-2xl flex items-center justify-between gap-2">
-      <audio ref={audioRef} src={streamUrl} />
+
+
       
       {/* Left: Track Info */}
       <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -62,18 +36,21 @@ export function MobilePlayer() {
       {/* Right: Volume + Play Button */}
       <div className="flex-1 flex items-center justify-end gap-3">
         {/* Volume Control */}
-        <div className="flex items-center gap-1.5 bg-slate-800/50 px-2 py-1.5 rounded-lg border border-white/5 group/vol">
-          <Volume2 size={12} className="text-slate-500 group-hover/vol:text-blue-400 transition-colors" />
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            value={volume}
-            onChange={(e) => setVolume(parseFloat(e.target.value))}
-            className="w-12 h-1 bg-slate-700 rounded-full appearance-none cursor-pointer accent-blue-600"
-          />
-        </div>
+        {activePlayer === 'audio' && (
+          <div className="flex items-center gap-1.5 bg-slate-800/50 px-2 py-1.5 rounded-lg border border-white/5 group/vol">
+            <Volume2 size={12} className="text-slate-500 group-hover/vol:text-blue-400 transition-colors" />
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={volume}
+              onChange={(e) => setVolume(parseFloat(e.target.value))}
+              className="w-12 h-1 bg-slate-700 rounded-full appearance-none cursor-pointer accent-blue-600"
+            />
+          </div>
+        )}
+
 
         {/* Play Button */}
         <button

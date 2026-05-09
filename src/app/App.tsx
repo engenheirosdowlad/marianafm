@@ -11,6 +11,7 @@ import AdminNews from './pages/Admin/News';
 import AdminRequests from './pages/Admin/Requests';
 import AdminSchedule from './pages/Admin/Schedule';
 import AdminSettings from './pages/Admin/Settings';
+import { PlayerProvider } from './context/PlayerContext';
 
 // Mock simpler versions of other pages for now
 const MockPage = ({ title }: { title: string }) => (
@@ -23,28 +24,31 @@ const MockPage = ({ title }: { title: string }) => (
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        {/* Public Routes */}
-        <Route element={<PublicLayout />}>
-          <Route index element={<Home />} />
-          <Route path="news" element={<News />} />
-          <Route path="schedule" element={<Schedule />} />
-        </Route>
-        <Route path="login" element={<Login />} />
+      <PlayerProvider>
+        <Routes>
+          {/* Public Routes */}
+          <Route element={<PublicLayout />}>
+            <Route index element={<Home />} />
+            <Route path="news" element={<News />} />
+            <Route path="schedule" element={<Schedule />} />
+          </Route>
+          <Route path="login" element={<Login />} />
 
-        {/* Admin Routes */}
-        <Route path="admin" element={<AdminLayout />}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="schedule" element={<AdminSchedule />} />
-          <Route path="news" element={<AdminNews />} />
-          <Route path="requests" element={<AdminRequests />} />
-          <Route path="team" element={<AdminTeam />} />
-          <Route path="settings" element={<AdminSettings />} />
-        </Route>
+          {/* Admin Routes */}
+          <Route path="admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="schedule" element={<AdminSchedule />} />
+            <Route path="news" element={<AdminNews />} />
+            <Route path="requests" element={<AdminRequests />} />
+            <Route path="team" element={<AdminTeam />} />
+            <Route path="settings" element={<AdminSettings />} />
+          </Route>
 
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </PlayerProvider>
     </BrowserRouter>
+
   );
 }

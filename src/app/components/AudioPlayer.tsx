@@ -3,42 +3,15 @@ import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { PlayPauseIcon } from './ui/PlayPauseIcon';
 import logo from '../../assets/logo.png';
+import { usePlayer } from '../context/PlayerContext';
 
 export function AudioPlayer() {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(0.7);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const { isPlaying, setIsPlaying, volume, setVolume } = usePlayer();
   const [currentTrack] = useState({
     title: "Cidade FM 87,9",
     artist: "Onde nasce o sucesso!",
     cover: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=2670&auto=format&fit=crop"
   });
-
-  const [streamUrl, setStreamUrl] = useState("https://link.radio.br:18630/stream");
-
-  useEffect(() => {
-    const storedStream = localStorage.getItem('audioStreamUrl');
-    if (storedStream) setStreamUrl(storedStream);
-  }, []);
-
-  useEffect(() => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.play().catch(err => {
-          console.error("Erro ao reproduzir áudio:", err);
-          setIsPlaying(false);
-        });
-      } else {
-        audioRef.current.pause();
-      }
-    }
-  }, [isPlaying]);
-
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume;
-    }
-  }, [volume]);
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setVolume(parseFloat(e.target.value));
@@ -46,7 +19,7 @@ export function AudioPlayer() {
 
   return (
     <div className="glass-card p-4 h-full flex flex-col justify-between overflow-hidden relative border border-white/5">
-      <audio ref={audioRef} src={streamUrl} />
+
       
       <div className="absolute top-0 right-0 p-3">
         <div className="flex items-center gap-2 bg-red-600/20 px-2.5 py-1 rounded-full border border-red-600/30">
@@ -104,7 +77,7 @@ export function AudioPlayer() {
         ))}
       </div>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 hidden lg:flex">
         <div className="flex items-center justify-center">
           <button
             onClick={() => setIsPlaying(!isPlaying)}

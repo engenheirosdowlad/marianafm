@@ -1,18 +1,20 @@
-import { useState } from 'react';
 import { Maximize2, ExternalLink } from 'lucide-react';
 import { PlayPauseIcon } from './ui/PlayPauseIcon';
 import { motion, AnimatePresence } from 'framer-motion';
 import logo from '../../assets/logo.png';
+import { usePlayer } from '../context/PlayerContext';
 
 export function VideoPlayer() {
-  const [hasStarted, setHasStarted] = useState(false);
+  const { isPlaying, setIsPlaying } = usePlayer();
   const videoUrl = "https://player.radiosnaweb.com/clappr/video.php?urlplayer=https://5a57bda70564a.streamlock.net/marianafm/marianafm.sdp/playlist.m3u8";
+
 
   return (
     <div className="bg-slate-950 rounded-2xl overflow-hidden border border-white/5 shadow-2xl group relative">
       <div className="aspect-video w-full bg-black relative">
         <iframe
-          src={`${videoUrl}${hasStarted ? '&autoplay=true' : ''}`}
+          src={`${videoUrl}${isPlaying ? '&autoplay=true&muted=true' : ''}`}
+
           className="w-full h-full border-0 absolute inset-0"
           allow="autoplay; encrypted-media; picture-in-picture"
           allowFullScreen
@@ -21,14 +23,15 @@ export function VideoPlayer() {
         
         {/* Custom Overlay / Splash Screen */}
         <AnimatePresence>
-          {!hasStarted && (
+          {!isPlaying && (
             <motion.div 
               initial={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm flex flex-col items-center justify-center z-20"
+              className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm flex flex-col items-center justify-center z-20 hidden lg:flex"
             >
+
               <button 
-                onClick={() => setHasStarted(true)}
+                onClick={() => setIsPlaying(true)}
                 className="hover:scale-110 active:scale-95 transition-all duration-300 drop-shadow-[0_0_30px_rgba(59,130,246,0.3)]"
               >
                 <img src={logo} alt="Play" className="w-[100px] h-[100px] object-contain" />
