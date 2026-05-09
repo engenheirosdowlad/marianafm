@@ -10,8 +10,10 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
-  Menu
+  Menu,
+  ExternalLink
 } from 'lucide-react';
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { useIsMobile } from '../components/ui/use-mobile';
 import { MobilePlayer } from '../components/MobilePlayer';
@@ -53,15 +55,19 @@ export function AdminLayout() {
           </div>
           <AnimatePresence>
             {isSidebarOpen && (
-              <motion.span 
+              <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="font-bold text-lg whitespace-nowrap"
+                className="flex flex-col min-w-0"
               >
-                ADMIN PANEL
-              </motion.span>
+                <span className="font-bold text-lg whitespace-nowrap">ADMIN PANEL</span>
+                <Link to="/" className="text-slate-500 hover:text-white text-[10px] font-black uppercase tracking-wider flex items-center gap-0.5 transition-colors mt-0.5">
+                  <ExternalLink size={10} /> Ver Site
+                </Link>
+              </motion.div>
             )}
+
           </AnimatePresence>
         </div>
 
