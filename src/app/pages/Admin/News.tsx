@@ -122,7 +122,8 @@ export default function AdminNews() {
       </div>
 
       <div className="bg-slate-800/50 backdrop-blur-md rounded-xl overflow-hidden border border-white/5 shadow-2xl">
-        <div className="overflow-x-auto">
+        {/* Desktop Table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-white/5 bg-slate-900/50">
@@ -204,6 +205,73 @@ export default function AdminNews() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Cards */}
+        <div className="md:hidden divide-y divide-white/5">
+          {loading ? (
+            Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="p-4 animate-pulse space-y-3">
+                <div className="flex gap-3">
+                  <div className="w-16 h-10 bg-slate-700 rounded-lg flex-shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-slate-700 rounded w-3/4" />
+                    <div className="h-3 bg-slate-700 rounded w-1/4" />
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : visibleNews.length === 0 ? (
+            <div className="p-8 text-center text-slate-500 text-sm">
+              Nenhuma notícia encontrada ou todas foram excluídas.
+            </div>
+          ) : (
+            visibleNews.map((item, index) => {
+              const isHidden = hiddenIds.includes(item.link);
+              return (
+                <div key={index} className={`p-4 space-y-3 ${isHidden ? 'opacity-50' : ''}`}>
+                  <div className="flex gap-3">
+                    <div className="w-16 h-10 rounded-lg overflow-hidden flex-shrink-0 border border-white/10">
+                      <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white text-sm font-bold line-clamp-2">{item.title}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-[10px] font-black bg-blue-600/20 text-blue-400 px-2 py-0.5 rounded-full uppercase tracking-widest border border-blue-500/20">
+                          {item.source}
+                        </span>
+                        {isHidden ? (
+                          <span className="text-[10px] font-black bg-slate-700 text-slate-400 px-2 py-0.5 rounded-full uppercase tracking-widest">
+                            Oculto
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-black bg-green-600/20 text-green-400 px-2 py-0.5 rounded-full uppercase tracking-widest border border-green-500/20">
+                            Visível
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-2 pt-2 border-t border-white/5">
+                    <button 
+                      onClick={() => handleHide(item.link)}
+                      className={`p-2 rounded-lg transition-colors ${isHidden ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+                      title={isHidden ? "Mostrar" : "Ocultar"}
+                    >
+                      {isHidden ? <Eye size={16} /> : <EyeOff size={16} />}
+                    </button>
+                    <button 
+                      onClick={() => handleDelete(item.link)}
+                      className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/5 rounded-lg transition-colors"
+                      title="Excluir"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
     </div>

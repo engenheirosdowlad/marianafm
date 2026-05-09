@@ -14,7 +14,12 @@ export function AudioPlayer() {
     cover: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=2670&auto=format&fit=crop"
   });
 
-  const streamUrl = "https://link.radio.br:18630/stream";
+  const [streamUrl, setStreamUrl] = useState("https://link.radio.br:18630/stream");
+
+  useEffect(() => {
+    const storedStream = localStorage.getItem('audioStreamUrl');
+    if (storedStream) setStreamUrl(storedStream);
+  }, []);
 
   useEffect(() => {
     if (audioRef.current) {

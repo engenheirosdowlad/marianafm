@@ -1,9 +1,41 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { teamData as initialTeamData, TeamMember } from '../../data/mockData';
 import { Edit2, Trash2, UserPlus, Shield, User, Radio, X, Camera } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Cropper from 'react-easy-crop';
+
+const createImage = (url: string): Promise<HTMLImageElement> =>
+  new Promise((resolve, reject) => {
+    const image = new Image();
+    image.addEventListener('load', () => resolve(image));
+    image.addEventListener('error', (error) => reject(error));
+    image.setAttribute('crossOrigin', 'anonymous');
+    image.src = url;
+  });
+
+async function getCroppedImg(imageSrc: string, pixelCrop: any): Promise<string> {
+  const image = await createImage(imageSrc);
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return '';
+  canvas.width = pixelCrop.width;
+  canvas.height = pixelCrop.height;
+  ctx.drawImage(
+    image,
+    pixelCrop.x,
+    pixelCrop.y,
+    pixelCrop.width,
+    pixelCrop.height,
+    0,
+    0,
+    pixelCrop.width,
+    pixelCrop.height
+  );
+  return canvas.toDataURL('image/jpeg');
+}
 
 export default function AdminTeam() {
+
   const [team, setTeam] = useState(initialTeamData);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
@@ -14,6 +46,22 @@ export default function AdminTeam() {
     photo: '',
     program: ''
   });
+  const [imageToCrop, setImageToCrop] = useState<string | null>(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+
+  const [programs, setPrograms] = useState<string[]>([]);
+
+  useEffect(() => {
+    const storedPrograms = localStorage.getItem('radioPrograms');
+    if (storedPrograms) {
+      const parsed = JSON.parse(storedPrograms);
+      setPrograms(parsed.map((p: any) => p.title));
+    } else {
+      setPrograms(['Manhã Show', 'Tarde Total', 'Noite de Sucessos', 'Sábado Especial']);
+    }
+  }, []);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -78,11 +126,12 @@ export default function AdminTeam() {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setFormData({ ...formData, photo: reader.result as string });
+        setImageToCrop(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
   };
+
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -171,120 +220,178 @@ export default function AdminTeam() {
               </div>
               
               <div className="p-6 space-y-4">
-                {/* Photo Preview & Upload */}
-                <div className="flex justify-center mb-4">
-                  <div 
-                    onClick={() => fileInputRef.current?.click()}
-                    className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-blue-500 shadow-lg shadow-blue-500/20 cursor-pointer group"
-                    title="Clique para alterar a foto"
-                  >
-                    <img src={formData.photo} alt="Preview" className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Camera size={20} className="text-white mb-1" />
-                      <span className="text-white text-[10px] font-bold uppercase">Alterar</span>
+                {imageToCrop ? (
+                  <div className="space-y-4">
+                    <div className="relative w-full h-64 bg-slate-800 rounded-lg overflow-hidden">
+                      <Cropper
+                        image={imageToCrop}
+                        crop={crop}
+                        zoom={zoom}
+                        aspect={1}
+                        onCropChange={setCrop}
+                        onZoomChange={setZoom}
+                        onCropComplete={(_, croppedAreaPixels) => setCroppedAreaPixels(croppedAreaPixels)}
+                      />
                     </div>
-                  </div>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    accept="image/*"
-                    className="hidden"
-                  />
-                </div>
-
-                {/* Photo URL */}
-                <div className="space-y-1">
-                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider">URL da Foto</label>
-                  <input
-                    type="text"
-                    value={formData.photo}
-                    onChange={(e) => setFormData({ ...formData, photo: e.target.value })}
-                    className="w-full bg-slate-800 border border-white/5 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none transition-colors"
-                    placeholder="https://..."
-                  />
-                </div>
-
-                {/* Name */}
-                <div className="space-y-1">
-                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider">Nome</label>
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full bg-slate-800 border border-white/5 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none transition-colors"
-                    placeholder="Nome do membro"
-                  />
-                </div>
-
-                {/* Category/Role */}
-                <div className="space-y-1">
-                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider">Categoria</label>
-                  <select
-                    value={formData.role}
-                    onChange={(e) => setFormData({ ...formData, role: e.target.value as any })}
-                    className="w-full bg-slate-800 border border-white/5 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none transition-colors"
-                  >
-                    <option value="usuario">Usuário</option>
-                    <option value="administrador">Administrador</option>
-                    <option value="locutor">Locutor</option>
-                  </select>
-                </div>
-
-                {/* Program (Conditional) */}
-                {formData.role === 'locutor' && (
-                  <div className="space-y-1">
-                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">Programa</label>
-                    <input
-                      type="text"
-                      value={formData.program || ''}
-                      onChange={(e) => setFormData({ ...formData, program: e.target.value })}
-                      className="w-full bg-slate-800 border border-white/5 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none transition-colors"
-                      placeholder="Nome do programa"
-                    />
-                  </div>
-                )}
-
-                {/* Dados de Acesso (Sub-área) */}
-                {(formData.role === 'administrador' || formData.role === 'locutor') && (
-                  <div className="border-t border-white/5 pt-4 mt-4 space-y-3">
-                    <p className="text-slate-400 text-xs font-black uppercase tracking-wider mb-2">Dados de Acesso</p>
                     
-                    <div className="space-y-1">
-                      <label className="text-slate-500 text-[10px] font-black uppercase tracking-wider">Email</label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-slate-400 text-xs font-black uppercase">Zoom</span>
                       <input
-                        type="email"
-                        className="w-full bg-slate-800 border border-white/5 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none transition-colors"
-                        placeholder="email@radio.com"
+                        type="range"
+                        min={1}
+                        max={3}
+                        step={0.1}
+                        value={zoom}
+                        onChange={(e) => setZoom(parseFloat(e.target.value))}
+                        className="flex-1 h-1 bg-slate-700 rounded-full appearance-none cursor-pointer accent-blue-600"
                       />
                     </div>
 
-                    <div className="space-y-1">
-                      <label className="text-slate-500 text-[10px] font-black uppercase tracking-wider">Senha</label>
-                      <input
-                        type="password"
-                        className="w-full bg-slate-800 border border-white/5 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none transition-colors"
-                        placeholder="••••••••"
-                      />
+                    <div className="flex justify-end gap-2 pt-2 border-t border-white/5">
+                      <button
+                        onClick={() => setImageToCrop(null)}
+                        className="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        onClick={async () => {
+                          if (imageToCrop && croppedAreaPixels) {
+                            const croppedImage = await getCroppedImg(imageToCrop, croppedAreaPixels);
+                            setFormData({ ...formData, photo: croppedImage });
+                            setImageToCrop(null);
+                          }
+                        }}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors shadow-lg shadow-blue-600/20"
+                      >
+                        Salvar Corte
+                      </button>
                     </div>
                   </div>
+                ) : (
+                  <>
+                    {/* Photo Preview & Upload */}
+                    <div className="flex justify-center mb-4">
+                      <div 
+                        onClick={() => fileInputRef.current?.click()}
+                        className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-blue-500 shadow-lg shadow-blue-500/20 cursor-pointer group"
+                        title="Clique para alterar a foto"
+                      >
+                        <img src={formData.photo} alt="Preview" className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Camera size={20} className="text-white mb-1" />
+                          <span className="text-white text-[10px] font-bold uppercase">Alterar</span>
+                        </div>
+                      </div>
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                        accept="image/*"
+                        className="hidden"
+                      />
+                    </div>
+
+                    {/* Photo URL */}
+                    <div className="space-y-1">
+                      <label className="text-slate-400 text-xs font-black uppercase tracking-wider">URL da Foto</label>
+                      <input
+                        type="text"
+                        value={formData.photo}
+                        onChange={(e) => setFormData({ ...formData, photo: e.target.value })}
+                        className="w-full bg-slate-800 border border-white/5 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                        placeholder="https://..."
+                      />
+                    </div>
+
+                    {/* Name */}
+                    <div className="space-y-1">
+                      <label className="text-slate-400 text-xs font-black uppercase tracking-wider">Nome</label>
+                      <input
+                        type="text"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="w-full bg-slate-800 border border-white/5 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                        placeholder="Nome do membro"
+                      />
+                    </div>
+
+                    {/* Category/Role */}
+                    <div className="space-y-1">
+                      <label className="text-slate-400 text-xs font-black uppercase tracking-wider">Categoria</label>
+                      <select
+                        value={formData.role}
+                        onChange={(e) => setFormData({ ...formData, role: e.target.value as any })}
+                        className="w-full bg-slate-800 border border-white/5 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                      >
+                        <option value="usuario">Usuário</option>
+                        <option value="administrador">Administrador</option>
+                        <option value="locutor">Locutor</option>
+                      </select>
+                    </div>
+
+                    {/* Program (Conditional) */}
+                    {formData.role === 'locutor' && (
+                      <div className="space-y-1">
+                        <label className="text-slate-400 text-xs font-black uppercase tracking-wider">Programa</label>
+                        <select
+                          value={formData.program || ''}
+                          onChange={(e) => setFormData({ ...formData, program: e.target.value })}
+                          className="w-full bg-slate-800 border border-white/5 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                        >
+                          <option value="">Selecione um programa</option>
+                          {programs.map((prog, index) => (
+                            <option key={index} value={prog}>{prog}</option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+
+                    {/* Dados de Acesso (Sub-área) */}
+                    {(formData.role === 'administrador' || formData.role === 'locutor') && (
+                      <div className="border-t border-white/5 pt-4 mt-4 space-y-3">
+                        <p className="text-slate-400 text-xs font-black uppercase tracking-wider mb-2">Dados de Acesso</p>
+                        
+                        <div className="space-y-1">
+                          <label className="text-slate-500 text-[10px] font-black uppercase tracking-wider">Email</label>
+                          <input
+                            type="email"
+                            className="w-full bg-slate-800 border border-white/5 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                            placeholder="email@radio.com"
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <label className="text-slate-500 text-[10px] font-black uppercase tracking-wider">Senha</label>
+                          <input
+                            type="password"
+                            className="w-full bg-slate-800 border border-white/5 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                            placeholder="••••••••"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
 
-              <div className="p-6 bg-slate-950/50 border-t border-white/5 flex justify-end gap-3">
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 text-slate-400 hover:text-white text-sm font-bold transition-colors"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={handleSave}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors shadow-lg shadow-blue-600/20"
-                >
-                  Salvar
-                </button>
-              </div>
+              {!imageToCrop && (
+                <div className="p-6 bg-slate-950/50 border-t border-white/5 flex justify-end gap-3">
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="px-4 py-2 text-slate-400 hover:text-white text-sm font-bold transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={handleSave}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors shadow-lg shadow-blue-600/20"
+                  >
+                    Salvar
+                  </button>
+                </div>
+              )}
+
             </motion.div>
           </div>
         )}

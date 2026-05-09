@@ -61,7 +61,8 @@ export default function AdminRequests() {
       </div>
 
       <div className="bg-slate-800/50 backdrop-blur-md rounded-xl overflow-hidden border border-white/5 shadow-2xl">
-        <div className="overflow-x-auto">
+        {/* Desktop Table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-white/5 bg-slate-900/50">
@@ -147,6 +148,80 @@ export default function AdminRequests() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Cards */}
+        <div className="md:hidden divide-y divide-white/5">
+          {loading ? (
+            Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="p-4 animate-pulse space-y-2">
+                <div className="h-4 bg-slate-700 rounded w-1/4" />
+                <div className="h-4 bg-slate-700 rounded w-3/4" />
+                <div className="h-3 bg-slate-700 rounded w-1/2" />
+              </div>
+            ))
+          ) : requests.length === 0 ? (
+            <div className="p-8 text-center text-slate-500 text-sm">
+              Nenhum pedido recebido ainda.
+            </div>
+          ) : (
+            requests.map((req, index) => (
+              <div key={req.id} className={`p-4 space-y-3 ${req.status === 'hidden' ? 'opacity-50' : ''}`}>
+                <div>
+                  <p className="text-white text-sm font-bold">{req.userName}</p>
+                  <p className="text-slate-500 text-[10px]">{new Date(req.timestamp).toLocaleString()}</p>
+                </div>
+                <div>
+                  <p className="text-white text-sm font-bold">{req.songTitle}</p>
+                  {req.artist && <p className="text-blue-400 text-xs">{req.artist}</p>}
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    {req.status === 'pending' && (
+                      <span className="text-[10px] font-black bg-yellow-500/20 text-yellow-500 px-2 py-0.5 rounded-full uppercase tracking-widest border border-yellow-500/20 flex items-center gap-1 w-fit">
+                        <Clock size={10} /> pendente
+                      </span>
+                    )}
+                    {req.status === 'played' && (
+                      <span className="text-[10px] font-black bg-green-600/20 text-green-400 px-2 py-0.5 rounded-full uppercase tracking-widest border border-green-500/20 flex items-center gap-1 w-fit">
+                        <Check size={10} /> atendido
+                      </span>
+                    )}
+                    {req.status === 'hidden' && (
+                      <span className="text-[10px] font-black bg-slate-700 text-slate-400 px-2 py-0.5 rounded-full uppercase tracking-widest w-fit block">
+                        oculto
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    {req.status !== 'played' && (
+                      <button 
+                        onClick={() => updateStatus(req.id, 'played')}
+                        className="p-2 text-slate-400 hover:text-green-400 hover:bg-green-500/5 rounded-lg transition-colors"
+                        title="Marcar como Atendido"
+                      >
+                        <Check size={16} />
+                      </button>
+                    )}
+                    <button 
+                      onClick={() => updateStatus(req.id, req.status === 'hidden' ? 'pending' : 'hidden')}
+                      className={`p-2 rounded-lg transition-colors ${req.status === 'hidden' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+                      title={req.status === 'hidden' ? "Mostrar" : "Ocultar"}
+                    >
+                      {req.status === 'hidden' ? <Eye size={16} /> : <EyeOff size={16} />}
+                    </button>
+                    <button 
+                      onClick={() => handleDelete(req.id)}
+                      className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/5 rounded-lg transition-colors"
+                      title="Excluir"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

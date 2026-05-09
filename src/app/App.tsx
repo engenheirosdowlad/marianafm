@@ -10,6 +10,7 @@ import AdminTeam from './pages/Admin/Team';
 import AdminNews from './pages/Admin/News';
 import AdminRequests from './pages/Admin/Requests';
 import AdminSchedule from './pages/Admin/Schedule';
+import AdminSettings from './pages/Admin/Settings';
 
 // Mock simpler versions of other pages for now
 const MockPage = ({ title }: { title: string }) => (
@@ -38,7 +39,7 @@ export default function App() {
           <Route path="news" element={<AdminNews />} />
           <Route path="requests" element={<AdminRequests />} />
           <Route path="team" element={<AdminTeam />} />
-          <Route path="settings" element={<MockPage title="Configurações" />} />
+          <Route path="settings" element={<AdminSettings />} />
         </Route>
 
         {/* Fallback */}

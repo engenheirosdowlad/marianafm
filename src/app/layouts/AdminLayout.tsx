@@ -13,8 +13,11 @@ import {
   Menu
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useIsMobile } from '../components/ui/use-mobile';
+import { MobilePlayer } from '../components/MobilePlayer';
 
 export function AdminLayout() {
+  const isMobile = useIsMobile();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const location = useLocation();
 
@@ -38,8 +41,11 @@ export function AdminLayout() {
       {/* Sidebar */}
       <motion.aside 
         initial={false}
-        animate={{ width: isSidebarOpen ? 260 : 80 }}
-        className="bg-slate-900 border-r border-slate-800 flex flex-col transition-all duration-300 relative"
+        animate={{ 
+          width: isSidebarOpen ? 260 : (isMobile ? 0 : 80),
+          x: isSidebarOpen ? 0 : (isMobile ? -260 : 0)
+        }}
+        className={`bg-slate-900 border-r border-slate-800 flex flex-col transition-all duration-300 relative z-40 ${isMobile ? 'absolute inset-y-0 left-0 shadow-2xl' : ''}`}
       >
         <div className="p-6 flex items-center gap-3 overflow-hidden">
           <div className="w-10 h-10 rounded-xl bg-blue-600 flex-shrink-0 flex items-center justify-center font-bold text-xl">
@@ -103,7 +109,12 @@ export function AdminLayout() {
         <header className="h-16 border-b border-slate-800 bg-slate-900/50 backdrop-blur-md flex items-center justify-between px-8 flex-shrink-0">
           <div className="flex items-center gap-4">
              {/* Mobile menu (hidden on desktop sidebar) */}
-             <button className="lg:hidden text-slate-400"><Menu /></button>
+             <button 
+               className="lg:hidden text-slate-400"
+               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+             >
+               <Menu />
+             </button>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right hidden sm:block">
@@ -116,10 +127,11 @@ export function AdminLayout() {
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-8 custom-scrollbar pb-24 lg:pb-8">
           <Outlet />
         </div>
       </main>
+      <MobilePlayer />
     </div>
   );
 }
