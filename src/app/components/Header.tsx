@@ -1,6 +1,9 @@
 import { Menu, Search, Headphones } from 'lucide-react';
 import { Link, useLocation } from 'react-router';
+import { useState, useEffect } from 'react';
 import { Logo } from './ui/Logo';
+import { WeatherWidget } from './WeatherWidget';
+import cidadeVideo from '../../imports/video.mp4';
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -9,58 +12,65 @@ interface HeaderProps {
 export function Header({ onMenuClick }: HeaderProps) {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith('/admin');
+  
+  const [title, setTitle] = useState('Seja bem-vindo a Cidade FM');
+  const [subtitle, setSubtitle] = useState('onde nasce o sucesso');
+
+  useEffect(() => {
+    const loadTexts = () => {
+      const storedTitle = localStorage.getItem('headerTitle');
+      const storedSub = localStorage.getItem('headerSubtitle');
+      if (storedTitle) setTitle(storedTitle);
+      if (storedSub) setSubtitle(storedSub);
+    };
+    
+    loadTexts();
+    window.addEventListener('settingsUpdated', loadTexts);
+    return () => window.removeEventListener('settingsUpdated', loadTexts);
+  }, []);
 
   if (isAdmin) return null;
 
   return (
-    <header className="sticky top-0 z-50 glass-panel px-6 py-4">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+    <header className="sticky top-0 z-50 px-6 py-4 overflow-hidden shadow-2xl border-b border-white/5">
+      {/* Video Background */}
+      <div className="absolute inset-0 w-full h-full -z-10 overflow-hidden">
+        <video 
+          src={cidadeVideo} 
+          autoPlay 
+          loop 
+          muted 
+          playsInline 
+          className="w-full h-full object-cover object-bottom"
+        />
+        <div className="absolute inset-0 bg-slate-950/40" />
+      </div>
+
+      <div className="max-w-7xl mx-auto flex items-center justify-between relative z-10">
         <div className="flex items-center gap-10">
           <Link to="/">
             <Logo />
           </Link>
-
-          <nav className="hidden xl:flex items-center gap-8">
-            {['Início', 'Programação', 'Notícias', 'Promoções', 'Contato'].map((item) => (
-              <a 
-                key={item} 
-                href="#" 
-                className="text-slate-400 hover:text-white text-xs font-black uppercase tracking-[0.2em] transition-all relative group"
-              >
-                {item}
-                <span className="absolute -bottom-2 left-0 w-0 h-0.5 bg-blue-500 transition-all group-hover:w-full rounded-full" />
-              </a>
-            ))}
-          </nav>
         </div>
 
-        <div className="flex-1 max-w-sm mx-12 hidden lg:block">
-           <div className="relative group">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-blue-500" size={16} />
-              <input 
-                type="text" 
-                placeholder="Pesquisar..." 
-                className="w-full bg-slate-800/40 border border-white/5 rounded-2xl py-2 pl-10 pr-4 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all backdrop-blur-sm"
-              />
-           </div>
+        {/* Central Animated Text */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex-col items-center text-center flex pointer-events-none w-max mt-1 md:mt-0">
+          <h2 className="text-[10px] sm:text-sm md:text-xl lg:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-white uppercase tracking-[0.1em] md:tracking-[0.2em] drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+            {title}
+          </h2>
+          <div className="flex items-center gap-2 md:gap-4 mt-0.5 md:mt-1">
+            <div className="h-[1px] w-4 md:w-8 bg-gradient-to-r from-transparent to-blue-500" />
+            <p className="text-[6px] sm:text-[8px] md:text-xs lg:text-sm text-blue-400 font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase drop-shadow-[0_2px_5px_rgba(0,0,0,0.8)]">
+              {subtitle}
+            </p>
+            <div className="h-[1px] w-4 md:w-8 bg-gradient-to-l from-transparent to-blue-500" />
+          </div>
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="hidden sm:flex items-center gap-3 px-4 py-2 bg-blue-600/10 border border-blue-600/20 rounded-2xl">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
-            </span>
-            <p className="text-blue-400 text-[10px] font-black uppercase tracking-widest whitespace-nowrap">Ao Vivo: Manhã Show</p>
-          </div>
+          <WeatherWidget />
 
-          <Link 
-            to="/admin" 
-            className="p-3 text-slate-400 hover:text-blue-400 hover:bg-blue-600/5 rounded-2xl transition-all"
-            title="Área Administrativa"
-          >
-            <Headphones size={22} />
-          </Link>
+
 
           <button
             onClick={onMenuClick}

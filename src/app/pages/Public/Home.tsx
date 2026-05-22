@@ -3,66 +3,51 @@ import { AudioPlayer } from '../../components/AudioPlayer';
 import { ProgramCards } from '../../components/ProgramCards';
 import { NewsSection } from '../../components/NewsSection';
 import { TopRequests } from '../../components/TopRequests';
-import { Advertisers } from '../../components/Advertisers';
+
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '../../components/ui/carousel';
 import { Radio, Video, Headphones } from 'lucide-react';
 import { usePlayer } from '../../context/PlayerContext';
-// import { motion } from 'framer-motion';
+import { Link } from 'react-router';
+import { useState, useEffect } from 'react';
 const motion = { div: 'div' } as any;
 
 export default function Home() {
   const { activePlayer, setActivePlayer } = usePlayer();
+  const [banners, setBanners] = useState<any[]>([]);
 
-
+  useEffect(() => {
+    const loadBanners = () => {
+      const storedBanners = localStorage.getItem('siteBanners');
+      if (storedBanners) {
+        try {
+          setBanners(JSON.parse(storedBanners));
+        } catch (e) {
+          console.error("Erro ao carregar banners", e);
+        }
+      }
+    };
+    
+    loadBanners();
+    window.addEventListener('bannersUpdated', loadBanners);
+    return () => window.removeEventListener('bannersUpdated', loadBanners);
+  }, []);
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="flex flex-col items-center mb-6">
-        {/* Badge */}
-        <div className="inline-flex items-center gap-1.5 bg-blue-500/10 border border-blue-500/20 px-3 py-1 rounded-full text-blue-400 text-[10px] font-black uppercase tracking-wider mb-3">
-          <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse" />
-          No Ar Agora
-        </div>
-
-        {/* Toggle Switch */}
-        <div className="bg-slate-100 dark:bg-slate-800/90 p-1 rounded-full border border-slate-200 dark:border-white/5 flex items-center gap-1 shadow-lg">
-          <button
-            onClick={() => setActivePlayer('audio')}
-            className={`px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 ${
-              activePlayer === 'audio' 
-                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' 
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-            }`}
-          >
-            <Headphones size={14} />
-            OUVIR
-          </button>
-          <button
-            onClick={() => setActivePlayer('video')}
-            className={`px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 ${
-              activePlayer === 'video' 
-                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' 
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-            }`}
-          >
-            <Video size={14} />
-            VER TRANSMISSÃO
-          </button>
-        </div>
-      </div>
-
-      <div className={`mx-auto mb-10 transition-all duration-500 ${activePlayer === 'audio' ? 'max-w-md' : 'max-w-5xl'}`}>
-        <div className="bg-slate-800/50 backdrop-blur-md rounded-2xl overflow-hidden border border-slate-700/50 shadow-2xl">
-          {activePlayer === 'audio' ? (
-            <div className="p-6">
-              <AudioPlayer />
-            </div>
-          ) : (
+      {/* Players Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10 max-w-6xl mx-auto">
+        <div className="lg:col-span-2 flex flex-col">
+          <div className="bg-slate-800/50 backdrop-blur-md rounded-2xl overflow-hidden border border-slate-700/50 shadow-2xl h-full">
             <VideoPlayer />
-          )}
+          </div>
+        </div>
+        <div className="lg:col-span-1 flex flex-col">
+          <div className="bg-slate-800/50 backdrop-blur-md rounded-2xl overflow-hidden border border-slate-700/50 shadow-2xl h-full p-6">
+            <AudioPlayer />
+          </div>
         </div>
       </div>
 
@@ -71,59 +56,48 @@ export default function Home() {
 
       <Carousel className="w-full mb-10" opts={{ loop: true }}>
         <CarouselContent>
-          {/* Banner 1: Clicknet */}
-          <CarouselItem>
-            <div className="relative group overflow-hidden bg-gradient-to-r from-blue-600 to-cyan-500 rounded-3xl p-6 lg:p-8 text-center border border-white/5 backdrop-blur-md shadow-2xl h-48 flex flex-col justify-center items-center">
-              <div className="absolute top-0 left-0 w-full h-full bg-[url('https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&fit=crop')] opacity-20 mix-blend-overlay object-cover" />
-              <div className="relative z-10">
-                <div className="px-3 py-0.5 bg-white/10 rounded-full text-white text-[10px] font-black uppercase mb-2 w-fit mx-auto">Patrocinador</div>
-                <h3 className="text-3xl lg:text-4xl font-black text-white uppercase mb-1">CLICKNET</h3>
-                <p className="text-white/80 text-sm font-medium">A melhor internet fibra da região</p>
-              </div>
-            </div>
-          </CarouselItem>
-          
-          {/* Banner 2: Sicredi */}
-          <CarouselItem>
-            <div className="relative group overflow-hidden bg-gradient-to-r from-green-600 to-emerald-500 rounded-3xl p-6 lg:p-8 text-center border border-white/5 backdrop-blur-md shadow-2xl h-48 flex flex-col justify-center items-center">
-              <div className="absolute top-0 left-0 w-full h-full bg-[url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&fit=crop')] opacity-20 mix-blend-overlay object-cover" />
-              <div className="relative z-10">
-                <div className="px-3 py-0.5 bg-white/10 rounded-full text-white text-[10px] font-black uppercase mb-2 w-fit mx-auto">Patrocinador</div>
-                <h3 className="text-3xl lg:text-4xl font-black text-white uppercase mb-1">SICREDI</h3>
-                <p className="text-white/80 text-sm font-medium">Gente que coopera cresce</p>
-              </div>
-            </div>
-          </CarouselItem>
-
-          {/* Banner 3: Default Ad */}
-          <CarouselItem>
-            <div className="relative group overflow-hidden bg-gradient-to-r from-blue-600/20 via-indigo-600/20 to-purple-600/20 rounded-3xl p-6 lg:p-8 text-center border border-white/5 backdrop-blur-md shadow-2xl h-48 flex flex-col justify-center items-center">
-              <div className="relative z-10 flex flex-col items-center gap-2">
-                <div className="px-4 py-1 bg-blue-500/10 rounded-full border border-blue-500/20 text-blue-400 text-[10px] font-black tracking-[0.4em] uppercase">
-                  Advertising Space
+          {banners.length > 0 ? (
+            banners.map((banner, index) => (
+              <CarouselItem key={banner.id || index}>
+                {banner.linkUrl ? (
+                  <a href={banner.linkUrl} target="_blank" rel="noopener noreferrer" className="block relative group overflow-hidden bg-slate-900 rounded-3xl border border-white/5 shadow-2xl h-[200px] md:h-[250px] w-full">
+                    <img src={banner.imageUrl} alt={`Banner ${index + 1}`} className={`w-full h-full object-cover object-${banner.position || 'center'} group-hover:scale-105 transition-transform duration-700`} />
+                  </a>
+                ) : (
+                  <div className="relative group overflow-hidden bg-slate-900 rounded-3xl border border-white/5 shadow-2xl h-[200px] md:h-[250px] w-full">
+                    <img src={banner.imageUrl} alt={`Banner ${index + 1}`} className={`w-full h-full object-cover object-${banner.position || 'center'} group-hover:scale-105 transition-transform duration-700`} />
+                  </div>
+                )}
+              </CarouselItem>
+            ))
+          ) : (
+            <CarouselItem>
+              <div className="relative group overflow-hidden bg-gradient-to-r from-blue-600/20 via-indigo-600/20 to-purple-600/20 rounded-3xl p-6 lg:p-8 text-center border border-white/5 backdrop-blur-md shadow-2xl h-[200px] md:h-[250px] flex flex-col justify-center items-center">
+                <div className="relative z-10 flex flex-col items-center gap-2">
+                  <div className="px-4 py-1 bg-blue-500/10 rounded-full border border-blue-500/20 text-blue-400 text-[10px] font-black tracking-[0.4em] uppercase">
+                    Advertising Space
+                  </div>
+                  <h3 className="text-2xl lg:text-3xl font-black text-white tracking-tight uppercase leading-none">
+                    ANUNCIE NA <span className="text-blue-500">CIDADE FM</span>
+                  </h3>
+                  <p className="text-slate-400 text-sm font-medium">
+                    Sua marca em destaque para milhares de ouvintes.
+                  </p>
                 </div>
-                <h3 className="text-2xl lg:text-3xl font-black text-white tracking-tight uppercase leading-none">
-                  ANUNCIE NA <span className="text-blue-500">CONECTA FM</span>
-                </h3>
-                <p className="text-slate-400 text-sm font-medium">
-                  Sua marca em destaque para milhares de ouvintes.
-                </p>
               </div>
-            </div>
-          </CarouselItem>
+            </CarouselItem>
+          )}
         </CarouselContent>
         <CarouselPrevious className="left-4" />
         <CarouselNext className="right-4" />
       </Carousel>
 
-      <div className="mb-10">
-        <Advertisers />
-      </div>
+
 
       <div className="mb-10">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-white font-bold text-xl uppercase tracking-wider">Programação</h3>
-          <button className="text-blue-400 text-xs font-semibold hover:text-blue-300 transition-colors">VER GRADE COMPLETA →</button>
+          <Link to="/schedule" className="text-blue-400 text-xs font-semibold hover:text-blue-300 transition-colors">VER GRADE COMPLETA →</Link>
         </div>
         <ProgramCards />
       </div>
@@ -138,7 +112,7 @@ export default function Home() {
         </div>
         <div className="space-y-6">
           <h3 className="text-white font-bold text-xl uppercase tracking-wider flex items-center gap-2">
-            Top Pedidos
+            TOP 5
             <span className="flex-1 h-[1px] bg-slate-700/50"></span>
           </h3>
           <TopRequests />

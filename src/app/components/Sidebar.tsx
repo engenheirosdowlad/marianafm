@@ -43,7 +43,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             <div className="p-6 flex items-center justify-between border-b border-white/5">
               <div className="flex items-center gap-3">
                  <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-600/20">C</div>
-                 <span className="font-black tracking-tight text-white">CONECTA FM</span>
+                 <span className="font-black tracking-tight text-white">CIDADE FM</span>
               </div>
               <button
                 onClick={onClose}
@@ -91,15 +91,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             </div>
 
             <div className="p-6 border-t border-white/5 bg-slate-950/30">
-              <Link 
-                to="/admin"
-                onClick={onClose}
-                className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-2xl font-bold flex items-center justify-center gap-3 shadow-lg shadow-blue-600/20 transition-all active:scale-[0.98]"
-              >
-                <LogIn size={20} />
-                Área Restrita
-              </Link>
-              <p className="text-center text-slate-500 text-[10px] mt-4 font-medium tracking-widest">© 2024 CONECTA WEB RÁDIO</p>
+
+              <p className="text-center text-slate-500 text-[10px] mt-4 font-medium tracking-widest">© 2024 CIDADE WEB RÁDIO</p>
             </div>
           </motion.div>
         </>

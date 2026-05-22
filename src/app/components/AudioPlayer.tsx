@@ -1,106 +1,128 @@
-import { Volume2, Radio } from 'lucide-react';
-import { useState, useEffect, useRef } from 'react';
+import { Volume2, Play, Pause } from 'lucide-react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { PlayPauseIcon } from './ui/PlayPauseIcon';
-import logo from '../../assets/logo.png';
 import { usePlayer } from '../context/PlayerContext';
 
 export function AudioPlayer() {
-  const { isPlaying, setIsPlaying, volume, setVolume } = usePlayer();
+  const { isPlaying, setIsPlaying, volume, setVolume, activePlayer, setActivePlayer } = usePlayer();
+  const isAudioPlaying = isPlaying && activePlayer === 'audio';
+  
   const [currentTrack] = useState({
-    title: "Cidade FM 87,9",
-    artist: "Onde nasce o sucesso!",
-    cover: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=2670&auto=format&fit=crop"
+    title: "CIDADE FM 87,9 MHZ",
+    artist: "Onde nasce o sucesso!"
   });
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setVolume(parseFloat(e.target.value));
   };
 
+  const handlePlayPause = () => {
+    if (activePlayer !== 'audio') {
+      setActivePlayer('audio');
+      setIsPlaying(true);
+    } else {
+      setIsPlaying(!isPlaying);
+    }
+  };
+
   return (
-    <div className="glass-card p-4 h-full flex flex-col justify-between overflow-hidden relative border border-white/5">
-
+    <div className="bg-slate-900/80 backdrop-blur-xl p-6 h-full flex flex-col justify-between items-center rounded-2xl border border-slate-700/50 shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden">
       
-      <div className="absolute top-0 right-0 p-3">
-        <div className="flex items-center gap-2 bg-red-600/20 px-2.5 py-1 rounded-full border border-red-600/30">
-          <div className={`w-1.5 h-1.5 bg-red-600 rounded-full ${isPlaying ? 'animate-pulse' : ''}`} />
-          <span className="text-[9px] font-black text-red-600 tracking-wider uppercase">No Ar</span>
-        </div>
+      {/* Background glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-blue-500/10 rounded-full blur-[60px] pointer-events-none" />
+
+      {/* Header */}
+      <div className="text-center w-full z-10">
+        <h2 className="text-white text-lg font-black tracking-widest uppercase opacity-90 drop-shadow-md">
+          Ouça Ao Vivo!
+        </h2>
       </div>
 
-      <div className="mb-2">
-        <p className="text-blue-400 text-[10px] font-black tracking-[0.2em] uppercase mb-2">Conecta 87,9 FM</p>
-        <div className="relative group max-w-[150px] mx-auto">
-          <motion.div 
-            animate={{ rotate: isPlaying ? 360 : 0 }}
-            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-            className="w-full aspect-square rounded-full border-4 border-slate-900 shadow-2xl overflow-hidden relative z-10"
-          >
-            <img 
-              src={currentTrack.cover} 
-              alt="Cover" 
-              className={`w-full h-full object-cover transition-all duration-700 ${isPlaying ? 'grayscale-0' : 'grayscale'}`}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
-          </motion.div>
+      {/* Giant Play Button */}
+      <div className="relative group my-8 z-10 flex items-center justify-center">
+        {/* Outer Ring */}
+        <div className="absolute inset-0 rounded-full border-2 border-slate-600/30 scale-125 pointer-events-none" />
+        
+        {/* Inner Glowing Ring */}
+        <motion.div 
+          animate={{ scale: isAudioPlaying ? [1, 1.05, 1] : 1, opacity: isAudioPlaying ? [0.5, 0.8, 0.5] : 0.5 }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute inset-0 rounded-full border border-blue-500/50 scale-110 shadow-[0_0_20px_rgba(59,130,246,0.3)] pointer-events-none" 
+        />
+        
+        {/* The Button */}
+        <button
+          onClick={handlePlayPause}
+          className="relative w-24 h-24 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 border border-slate-600 shadow-[inset_0_2px_10px_rgba(255,255,255,0.1),_0_10px_20px_rgba(0,0,0,0.5)] flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-300 group"
+        >
+          {/* Subtle inner highlight */}
+          <div className="absolute inset-1 rounded-full bg-gradient-to-b from-white/5 to-transparent pointer-events-none" />
           
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-slate-950 rounded-full flex items-center justify-center border-2 border-slate-800 shadow-xl z-20">
-             <Radio className={isPlaying ? "text-blue-500 animate-bounce" : "text-slate-600"} size={16} />
+          <div className="relative z-10 text-blue-400 drop-shadow-[0_0_10px_rgba(59,130,246,0.6)] group-hover:text-blue-300 transition-colors">
+            {isAudioPlaying ? (
+              <Pause fill="currentColor" size={36} />
+            ) : (
+              <Play fill="currentColor" size={36} className="ml-1" />
+            )}
           </div>
+        </button>
+      </div>
+
+      {/* Track Info */}
+      <div className="text-center z-10 w-full mb-6">
+        <p className="text-slate-400 text-[10px] font-black tracking-widest uppercase mb-1">
+          Now Playing
+        </p>
+        <h3 className="text-white font-bold text-xl tracking-tight leading-tight truncate px-2">
+          {currentTrack.title}
+        </h3>
+        <p className="text-slate-400 text-sm font-medium truncate mt-0.5">
+          {currentTrack.artist}
+        </p>
+      </div>
+
+      {/* Rainbow Equalizer */}
+      <div className="flex items-center justify-center gap-[2px] h-12 w-full max-w-[200px] mb-6 z-10">
+        {Array.from({ length: 30 }).map((_, i) => {
+          // Rainbow color logic based on index
+          const hue = (i / 30) * 360; // 0 to 360
           
-          {/* Decorative Ring */}
-          <div className="absolute -inset-2 border border-blue-500/10 rounded-full animate-[spin_10s_linear_infinite]" />
-        </div>
+          return (
+            <motion.div
+              key={i}
+              animate={{ 
+                height: isAudioPlaying 
+                  ? [`${15 + Math.random() * 85}%`, `${20 + Math.random() * 80}%`, `${15 + Math.random() * 85}%`] 
+                  : '10%' 
+              }}
+              transition={{ 
+                duration: 0.4 + Math.random() * 0.4, 
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              style={{
+                backgroundColor: isAudioPlaying ? `hsl(${hue}, 80%, 60%)` : '#334155'
+              }}
+              className="flex-1 rounded-full transition-colors duration-500 w-1"
+            />
+          );
+        })}
       </div>
 
-      <div className="text-center space-y-0.5 mb-2">
-        <h3 className="text-white font-black text-base tracking-tight leading-tight uppercase truncate">{currentTrack.title}</h3>
-        <p className="text-slate-400 text-[10px] font-medium truncate tracking-wide">{currentTrack.artist}</p>
+      {/* Volume Control (Hidden on small screens) */}
+      <div className="w-full max-w-[200px] hidden lg:flex items-center gap-3 bg-slate-950/40 rounded-full px-3 py-1.5 border border-white/5 group/vol z-10">
+        <Volume2 size={14} className="text-slate-500 group-hover/vol:text-blue-400 transition-colors" />
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          value={volume}
+          onChange={handleVolumeChange}
+          className="flex-1 h-1 bg-slate-800 rounded-full appearance-none cursor-pointer accent-blue-500"
+        />
       </div>
-
-      <div className="flex items-center gap-1 h-10 mb-4 px-3 bg-slate-950/50 rounded-xl border border-white/5 overflow-hidden shadow-inner">
-        {Array.from({ length: 30 }).map((_, i) => (
-          <motion.div
-            key={i}
-            animate={{ 
-              height: isPlaying 
-                ? [`${20 + Math.random() * 60}%`, `${30 + Math.random() * 70}%`, `${20 + Math.random() * 60}%`] 
-                : '15%' 
-            }}
-            transition={{ 
-              duration: 0.5 + Math.random() * 0.5, 
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            className={`flex-1 rounded-full transition-colors duration-500 ${isPlaying ? 'bg-blue-500' : 'bg-slate-700'}`}
-          />
-        ))}
-      </div>
-
-      <div className="flex flex-col gap-4 hidden lg:flex">
-        <div className="flex items-center justify-center">
-          <button
-            onClick={() => setIsPlaying(!isPlaying)}
-            className="hover:scale-110 active:scale-95 transition-all duration-300 transform"
-            title={isPlaying ? "Pausar" : "Ouvir Rádio"}
-          >
-            <img src={logo} alt="Play/Pause" className={`w-[72px] h-[72px] object-contain ${isPlaying ? 'animate-pulse' : ''}`} />
-          </button>
-        </div>
-
-        <div className="flex items-center gap-3 bg-slate-950/60 rounded-xl p-2.5 border border-white/5 group/vol">
-          <Volume2 size={14} className="text-slate-500 group-hover/vol:text-blue-400 transition-colors" />
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            value={volume}
-            onChange={handleVolumeChange}
-            className="flex-1 h-1 bg-slate-800 rounded-full appearance-none cursor-pointer accent-blue-600"
-          />
-        </div>
-      </div>
+      
     </div>
   );
 }

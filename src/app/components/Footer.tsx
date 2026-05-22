@@ -1,27 +1,56 @@
-import { MessageCircle, Instagram, Facebook } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { MessageCircle, Instagram, Facebook, MapPin, Map, Navigation } from 'lucide-react';
 
 export function Footer() {
+  const [links, setLinks] = useState({
+    whatsapp: '#',
+    instagram: '#',
+    facebook: '#',
+    number: '(81) 999.523.2550'
+  });
+
+  useEffect(() => {
+    const loadSettings = () => {
+      setLinks({
+        whatsapp: localStorage.getItem('whatsappUrl') || '#',
+        instagram: localStorage.getItem('instagramUrl') || '#',
+        facebook: localStorage.getItem('facebookUrl') || '#',
+        number: localStorage.getItem('whatsappNumber') || '(81) 999.523.2550'
+      });
+    };
+
+    loadSettings();
+    window.addEventListener('settingsUpdated', loadSettings);
+    return () => window.removeEventListener('settingsUpdated', loadSettings);
+  }, []);
+
   return (
     <footer className="bg-slate-900 border-t border-slate-800 py-6 px-4 mt-8">
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col items-center gap-3">
           <div className="flex items-center gap-5">
             <a
-              href="#"
+              href={links.whatsapp}
+              target={links.whatsapp !== '#' ? '_blank' : '_self'}
+              rel="noopener noreferrer"
               className="text-slate-300 hover:text-green-500 transition-colors"
               aria-label="WhatsApp"
             >
               <MessageCircle size={22} />
             </a>
             <a
-              href="#"
+              href={links.instagram}
+              target={links.instagram !== '#' ? '_blank' : '_self'}
+              rel="noopener noreferrer"
               className="text-slate-300 hover:text-pink-500 transition-colors"
               aria-label="Instagram"
             >
               <Instagram size={22} />
             </a>
             <a
-              href="#"
+              href={links.facebook}
+              target={links.facebook !== '#' ? '_blank' : '_self'}
+              rel="noopener noreferrer"
               className="text-slate-300 hover:text-blue-500 transition-colors"
               aria-label="Facebook"
             >
@@ -29,13 +58,38 @@ export function Footer() {
             </a>
           </div>
 
-          <div className="text-center">
-            <p className="text-white font-semibold text-sm mb-0.5">Contato Info</p>
-            <p className="text-slate-400 text-xs">(81) 999.523.2550</p>
+          <div className="text-center mt-2">
+            <p className="text-white font-semibold text-sm mb-0.5 flex items-center justify-center gap-1">
+              <MessageCircle size={14} className="text-green-500" /> WhatsApp
+            </p>
+            <p className="text-slate-400 text-xs mb-5">{links.number}</p>
+
+            <p className="text-white font-semibold text-sm mb-1 flex items-center justify-center gap-1">
+              <MapPin size={14} className="text-red-500" /> Endereço
+            </p>
+            <p className="text-slate-400 text-xs mb-3">Av. Jerônimo Pimentel, 64, Barcarena - PA, 68445-000</p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <a 
+                href="https://www.google.com/maps/place/Av.+Jer%C3%B4nimo+Pimentel,+64,+Barcarena+-+PA,+68445-000" 
+                target="_blank" 
+                rel="noreferrer" 
+                className="text-[10px] bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 px-4 py-2 rounded-full transition-colors flex items-center gap-1.5 shadow-lg"
+              >
+                <Map size={12} className="text-blue-400" /> Ver no Mapa
+              </a>
+              <a 
+                href="https://www.google.com/maps/search/Av.+Jer%C3%B4nimo+Pimentel,+64,+Barcarena+-+PA,+68445-000" 
+                target="_blank" 
+                rel="noreferrer" 
+                className="text-[10px] bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 px-4 py-2 rounded-full transition-colors flex items-center gap-1.5 shadow-lg"
+              >
+                <Navigation size={12} className="text-orange-400" /> Street View
+              </a>
+            </div>
           </div>
 
           <p className="text-slate-600 text-[10px] text-center">
-            *Regulamentos regulares regularmente os direitos reservados
+            *Todos os direitos reservados
           </p>
         </div>
       </div>

@@ -8,9 +8,10 @@ import Schedule from './pages/Public/Schedule';
 import Login from './pages/Public/Login';
 import AdminTeam from './pages/Admin/Team';
 import AdminNews from './pages/Admin/News';
-import AdminRequests from './pages/Admin/Requests';
+import AdminBanners from './pages/Admin/Banners';
 import AdminSchedule from './pages/Admin/Schedule';
 import AdminSettings from './pages/Admin/Settings';
+import AdminTop5 from './pages/Admin/Top5';
 import { PlayerProvider } from './context/PlayerContext';
 
 // Mock simpler versions of other pages for now
@@ -39,8 +40,9 @@ export default function App() {
             <Route index element={<AdminDashboard />} />
             <Route path="schedule" element={<AdminSchedule />} />
             <Route path="news" element={<AdminNews />} />
-            <Route path="requests" element={<AdminRequests />} />
+            <Route path="banners" element={<AdminBanners />} />
             <Route path="team" element={<AdminTeam />} />
+            <Route path="top5" element={<AdminTop5 />} />
             <Route path="settings" element={<AdminSettings />} />
           </Route>
 

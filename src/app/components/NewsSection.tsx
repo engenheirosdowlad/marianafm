@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
+import { RefreshCw } from 'lucide-react';
 
 interface NewsItem {
   title: string;
@@ -11,88 +12,87 @@ interface NewsItem {
 export function NewsSection() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   const sources = [
-    { name: 'G1 PARÁ', url: 'https://g1.globo.com/rss/g1/pa/para/' },
-    { name: 'DOL', url: 'https://dol.com.br/rss' },
-    { name: 'O LIBERAL', url: 'https://www.oliberal.com/rss' }
+    { name: 'POLÍTICA', url: 'https://g1.globo.com/rss/g1/politica/' },
+    { name: 'ESPORTE', url: 'https://ge.globo.com/rss/ge/' },
+    { name: 'ENTRETENIMENTO', url: 'https://g1.globo.com/rss/g1/pop-arte/' }
   ];
 
-  useEffect(() => {
-    async function fetchAllNews() {
-      setLoading(true);
-      const allNews: NewsItem[] = [];
+  const fetchAllNews = useCallback(async () => {
+    setLoading(true);
+    const allNews: NewsItem[] = [];
 
-      for (const source of sources) {
-        try {
-          // Usando corsproxy.io para todos
-          const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(source.url)}`);
-          if (!response.ok) continue;
+    for (const source of sources) {
+      try {
+        const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(source.url)}`);
+        if (!response.ok) continue;
+        
+        const xmlText = await response.text();
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+        
+        const items = xmlDoc.querySelectorAll("item");
+        
+        Array.from(items).slice(0, 15).forEach(item => {
+          const title = item.querySelector("title")?.textContent || "";
+          const link = item.querySelector("link")?.textContent || "";
+          const description = item.querySelector("description")?.textContent || "";
           
-          const xmlText = await response.text();
-          const parser = new DOMParser();
-          const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+          if (title.toUpperCase().includes('VÍDEO') || title.toUpperCase().includes('ASSISTA') || link.includes('video')) {
+            return;
+          }
+
+          let image = "";
+          const mediaContent = item.getElementsByTagName("media:content")[0] || item.getElementsByTagName("content")[0];
+          const enclosure = item.getElementsByTagName("enclosure")[0];
+
+          if (mediaContent) {
+            image = mediaContent.getAttribute("url") || "";
+          } else if (enclosure) {
+            image = enclosure.getAttribute("url") || "";
+          }
           
-          const items = xmlDoc.querySelectorAll("item");
-          
-          const parsed = Array.from(items).slice(0, 3).map(item => {
-            const title = item.querySelector("title")?.textContent || "";
-            const link = item.querySelector("link")?.textContent || "";
-            const description = item.querySelector("description")?.textContent || "";
-            
-            let image = "";
-            const mediaContent = item.getElementsByTagName("media:content")[0] || item.getElementsByTagName("content")[0];
-            if (mediaContent) {
-              image = mediaContent.getAttribute("url") || "";
+          if (!image) {
+            const imgMatch = description.match(/src="([^"]+)"/);
+            if (imgMatch) {
+              image = imgMatch[1];
             }
-            
-            if (!image) {
-              const imgMatch = description.match(/src="([^"]+)"/);
-              image = imgMatch ? imgMatch[1] : '';
-            }
+          }
 
-            // Fallback image based on source if not found
-            if (!image) {
-              image = source.name === 'G1 PARÁ' 
-                ? 'https://s2-g1.glbimg.com/E8S9hP0H5yH5yH5yH5yH5yH5yH5y=/0x0:1920x1080/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_59edd422c128475bb6a11030283f6f1c/internal_photos/bs/2023/q/r/ABCDEF.jpg'
-                : 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400&h=300&fit=crop';
-            }
-
-            return { title, link, image, source: source.name };
-          });
-
-          allNews.push(...parsed);
-        } catch (error) {
-          console.error(`Erro ao buscar notícias de ${source.name}:`, error);
-        }
-      }
-
-      // Se falhar tudo, carregar fallback
-      if (allNews.length === 0) {
-        allNews.push({
-          title: "Acompanhe as notícias do Pará nos portais regionais",
-          link: "https://g1.globo.com/pa/para/",
-          image: "https://images.unsplash.com/photo-1582139329536-e7284fece509?w=400&h=300&fit=crop",
-          source: "SISTEMA"
+          if (image) {
+            allNews.push({ title, link, image, source: source.name });
+          }
         });
+
+      } catch (error) {
+        console.error(`Erro ao buscar notícias de ${source.name}:`, error);
       }
-
-      const storedHidden = localStorage.getItem('hiddenNewsLinks');
-      const storedDeleted = localStorage.getItem('deletedNewsLinks');
-      const hiddenIds = storedHidden ? JSON.parse(storedHidden) : [];
-      const deletedIds = storedDeleted ? JSON.parse(storedDeleted) : [];
-
-      const filteredNews = allNews.filter(item => 
-        !deletedIds.includes(item.link) && !hiddenIds.includes(item.link)
-      );
-
-      // Embaralhar um pouco para misturar fontes
-      setNews(filteredNews.sort(() => Math.random() - 0.5).slice(0, 6));
-      setLoading(false);
     }
 
-    fetchAllNews();
+    const storedHidden = localStorage.getItem('hiddenNewsLinks');
+    const storedDeleted = localStorage.getItem('deletedNewsLinks');
+    const hiddenIds = storedHidden ? JSON.parse(storedHidden) : [];
+    const deletedIds = storedDeleted ? JSON.parse(storedDeleted) : [];
+
+    let filteredNews = allNews.filter(item => 
+      !deletedIds.includes(item.link) && !hiddenIds.includes(item.link)
+    );
+
+    filteredNews = filteredNews.sort(() => Math.random() - 0.5);
+
+    setNews(filteredNews);
+    setLoading(false);
   }, []);
+
+  useEffect(() => {
+    fetchAllNews();
+  }, [fetchAllNews]);
+
+  const displayNews = activeCategory 
+    ? news.filter(n => n.source === activeCategory).slice(0, 6)
+    : news.slice(0, 6);
 
   return (
     <div className="glass-card p-5 h-full border border-white/5 shadow-2xl">
@@ -102,14 +102,42 @@ export function NewsSection() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
           </span>
-          Notícias do Pará
+          Últimas Notícias
         </h2>
-        <div className="flex gap-2">
-          {['G1', 'DOL', 'LIBERAL'].map(s => (
-            <span key={s} className="text-[8px] font-black text-slate-500 border border-slate-800 px-1.5 py-0.5 rounded uppercase tracking-tighter">
-              {s}
-            </span>
-          ))}
+        <div className="flex items-center gap-3">
+          <div className="flex gap-2">
+            <button
+              onClick={() => setActiveCategory(null)}
+              className={`text-[8px] font-black border px-1.5 py-0.5 rounded uppercase tracking-tighter transition-colors ${
+                activeCategory === null 
+                  ? 'bg-blue-600 text-white border-blue-500' 
+                  : 'text-slate-500 border-slate-800 hover:text-white hover:border-slate-600'
+              }`}
+            >
+              TODAS
+            </button>
+            {sources.map(s => (
+              <button 
+                key={s.name} 
+                onClick={() => setActiveCategory(s.name)}
+                className={`text-[8px] font-black border px-1.5 py-0.5 rounded uppercase tracking-tighter transition-colors ${
+                  activeCategory === s.name 
+                    ? 'bg-blue-600 text-white border-blue-500' 
+                    : 'text-slate-500 border-slate-800 hover:text-white hover:border-slate-600'
+                }`}
+              >
+                {s.name}
+              </button>
+            ))}
+          </div>
+          <button 
+            onClick={fetchAllNews}
+            disabled={loading}
+            className="p-1.5 bg-slate-800 hover:bg-blue-600 text-slate-400 hover:text-white rounded-lg transition-colors border border-white/5"
+            title="Atualizar notícias"
+          >
+            <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
+          </button>
         </div>
       </div>
 
@@ -118,10 +146,10 @@ export function NewsSection() {
           Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="animate-pulse bg-slate-800/50 aspect-video rounded-xl border border-white/5" />
           ))
-        ) : (
-          news.map((item, index) => (
+        ) : displayNews.length > 0 ? (
+          displayNews.map((item, index) => (
             <motion.a
-              key={index}
+              key={item.link + index}
               href={item.link}
               target="_blank"
               rel="noopener noreferrer"
@@ -153,6 +181,10 @@ export function NewsSection() {
               </div>
             </motion.a>
           ))
+        ) : (
+          <p className="text-slate-400 text-xs sm:col-span-2 text-center py-10">
+            Nenhuma notícia com foto encontrada no momento para esta categoria.
+          </p>
         )}
       </div>
     </div>

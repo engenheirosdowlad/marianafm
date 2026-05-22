@@ -4,14 +4,15 @@ import {
   LayoutDashboard, 
   Radio, 
   Newspaper, 
-  MessageSquare, 
+  Image as ImageIcon, 
   Users, 
   Settings, 
   LogOut,
   ChevronLeft,
   ChevronRight,
   Menu,
-  ExternalLink
+  ExternalLink,
+  Trophy
 } from 'lucide-react';
 
 import { motion, AnimatePresence } from 'framer-motion';
@@ -33,7 +34,8 @@ export function AdminLayout() {
     { label: 'Dashboard', icon: LayoutDashboard, path: '/admin' },
     { label: 'Programação', icon: Radio, path: '/admin/schedule' },
     { label: 'Notícias', icon: Newspaper, path: '/admin/news' },
-    { label: 'Pedidos', icon: MessageSquare, path: '/admin/requests' },
+    { label: 'Banners', icon: ImageIcon, path: '/admin/banners' },
+    { label: 'TOP 5', icon: Trophy, path: '/admin/top5' },
     { label: 'Equipe', icon: Users, path: '/admin/team' },
     { label: 'Configurações', icon: Settings, path: '/admin/settings' },
   ];
