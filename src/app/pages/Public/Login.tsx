@@ -87,7 +87,7 @@ export default function Login() {
         </form>
 
         <p className="text-slate-600 text-xs text-center mt-6">
-          Acesso restrito a administradores e locutores cadastrados.
+          Acesso restrito apenas a administradores cadastrados.
         </p>
       </motion.div>
     </div>

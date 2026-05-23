@@ -1,4 +1,7 @@
 import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 import { Trophy, Save, Link as LinkIcon, Image as ImageIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -18,6 +21,8 @@ const defaultTop5: Top5Item[] = [
 ];
 
 export default function AdminTop5() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [items, setItems] = useState<Top5Item[]>(defaultTop5);
   const [isSaved, setIsSaved] = useState(false);
 
@@ -28,7 +33,19 @@ export default function AdminTop5() {
     } else {
       localStorage.setItem('top5Requests', JSON.stringify(defaultTop5));
     }
-  }, []);
+
+    if (location.state?.startTour) {
+      navigate('.', { replace: true, state: {} });
+      const driverObj = driver({
+        showProgress: true,
+        steps: [
+          { element: '#tour-top5-list', popover: { title: 'Músicas Mais Pedidas', description: 'Edite o Nome, Artista e Link do YouTube das 5 músicas mais populares da rádio.', side: "top", align: 'start' }},
+          { element: '#tour-save-top5', popover: { title: 'Salvar', description: 'Clique aqui após atualizar a lista para colocar as novidades no ar!', side: "bottom", align: 'start' }}
+        ]
+      });
+      setTimeout(() => driverObj.drive(), 500);
+    }
+  }, [location, navigate]);
 
   const handleChange = (index: number, field: keyof Top5Item, value: string) => {
     const newItems = [...items];
@@ -58,6 +75,7 @@ export default function AdminTop5() {
           <p className="text-slate-400 text-sm mt-1">Gerencie a lista do Top 5 com link do YouTube.</p>
         </div>
         <button 
+          id="tour-save-top5"
           onClick={handleSave}
           className={`px-4 py-2 rounded-xl font-bold flex items-center gap-2 transition-all ${
             isSaved ? 'bg-green-600 text-white' : 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/20'
@@ -68,7 +86,7 @@ export default function AdminTop5() {
         </button>
       </div>
 
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+      <div id="tour-top5-list" className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
         <div className="space-y-6">
           {items.map((item, index) => {
             const ytId = extractYoutubeId(item.youtubeUrl);

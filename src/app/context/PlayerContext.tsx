@@ -9,6 +9,7 @@ interface PlayerContextType {
   setActivePlayer: (player: PlayerType) => void;
   volume: number;
   setVolume: (volume: number) => void;
+  audioRef: React.RefObject<HTMLAudioElement | null>;
 }
 
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
@@ -56,7 +57,8 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       activePlayer,
       setActivePlayer,
       volume,
-      setVolume
+      setVolume,
+      audioRef
     }}>
       {children}
       <audio ref={audioRef} src={activePlayer === 'audio' ? streamUrl : ''} />

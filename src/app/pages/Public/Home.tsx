@@ -3,6 +3,7 @@ import { AudioPlayer } from '../../components/AudioPlayer';
 import { ProgramCards } from '../../components/ProgramCards';
 import { NewsSection } from '../../components/NewsSection';
 import { TopRequests } from '../../components/TopRequests';
+import { GlowingDivider } from '../../components/ui/GlowingDivider';
 
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '../../components/ui/carousel';
 import { Radio, Video, Headphones } from 'lucide-react';
@@ -51,8 +52,8 @@ export default function Home() {
         </div>
       </div>
 
-
-
+      {/* Glowing Divider */}
+      <GlowingDivider className="my-10" />
 
       <Carousel className="w-full mb-10" opts={{ loop: true }}>
         <CarouselContent>
@@ -92,7 +93,8 @@ export default function Home() {
         <CarouselNext className="right-4" />
       </Carousel>
 
-
+      {/* Glowing Divider */}
+      <GlowingDivider className="my-10" />
 
       <div className="mb-10">
         <div className="flex items-center justify-between mb-6">
@@ -102,7 +104,10 @@ export default function Home() {
         <ProgramCards />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-12">
+      {/* Glowing Divider */}
+      <GlowingDivider className="my-12" />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-8 pb-12">
         <div className="space-y-6">
           <h3 className="text-white font-bold text-xl uppercase tracking-wider flex items-center gap-2">
             Últimas Notícias

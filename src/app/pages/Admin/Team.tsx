@@ -1,4 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 import { teamData as initialTeamData, TeamMember } from '../../data/mockData';
 import { Edit2, Trash2, UserPlus, Shield, User, Radio, X, Camera } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -35,7 +38,8 @@ async function getCroppedImg(imageSrc: string, pixelCrop: any): Promise<string> 
 }
 
 export default function AdminTeam() {
-
+  const location = useLocation();
+  const navigate = useNavigate();
   const [team, setTeam] = useState(initialTeamData);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
@@ -61,7 +65,19 @@ export default function AdminTeam() {
     } else {
       setPrograms(['Manhã Show', 'Tarde Total', 'Noite de Sucessos', 'Sábado Especial']);
     }
-  }, []);
+
+    if (location.state?.startTour) {
+      navigate('.', { replace: true, state: {} });
+      const driverObj = driver({
+        showProgress: true,
+        steps: [
+          { element: '#tour-add-member', popover: { title: 'Adicionar Membro', description: 'Cadastre novos locutores ou administradores para a rádio.', side: "bottom", align: 'start' }},
+          { element: '#tour-team-list', popover: { title: 'Sua Equipe', description: 'Aqui você visualiza e gerencia os membros cadastrados. Pode editar suas informações e fotos.', side: "top", align: 'start' }}
+        ]
+      });
+      setTimeout(() => driverObj.drive(), 500);
+    }
+  }, [location, navigate]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -141,6 +157,7 @@ export default function AdminTeam() {
           <p className="text-slate-400 text-sm">Cadastre e gerencie os membros da sua rádio.</p>
         </div>
         <button 
+          id="tour-add-member"
           onClick={openCreateModal}
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors shadow-lg shadow-blue-600/20"
         >
@@ -149,7 +166,7 @@ export default function AdminTeam() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div id="tour-team-list" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {team.map((member, index) => (
           <motion.div
             key={member.id}

@@ -1,4 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 import { motion } from 'framer-motion';
 import { Trash2, EyeOff, Eye, RefreshCw } from 'lucide-react';
 
@@ -10,6 +13,8 @@ interface NewsItem {
 }
 
 export default function AdminNews() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [hiddenIds, setHiddenIds] = useState<string[]>([]);
@@ -30,7 +35,19 @@ export default function AdminNews() {
     if (storedDeleted) setDeletedIds(JSON.parse(storedDeleted));
 
     fetchNews();
-  }, []);
+
+    if (location.state?.startTour) {
+      navigate('.', { replace: true, state: {} });
+      const driverObj = driver({
+        showProgress: true,
+        steps: [
+          { element: '#tour-refresh-btn', popover: { title: 'Atualizar Notícias', description: 'Clique aqui para buscar as últimas notícias nos feeds RSS (G1, DOL, etc).', side: "bottom", align: 'start' }},
+          { element: '#tour-news-table', popover: { title: 'Lista de Notícias', description: 'Aqui ficam todas as notícias que vão para o site principal.', side: "top", align: 'start' }}
+        ]
+      });
+      setTimeout(() => driverObj.drive(), 500);
+    }
+  }, [location, navigate]);
 
   const fetchNews = async () => {
     setLoading(true);
@@ -113,6 +130,7 @@ export default function AdminNews() {
           <p className="text-slate-400 text-sm">Oculte ou exclua notícias puxadas automaticamente dos portais.</p>
         </div>
         <button 
+          id="tour-refresh-btn"
           onClick={fetchNews}
           className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors border border-white/5"
         >
@@ -121,7 +139,7 @@ export default function AdminNews() {
         </button>
       </div>
 
-      <div className="bg-slate-800/50 backdrop-blur-md rounded-xl overflow-hidden border border-white/5 shadow-2xl">
+      <div id="tour-news-table" className="bg-slate-800/50 backdrop-blur-md rounded-xl overflow-hidden border border-white/5 shadow-2xl">
         {/* Desktop Table */}
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left">

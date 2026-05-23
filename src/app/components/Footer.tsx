@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { MessageCircle, Instagram, Facebook, MapPin, Map, Navigation } from 'lucide-react';
+import { GlowingDivider } from './ui/GlowingDivider';
 
 export function Footer() {
   const [links, setLinks] = useState({
@@ -25,7 +26,9 @@ export function Footer() {
   }, []);
 
   return (
-    <footer className="bg-slate-900 border-t border-slate-800 py-6 px-4 mt-8">
+    <footer className="bg-slate-900 pt-6 pb-6 px-4 mt-8 relative">
+      {/* Glowing Divider Top */}
+      <GlowingDivider className="absolute top-0 left-0 right-0" />
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col items-center gap-3">
           <div className="flex items-center gap-5">

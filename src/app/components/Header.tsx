@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router';
 import { useState, useEffect } from 'react';
 import { Logo } from './ui/Logo';
 import { WeatherWidget } from './WeatherWidget';
-import cidadeVideo from '../../imports/video.mp4';
+import { AudioVisualizer } from './AudioVisualizer';
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -33,17 +33,10 @@ export function Header({ onMenuClick }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-50 px-6 py-4 overflow-hidden shadow-2xl border-b border-white/5">
-      {/* Video Background */}
-      <div className="absolute inset-0 w-full h-full -z-10 overflow-hidden">
-        <video 
-          src={cidadeVideo} 
-          autoPlay 
-          loop 
-          muted 
-          playsInline 
-          className="w-full h-full object-cover object-bottom"
-        />
-        <div className="absolute inset-0 bg-slate-950/40" />
+      {/* Visualizer Background */}
+      <div className="absolute inset-0 w-full h-full -z-10 overflow-hidden bg-slate-950">
+        <AudioVisualizer />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/20" />
       </div>
 
       <div className="max-w-7xl mx-auto flex items-center justify-between relative z-10">

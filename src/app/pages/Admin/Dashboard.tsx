@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
-import { LayoutDashboard, Radio, Newspaper, MessageSquare, Users, Settings } from 'lucide-react';
+import { LayoutDashboard, Radio, Newspaper, MessageSquare, Users, Settings, Map, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router';
 
 export default function AdminDashboard() {
   const stats = [
@@ -71,21 +72,66 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6">
-          <h2 className="text-xl font-bold text-white mb-6">Pedidos Recentes</h2>
-          <div className="space-y-4">
-            {[1, 2, 3].map((_, i) => (
-              <div key={i} className="flex items-center justify-between p-3 bg-slate-900 rounded-xl border border-slate-700/50">
-                <div>
-                  <p className="text-white text-sm font-semibold">Beat It - Michael Jackson</p>
-                  <p className="text-slate-500 text-xs">Pedido por: João Silva</p>
-                </div>
-                <div className="flex gap-2">
-                  <button className="text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-lg transition-colors">Aceitar</button>
-                  <button className="text-xs bg-slate-700 hover:bg-slate-600 text-white px-3 py-1 rounded-lg transition-colors">Negar</button>
-                </div>
+        <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/10 rounded-full blur-3xl" />
+          <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2 relative z-10">
+            <Map size={20} className="text-blue-500" />
+            Tour Rápido
+          </h2>
+          <div className="space-y-3 relative z-10">
+            <Link to="/admin/schedule" state={{ startTour: true }} className="flex items-start gap-3 p-3 hover:bg-slate-700/50 rounded-xl transition-colors group">
+              <CheckCircle2 className="text-slate-600 group-hover:text-blue-500 mt-0.5 flex-shrink-0 transition-colors" size={18} />
+              <div>
+                <h4 className="text-white text-sm font-semibold group-hover:text-blue-400 transition-colors">1. Programação</h4>
+                <p className="text-slate-400 text-xs mt-1">Configure a grade de programas e locutores por horário.</p>
               </div>
-            ))}
+              <ArrowRight className="text-slate-600 group-hover:text-blue-500 ml-auto flex-shrink-0 mt-2 transition-colors" size={16} />
+            </Link>
+
+            <Link to="/admin/news" state={{ startTour: true }} className="flex items-start gap-3 p-3 hover:bg-slate-700/50 rounded-xl transition-colors group">
+              <CheckCircle2 className="text-slate-600 group-hover:text-purple-500 mt-0.5 flex-shrink-0 transition-colors" size={18} />
+              <div>
+                <h4 className="text-white text-sm font-semibold group-hover:text-purple-400 transition-colors">2. Notícias</h4>
+                <p className="text-slate-400 text-xs mt-1">Acompanhe as notícias locais que aparecem na página principal.</p>
+              </div>
+              <ArrowRight className="text-slate-600 group-hover:text-purple-500 ml-auto flex-shrink-0 mt-2 transition-colors" size={16} />
+            </Link>
+
+            <Link to="/admin/banners" state={{ startTour: true }} className="flex items-start gap-3 p-3 hover:bg-slate-700/50 rounded-xl transition-colors group">
+              <CheckCircle2 className="text-slate-600 group-hover:text-pink-500 mt-0.5 flex-shrink-0 transition-colors" size={18} />
+              <div>
+                <h4 className="text-white text-sm font-semibold group-hover:text-pink-400 transition-colors">3. Banners</h4>
+                <p className="text-slate-400 text-xs mt-1">Gerencie o carrossel de publicidade e parceiros do topo.</p>
+              </div>
+              <ArrowRight className="text-slate-600 group-hover:text-pink-500 ml-auto flex-shrink-0 mt-2 transition-colors" size={16} />
+            </Link>
+
+            <Link to="/admin/top5" state={{ startTour: true }} className="flex items-start gap-3 p-3 hover:bg-slate-700/50 rounded-xl transition-colors group">
+              <CheckCircle2 className="text-slate-600 group-hover:text-yellow-500 mt-0.5 flex-shrink-0 transition-colors" size={18} />
+              <div>
+                <h4 className="text-white text-sm font-semibold group-hover:text-yellow-400 transition-colors">4. TOP 5</h4>
+                <p className="text-slate-400 text-xs mt-1">Atualize o ranking das músicas mais pedidas pelos ouvintes.</p>
+              </div>
+              <ArrowRight className="text-slate-600 group-hover:text-yellow-500 ml-auto flex-shrink-0 mt-2 transition-colors" size={16} />
+            </Link>
+
+            <Link to="/admin/team" state={{ startTour: true }} className="flex items-start gap-3 p-3 hover:bg-slate-700/50 rounded-xl transition-colors group">
+              <CheckCircle2 className="text-slate-600 group-hover:text-green-500 mt-0.5 flex-shrink-0 transition-colors" size={18} />
+              <div>
+                <h4 className="text-white text-sm font-semibold group-hover:text-green-400 transition-colors">5. Equipe</h4>
+                <p className="text-slate-400 text-xs mt-1">Cadastre locutores e equipe para associá-los aos programas.</p>
+              </div>
+              <ArrowRight className="text-slate-600 group-hover:text-green-500 ml-auto flex-shrink-0 mt-2 transition-colors" size={16} />
+            </Link>
+
+            <Link to="/admin/settings" state={{ startTour: true }} className="flex items-start gap-3 p-3 hover:bg-slate-700/50 rounded-xl transition-colors group">
+              <CheckCircle2 className="text-slate-600 group-hover:text-orange-500 mt-0.5 flex-shrink-0 transition-colors" size={18} />
+              <div>
+                <h4 className="text-white text-sm font-semibold group-hover:text-orange-400 transition-colors">6. Configurações</h4>
+                <p className="text-slate-400 text-xs mt-1">Personalize links, streams e aparência geral do sistema.</p>
+              </div>
+              <ArrowRight className="text-slate-600 group-hover:text-orange-500 ml-auto flex-shrink-0 mt-2 transition-colors" size={16} />
+            </Link>
           </div>
         </div>
       </div>

@@ -14,6 +14,7 @@ import AdminBanners from './pages/Admin/Banners';
 import AdminSchedule from './pages/Admin/Schedule';
 import AdminSettings from './pages/Admin/Settings';
 import AdminTop5 from './pages/Admin/Top5';
+import HelpCenter from './pages/Admin/HelpCenter';
 import { PlayerProvider } from './context/PlayerContext';
 
 // Mock simpler versions of other pages for now
@@ -52,6 +53,7 @@ export default function App() {
             <Route path="team" element={<AdminTeam />} />
             <Route path="top5" element={<AdminTop5 />} />
             <Route path="settings" element={<AdminSettings />} />
+            <Route path="help" element={<HelpCenter />} />
           </Route>
 
           {/* Fallback */}

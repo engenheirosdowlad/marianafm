@@ -1,4 +1,7 @@
 import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 import { motion, AnimatePresence } from 'framer-motion';
 import { programData as initialProgramData, teamData, Program } from '../../data/mockData';
 import { Calendar, Clock, User, Plus, Edit2, Trash2, X } from 'lucide-react';
@@ -14,6 +17,8 @@ const daysOfWeek = [
 ];
 
 export default function AdminSchedule() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [programs, setPrograms] = useState<Program[]>([]);
   const [selectedDay, setSelectedDay] = useState('seg');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,7 +40,22 @@ export default function AdminSchedule() {
       setPrograms(initialProgramData);
       localStorage.setItem('radioPrograms', JSON.stringify(initialProgramData));
     }
-  }, []);
+
+    if (location.state?.startTour) {
+      // Clear state so it doesn't run again on refresh
+      navigate('.', { replace: true, state: {} });
+      
+      const driverObj = driver({
+        showProgress: true,
+        steps: [
+          { element: '#tour-add-btn', popover: { title: 'Novo Programa', description: 'Clique aqui para cadastrar um novo programa ou horário na rádio.', side: "bottom", align: 'start' }},
+          { element: '#tour-days-tabs', popover: { title: 'Dias da Semana', description: 'Alterne entre os dias para visualizar ou editar a programação específica daquele dia.', side: "bottom", align: 'start' }},
+          { element: '#tour-programs-list', popover: { title: 'Grade de Programas', description: 'Aqui ficam listados todos os programas do dia. Você pode editar os horários ou o locutor de cada um.', side: "top", align: 'start' }}
+        ]
+      });
+      setTimeout(() => driverObj.drive(), 500);
+    }
+  }, [location, navigate]);
 
   const filteredPrograms = programs.filter(prog => prog.days.includes(selectedDay));
 
@@ -101,6 +121,7 @@ export default function AdminSchedule() {
           <p className="text-slate-400 text-sm">Organize a programação semanal da rádio.</p>
         </div>
         <button 
+          id="tour-add-btn"
           onClick={openCreateModal}
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors shadow-lg shadow-blue-600/20"
         >
@@ -110,7 +131,7 @@ export default function AdminSchedule() {
       </div>
 
       {/* Days Tabs */}
-      <div className="flex overflow-x-auto gap-2 mb-6 pb-2 scrollbar-thin scrollbar-thumb-slate-700">
+      <div id="tour-days-tabs" className="flex overflow-x-auto gap-2 mb-6 pb-2 scrollbar-thin scrollbar-thumb-slate-700">
         {daysOfWeek.map(day => (
           <button
             key={day.id}
@@ -127,7 +148,7 @@ export default function AdminSchedule() {
       </div>
 
       {/* Programs List */}
-      <div className="space-y-4">
+      <div id="tour-programs-list" className="space-y-4">
         <AnimatePresence mode="wait">
           <motion.div
             key={selectedDay}

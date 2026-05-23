@@ -12,7 +12,8 @@ import {
   ChevronRight,
   Menu,
   ExternalLink,
-  Trophy
+  Trophy,
+  HelpCircle
 } from 'lucide-react';
 
 import { motion, AnimatePresence } from 'framer-motion';
@@ -38,6 +39,7 @@ export function AdminLayout() {
     { label: 'TOP 5', icon: Trophy, path: '/admin/top5' },
     { label: 'Equipe', icon: Users, path: '/admin/team' },
     { label: 'Configurações', icon: Settings, path: '/admin/settings' },
+    { label: 'Central de Ajuda', icon: HelpCircle, path: '/admin/help' },
   ];
 
   return (

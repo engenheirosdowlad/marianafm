@@ -1,4 +1,7 @@
 import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 import { Save, Plus, Trash2, Upload, Image as ImageIcon, Link as LinkIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -10,6 +13,8 @@ interface Banner {
 }
 
 export default function AdminBanners() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [banners, setBanners] = useState<Banner[]>([]);
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -23,7 +28,19 @@ export default function AdminBanners() {
         console.error("Erro ao carregar banners", e);
       }
     }
-  }, []);
+
+    if (location.state?.startTour) {
+      navigate('.', { replace: true, state: {} });
+      const driverObj = driver({
+        showProgress: true,
+        steps: [
+          { element: '#tour-add-banner', popover: { title: 'Adicionar Banner', description: 'Clique aqui para adicionar uma nova imagem ao carrossel.', side: "top", align: 'center' }},
+          { element: '#tour-save-banners', popover: { title: 'Salvar', description: 'Não se esqueça de salvar as alterações para publicá-las no site!', side: "bottom", align: 'start' }}
+        ]
+      });
+      setTimeout(() => driverObj.drive(), 500);
+    }
+  }, [location, navigate]);
 
   const handleSave = () => {
     setLoading(true);
@@ -79,6 +96,7 @@ export default function AdminBanners() {
         </div>
         
         <button
+          id="tour-save-banners"
           onClick={handleSave}
           disabled={loading}
           className={`flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl font-bold transition-all ${
@@ -186,6 +204,7 @@ export default function AdminBanners() {
         </AnimatePresence>
 
         <button
+          id="tour-add-banner"
           onClick={addBanner}
           className="w-full py-6 rounded-xl border-2 border-dashed border-white/10 text-slate-400 hover:text-white hover:border-blue-500 hover:bg-blue-500/5 transition-all flex flex-col items-center justify-center gap-2 group"
         >

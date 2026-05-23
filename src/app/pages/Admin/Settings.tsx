@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 import { Save, Radio, Video, Globe, MessageCircle, Instagram, Facebook, Phone, Upload } from 'lucide-react';
 
 export default function AdminSettings() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [audioStream, setAudioStream] = useState('https://link.radio.br:18630/stream');
   const [videoStream, setVideoStream] = useState('https://link.radio.br:18630/video');
   const [siteName, setSiteName] = useState('CIDADE FM 87,9 MHZ');
@@ -13,6 +18,13 @@ export default function AdminSettings() {
   const [instagramUrl, setInstagramUrl] = useState('');
   const [facebookUrl, setFacebookUrl] = useState('');
   const [youtubeUrl, setYoutubeUrl] = useState('');
+  
+  const [dividerThickness, setDividerThickness] = useState('1');
+  const [dividerGlow, setDividerGlow] = useState('20');
+  
+  const [visualizerColor, setVisualizerColor] = useState('#3b82f6');
+  const [visualizerIntensity, setVisualizerIntensity] = useState('50');
+  const [visualizerThickness, setVisualizerThickness] = useState('5');
   
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -29,6 +41,13 @@ export default function AdminSettings() {
     const storedInsta = localStorage.getItem('instagramUrl');
     const storedFb = localStorage.getItem('facebookUrl');
     const storedYt = localStorage.getItem('youtubeUrl');
+    
+    const storedThick = localStorage.getItem('dividerThickness');
+    const storedGlow = localStorage.getItem('dividerGlow');
+
+    const storedVisColor = localStorage.getItem('visualizerColor');
+    const storedVisInt = localStorage.getItem('visualizerIntensity');
+    const storedVisThick = localStorage.getItem('visualizerThickness');
 
     if (storedAudio) setAudioStream(storedAudio);
     if (storedVideo) setVideoStream(storedVideo);
@@ -41,7 +60,27 @@ export default function AdminSettings() {
     if (storedInsta) setInstagramUrl(storedInsta);
     if (storedFb) setFacebookUrl(storedFb);
     if (storedYt) setYoutubeUrl(storedYt);
-  }, []);
+    
+    if (storedThick) setDividerThickness(storedThick);
+    if (storedGlow) setDividerGlow(storedGlow);
+
+    if (storedVisColor) setVisualizerColor(storedVisColor);
+    if (storedVisInt) setVisualizerIntensity(storedVisInt);
+    if (storedVisThick) setVisualizerThickness(storedVisThick);
+
+    if (location.state?.startTour) {
+      navigate('.', { replace: true, state: {} });
+      const driverObj = driver({
+        showProgress: true,
+        steps: [
+          { element: '#tour-settings-streams', popover: { title: 'Transmissão', description: 'Configure os links de áudio e vídeo (YouTube/Twitch) da sua rádio.', side: "right", align: 'start' }},
+          { element: '#tour-settings-social', popover: { title: 'Redes Sociais', description: 'Cadastre os links do seu WhatsApp, Instagram e Facebook.', side: "left", align: 'start' }},
+          { element: '#tour-save-settings', popover: { title: 'Salvar Configurações', description: 'Sempre que alterar alguma coisa aqui, lembre-se de salvar.', side: "bottom", align: 'start' }}
+        ]
+      });
+      setTimeout(() => driverObj.drive(), 500);
+    }
+  }, [location, navigate]);
 
   const handleSave = () => {
     setLoading(true);
@@ -56,6 +95,13 @@ export default function AdminSettings() {
     localStorage.setItem('instagramUrl', instagramUrl);
     localStorage.setItem('facebookUrl', facebookUrl);
     localStorage.setItem('youtubeUrl', youtubeUrl);
+    
+    localStorage.setItem('dividerThickness', dividerThickness);
+    localStorage.setItem('dividerGlow', dividerGlow);
+
+    localStorage.setItem('visualizerColor', visualizerColor);
+    localStorage.setItem('visualizerIntensity', visualizerIntensity);
+    localStorage.setItem('visualizerThickness', visualizerThickness);
     
     // Dispatch an event so components like Footer can update immediately
     window.dispatchEvent(new Event('settingsUpdated'));
@@ -74,11 +120,29 @@ export default function AdminSettings() {
           <h1 className="text-white font-black text-2xl uppercase tracking-wider">Configurações do Sistema</h1>
           <p className="text-slate-400 text-sm">Gerencie os links de transmissão e dados básicos da rádio.</p>
         </div>
+        <button
+          id="tour-save-settings"
+          onClick={handleSave}
+          disabled={loading}
+          className={`flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl font-bold transition-all ${
+            saved 
+              ? 'bg-green-500 text-white'
+              : 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg hover:shadow-blue-500/25'
+          }`}
+        >
+          {loading ? (
+            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          ) : saved ? (
+            <>Salvo com sucesso!</>
+          ) : (
+            <><Save size={20} /> Salvar Alterações</>
+          )}
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Stream Settings */}
-        <div className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
+        <div id="tour-settings-streams" className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
           <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
             <Radio className="text-blue-500" size={18} /> Transmissão
           </h2>
@@ -190,8 +254,8 @@ export default function AdminSettings() {
           </div>
         </div>
 
-        {/* Social Links Settings */}
-        <div className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
+        {/* Social Links */}
+        <div id="tour-settings-social" className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
           <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
             <Globe className="text-blue-500" size={18} /> Redes Sociais e Contato
           </h2>
@@ -258,6 +322,101 @@ export default function AdminSettings() {
               onChange={(e) => setYoutubeUrl(e.target.value)}
               className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
             />
+          </div>
+        </div>
+
+        {/* Layout Customization */}
+        <div className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
+          <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
+            <Globe className="text-blue-500" size={18} /> Estilos do Layout
+          </h2>
+
+          <div className="space-y-1">
+            <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+              Espessura das Barras Divisórias (px)
+            </label>
+            <input
+              type="number"
+              min="1"
+              max="10"
+              value={dividerThickness}
+              onChange={(e) => setDividerThickness(e.target.value)}
+              className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+              Intensidade do Brilho/Neon das Barras
+            </label>
+            <input
+              type="range"
+              min="0"
+              max="50"
+              value={dividerGlow}
+              onChange={(e) => setDividerGlow(e.target.value)}
+              className="w-full accent-blue-500"
+            />
+            <div className="text-right text-slate-500 text-xs mt-1">{dividerGlow}px de propagação</div>
+          </div>
+
+          {/* Visualizador de Áudio */}
+          <div className="pt-6 border-t border-white/10 space-y-4">
+            <h3 className="text-white font-bold text-sm flex items-center gap-2">
+              <Radio className="text-blue-500" size={16} /> Visualizador de Áudio (Fundo)
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                  Cor das Barras
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="color"
+                    value={visualizerColor}
+                    onChange={(e) => setVisualizerColor(e.target.value)}
+                    className="w-12 h-12 bg-slate-900 border border-white/5 rounded-lg cursor-pointer p-1"
+                  />
+                  <input 
+                    type="text" 
+                    value={visualizerColor} 
+                    onChange={(e) => setVisualizerColor(e.target.value)}
+                    className="flex-1 bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between">
+                  <span>Intensidade / Brilho</span>
+                  <span className="text-blue-400">{visualizerIntensity}%</span>
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={visualizerIntensity}
+                  onChange={(e) => setVisualizerIntensity(e.target.value)}
+                  className="w-full h-8 accent-blue-500"
+                />
+              </div>
+
+              <div className="space-y-1 sm:col-span-2">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between">
+                  <span>Espessura das Barras</span>
+                  <span className="text-blue-400">{visualizerThickness}px</span>
+                </label>
+                <input
+                  type="range"
+                  min="1"
+                  max="20"
+                  value={visualizerThickness}
+                  onChange={(e) => setVisualizerThickness(e.target.value)}
+                  className="w-full h-8 accent-blue-500"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
