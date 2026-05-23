@@ -1,7 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
+import { Capacitor } from '@capacitor/core';
 import { PublicLayout } from './layouts/PublicLayout';
 import { AdminLayout } from './layouts/AdminLayout';
 import Home from './pages/Public/Home';
+import TV from './pages/Public/TV';
 import AdminDashboard from './pages/Admin/Dashboard';
 import News from './pages/Public/News';
 import Schedule from './pages/Public/Schedule';
@@ -23,16 +25,22 @@ const MockPage = ({ title }: { title: string }) => (
 );
 
 export default function App() {
+  const isNative = Capacitor.isNativePlatform();
+
   return (
     <BrowserRouter>
       <PlayerProvider>
         <Routes>
           {/* Public Routes */}
-          <Route element={<PublicLayout />}>
+          <Route element={isNative ? <Navigate to="/tv" replace /> : <PublicLayout />}>
             <Route index element={<Home />} />
             <Route path="news" element={<News />} />
             <Route path="schedule" element={<Schedule />} />
           </Route>
+          
+          {/* Standalone TV Route */}
+          <Route path="tv" element={<TV />} />
+          
           <Route path="login" element={<Login />} />
 
           {/* Admin Routes */}

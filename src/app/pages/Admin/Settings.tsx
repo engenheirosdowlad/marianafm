@@ -12,6 +12,7 @@ export default function AdminSettings() {
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [instagramUrl, setInstagramUrl] = useState('');
   const [facebookUrl, setFacebookUrl] = useState('');
+  const [youtubeUrl, setYoutubeUrl] = useState('');
   
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -27,6 +28,7 @@ export default function AdminSettings() {
     const storedWaNum = localStorage.getItem('whatsappNumber');
     const storedInsta = localStorage.getItem('instagramUrl');
     const storedFb = localStorage.getItem('facebookUrl');
+    const storedYt = localStorage.getItem('youtubeUrl');
 
     if (storedAudio) setAudioStream(storedAudio);
     if (storedVideo) setVideoStream(storedVideo);
@@ -38,6 +40,7 @@ export default function AdminSettings() {
     if (storedWaNum) setWhatsappNumber(storedWaNum);
     if (storedInsta) setInstagramUrl(storedInsta);
     if (storedFb) setFacebookUrl(storedFb);
+    if (storedYt) setYoutubeUrl(storedYt);
   }, []);
 
   const handleSave = () => {
@@ -52,6 +55,7 @@ export default function AdminSettings() {
     localStorage.setItem('whatsappNumber', whatsappNumber);
     localStorage.setItem('instagramUrl', instagramUrl);
     localStorage.setItem('facebookUrl', facebookUrl);
+    localStorage.setItem('youtubeUrl', youtubeUrl);
     
     // Dispatch an event so components like Footer can update immediately
     window.dispatchEvent(new Event('settingsUpdated'));
@@ -241,6 +245,18 @@ export default function AdminSettings() {
               onChange={(e) => setFacebookUrl(e.target.value)}
               className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
               placeholder="https://facebook.com/..."
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+              <Globe size={14} className="text-red-500" /> Link do YouTube
+            </label>
+            <input
+              type="text"
+              value={youtubeUrl}
+              onChange={(e) => setYoutubeUrl(e.target.value)}
+              className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
             />
           </div>
         </div>
