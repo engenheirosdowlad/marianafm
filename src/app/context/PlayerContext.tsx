@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { useSettings } from './SettingsContext';
 
 type PlayerType = 'audio' | 'video';
 
@@ -19,12 +20,8 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const [activePlayer, setActivePlayer] = useState<PlayerType>('video'); // Padrão vídeo como no esboço
   const [volume, setVolume] = useState(0.7);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [streamUrl, setStreamUrl] = useState("https://link.radio.br:18630/stream");
-
-  useEffect(() => {
-    const storedStream = localStorage.getItem('audioStreamUrl');
-    if (storedStream) setStreamUrl(storedStream);
-  }, []);
+  const { settings } = useSettings();
+  const streamUrl = settings.audioStreamUrl || "https://link.radio.br:18630/stream";
 
   // Auto-play ao alternar
   useEffect(() => {

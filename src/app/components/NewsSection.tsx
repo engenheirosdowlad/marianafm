@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { RefreshCw } from 'lucide-react';
+import { useSettings } from '../context/SettingsContext';
 
 interface NewsItem {
   title: string;
@@ -13,11 +14,29 @@ export function NewsSection() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [hiddenIds, setHiddenIds] = useState<string[]>([]);
+  const [deletedIds, setDeletedIds] = useState<string[]>([]);
+  const { settings } = useSettings();
 
-  const sources = [
-    { name: 'POLÍTICA', url: 'https://g1.globo.com/rss/g1/politica/' },
-    { name: 'ESPORTE', url: 'https://ge.globo.com/rss/ge/' },
-    { name: 'ENTRETENIMENTO', url: 'https://g1.globo.com/rss/g1/pop-arte/' }
+  useEffect(() => {
+    let hidden: string[] = [];
+    let deleted: string[] = [];
+    
+    if (settings.hiddenNewsLinks) {
+      try { hidden = JSON.parse(settings.hiddenNewsLinks); } catch(e) {}
+    }
+    if (settings.deletedNewsLinks) {
+      try { deleted = JSON.parse(settings.deletedNewsLinks); } catch(e) {}
+    }
+    
+    setHiddenIds(hidden);
+    setDeletedIds(deleted);
+  }, [settings.hiddenNewsLinks, settings.deletedNewsLinks]);
+
+  const sources = settings.rssSources ? JSON.parse(settings.rssSources) : [
+    { name: 'ENTRETENIMENTO', url: 'https://g1.globo.com/rss/g1/pop-arte/' },
+    { name: 'ESPORTE', url: 'https://jovempan.com.br/esportes/feed' },
+    { name: 'POLÍTICA', url: 'https://g1.globo.com/rss/g1/politica/' }
   ];
 
   const fetchAllNews = useCallback(async () => {
@@ -26,36 +45,24 @@ export function NewsSection() {
 
     for (const source of sources) {
       try {
-        const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(source.url)}`);
+        const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(source.url)}`);
         if (!response.ok) continue;
         
-        const xmlText = await response.text();
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+        const data = await response.json();
+        if (data.status !== 'ok') continue;
         
-        const items = xmlDoc.querySelectorAll("item");
-        
-        Array.from(items).slice(0, 15).forEach(item => {
-          const title = item.querySelector("title")?.textContent || "";
-          const link = item.querySelector("link")?.textContent || "";
-          const description = item.querySelector("description")?.textContent || "";
+        data.items.slice(0, 15).forEach((item: any) => {
+          const title = item.title || "";
+          const link = item.link || "";
           
           if (title.toUpperCase().includes('VÍDEO') || title.toUpperCase().includes('ASSISTA') || link.includes('video')) {
             return;
           }
 
-          let image = "";
-          const mediaContent = item.getElementsByTagName("media:content")[0] || item.getElementsByTagName("content")[0];
-          const enclosure = item.getElementsByTagName("enclosure")[0];
-
-          if (mediaContent) {
-            image = mediaContent.getAttribute("url") || "";
-          } else if (enclosure) {
-            image = enclosure.getAttribute("url") || "";
-          }
+          let image = item.thumbnail || item.enclosure?.link || "";
           
-          if (!image) {
-            const imgMatch = description.match(/src="([^"]+)"/);
+          if (!image && item.description) {
+            const imgMatch = item.description.match(/src="([^"]+)"/);
             if (imgMatch) {
               image = imgMatch[1];
             }
@@ -71,11 +78,6 @@ export function NewsSection() {
       }
     }
 
-    const storedHidden = localStorage.getItem('hiddenNewsLinks');
-    const storedDeleted = localStorage.getItem('deletedNewsLinks');
-    const hiddenIds = storedHidden ? JSON.parse(storedHidden) : [];
-    const deletedIds = storedDeleted ? JSON.parse(storedDeleted) : [];
-
     let filteredNews = allNews.filter(item => 
       !deletedIds.includes(item.link) && !hiddenIds.includes(item.link)
     );
@@ -84,7 +86,7 @@ export function NewsSection() {
 
     setNews(filteredNews);
     setLoading(false);
-  }, []);
+  }, [settings.rssSources, deletedIds, hiddenIds]);
 
   useEffect(() => {
     fetchAllNews();
@@ -105,7 +107,7 @@ export function NewsSection() {
           Últimas Notícias
         </h2>
         <div className="flex items-center gap-3">
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setActiveCategory(null)}
               className={`text-[8px] font-black border px-1.5 py-0.5 rounded uppercase tracking-tighter transition-colors ${
@@ -116,17 +118,17 @@ export function NewsSection() {
             >
               TODAS
             </button>
-            {sources.map(s => (
+            {Array.from(new Set(sources.map((s: any) => s.name))).map((categoryName: any) => (
               <button 
-                key={s.name} 
-                onClick={() => setActiveCategory(s.name)}
+                key={categoryName} 
+                onClick={() => setActiveCategory(categoryName)}
                 className={`text-[8px] font-black border px-1.5 py-0.5 rounded uppercase tracking-tighter transition-colors ${
-                  activeCategory === s.name 
+                  activeCategory === categoryName 
                     ? 'bg-blue-600 text-white border-blue-500' 
                     : 'text-slate-500 border-slate-800 hover:text-white hover:border-slate-600'
                 }`}
               >
-                {s.name}
+                {categoryName}
               </button>
             ))}
           </div>

@@ -4,6 +4,7 @@ import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { Save, Plus, Trash2, Upload, Image as ImageIcon, Link as LinkIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSettings } from '../../context/SettingsContext';
 
 interface Banner {
   id: string;
@@ -15,20 +16,22 @@ interface Banner {
 export default function AdminBanners() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { banners: contextBanners, saveBanners, settings, saveSettings } = useSettings();
   const [banners, setBanners] = useState<Banner[]>([]);
+  const [bannerInterval, setBannerInterval] = useState('5');
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    const storedBanners = localStorage.getItem('siteBanners');
-    if (storedBanners) {
-      try {
-        setBanners(JSON.parse(storedBanners));
-      } catch (e) {
-        console.error("Erro ao carregar banners", e);
-      }
+    if (contextBanners && contextBanners.length > 0) {
+      setBanners(contextBanners);
     }
+    if (settings && settings.bannerInterval) {
+      setBannerInterval(settings.bannerInterval);
+    }
+  }, [contextBanners, settings]);
 
+  useEffect(() => {
     if (location.state?.startTour) {
       navigate('.', { replace: true, state: {} });
       const driverObj = driver({
@@ -42,18 +45,22 @@ export default function AdminBanners() {
     }
   }, [location, navigate]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setLoading(true);
-    setTimeout(() => {
-      localStorage.setItem('siteBanners', JSON.stringify(banners));
-      setLoading(false);
+    
+    try {
+      await Promise.all([
+        saveBanners(banners),
+        saveSettings({ ...settings, bannerInterval })
+      ]);
       setSaved(true);
-      
-      // Dispatch event to update Home component
       window.dispatchEvent(new Event('bannersUpdated'));
-      
       setTimeout(() => setSaved(false), 2000);
-    }, 600);
+    } catch (e) {
+      alert("Erro ao salvar banners.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const addBanner = () => {
@@ -93,6 +100,9 @@ export default function AdminBanners() {
             <ImageIcon className="text-blue-500" /> Banners do Site
           </h1>
           <p className="text-slate-400 mt-1 text-sm">Gerencie as imagens rotativas da página inicial</p>
+          <div className="inline-block mt-2 px-3 py-1 bg-blue-500/10 border border-blue-500/20 rounded-lg text-blue-400 text-xs font-medium">
+            💡 Tamanho recomendado: 1200x400 pixels (ou proporção 3:1)
+          </div>
         </div>
         
         <button
@@ -116,6 +126,22 @@ export default function AdminBanners() {
       </div>
 
       <div className="space-y-6">
+        <div className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 p-6 shadow-xl mb-6">
+          <div className="space-y-1">
+            <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+              Tempo de Transição dos Banners (Segundos)
+            </label>
+            <input
+              type="number"
+              min="1"
+              max="60"
+              value={bannerInterval}
+              onChange={(e) => setBannerInterval(e.target.value)}
+              className="w-full sm:w-1/2 bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
+            />
+          </div>
+        </div>
+
         <AnimatePresence>
           {banners.map((banner, index) => (
             <motion.div

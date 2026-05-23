@@ -58,6 +58,30 @@ export default function AdminTeam() {
   const [programs, setPrograms] = useState<string[]>([]);
 
   useEffect(() => {
+    const loadTeam = async () => {
+      try {
+        const response = await fetch('/api/team.php');
+        if (response.ok) {
+          const data = await response.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setTeam(data);
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn("API Team indisponível, usando fallback local");
+      }
+
+      const stored = localStorage.getItem('radioTeam');
+      if (stored) {
+        setTeam(JSON.parse(stored));
+      } else {
+        setTeam(initialTeamData);
+        localStorage.setItem('radioTeam', JSON.stringify(initialTeamData));
+      }
+    };
+    loadTeam();
+
     const storedPrograms = localStorage.getItem('radioPrograms');
     if (storedPrograms) {
       const parsed = JSON.parse(storedPrograms);
@@ -99,9 +123,15 @@ export default function AdminTeam() {
     }
   };
 
-  const handleDelete = (id: string) => {
-    if (window.confirm("Tem certeza que deseja excluir este membro?")) {
-      setTeam(team.filter(member => member.id !== id));
+  const handleDelete = async (id: string) => {
+    if (window.confirm("Tem certeza que deseja remover este membro da equipe?")) {
+      const updated = team.filter(member => member.id !== id);
+      setTeam(updated);
+      try {
+        await fetch('/api/team.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updated) });
+      } catch (e) {
+        localStorage.setItem('radioTeam', JSON.stringify(updated));
+      }
     }
   };
 

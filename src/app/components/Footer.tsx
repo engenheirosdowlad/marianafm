@@ -1,29 +1,16 @@
-import { useEffect, useState } from 'react';
 import { MessageCircle, Instagram, Facebook, MapPin, Map, Navigation } from 'lucide-react';
 import { GlowingDivider } from './ui/GlowingDivider';
+import { useSettings } from '../context/SettingsContext';
 
 export function Footer() {
-  const [links, setLinks] = useState({
-    whatsapp: '#',
-    instagram: '#',
-    facebook: '#',
-    number: '(81) 999.523.2550'
-  });
-
-  useEffect(() => {
-    const loadSettings = () => {
-      setLinks({
-        whatsapp: localStorage.getItem('whatsappUrl') || '#',
-        instagram: localStorage.getItem('instagramUrl') || '#',
-        facebook: localStorage.getItem('facebookUrl') || '#',
-        number: localStorage.getItem('whatsappNumber') || '(81) 999.523.2550'
-      });
-    };
-
-    loadSettings();
-    window.addEventListener('settingsUpdated', loadSettings);
-    return () => window.removeEventListener('settingsUpdated', loadSettings);
-  }, []);
+  const { settings } = useSettings();
+  
+  const links = {
+    whatsapp: settings.whatsappUrl || '#',
+    instagram: settings.instagramUrl || '#',
+    facebook: settings.facebookUrl || '#',
+    number: settings.whatsappNumber || '(81) 999.523.2550'
+  };
 
   return (
     <footer className="bg-slate-900 pt-6 pb-6 px-4 mt-8 relative">

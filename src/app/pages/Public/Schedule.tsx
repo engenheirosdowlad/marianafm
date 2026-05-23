@@ -1,6 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { programData, teamData } from '../../data/mockData';
 import { Calendar, Clock, User } from 'lucide-react';
 
 const daysOfWeek = [
@@ -15,8 +14,35 @@ const daysOfWeek = [
 
 export default function Schedule() {
   const [selectedDay, setSelectedDay] = useState('seg');
+  const [programs, setPrograms] = useState<any[]>([]);
+  const [team, setTeam] = useState<any[]>([]);
 
-  const filteredPrograms = programData.filter(prog => prog.days.includes(selectedDay));
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [progRes, teamRes] = await Promise.all([
+          fetch('/api/schedule.php'),
+          fetch('/api/team.php')
+        ]);
+        if (progRes.ok) setPrograms(await progRes.json());
+        if (teamRes.ok) setTeam(await teamRes.json());
+      } catch (e) {
+        console.warn("API indisponível, usando fallback local");
+        const storedProg = localStorage.getItem('radioPrograms');
+        const storedTeam = localStorage.getItem('radioTeam');
+        if (storedProg) setPrograms(JSON.parse(storedProg));
+        if (storedTeam) setTeam(JSON.parse(storedTeam));
+      }
+    };
+    loadData();
+    
+    // Set today's day correctly (0 = dom, 1 = seg...)
+    const todayIndex = new Date().getDay();
+    const daysMap = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab'];
+    setSelectedDay(daysMap[todayIndex]);
+  }, []);
+
+  const filteredPrograms = programs.filter(prog => prog.days?.includes(selectedDay));
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
@@ -69,7 +95,7 @@ export default function Schedule() {
               </div>
             ) : (
               filteredPrograms.map((prog, index) => {
-                const presenter = teamData.find(t => t.id === prog.presenterId);
+                const presenter = team.find(t => t.id === prog.host);
                 return (
                   <motion.div
                     key={prog.id}
@@ -104,8 +130,12 @@ export default function Schedule() {
 
                       {presenter ? (
                         <div className="flex items-center gap-3 bg-slate-900/30 p-3 rounded-xl border border-white/5">
-                          <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/10 shadow-lg flex-shrink-0">
-                            <img src={presenter.photo} alt={presenter.name} className="w-full h-full object-cover" />
+                          <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/10 shadow-lg flex-shrink-0 bg-slate-800 flex items-center justify-center">
+                            {presenter.imageUrl ? (
+                               <img src={presenter.imageUrl} alt={presenter.name} className="w-full h-full object-cover" />
+                            ) : (
+                               <User size={16} className="text-slate-500" />
+                            )}
                           </div>
                           <div>
                             <p className="text-slate-500 text-[10px] font-black uppercase tracking-wider">Apresentação</p>

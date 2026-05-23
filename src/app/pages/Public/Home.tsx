@@ -3,6 +3,7 @@ import { AudioPlayer } from '../../components/AudioPlayer';
 import { ProgramCards } from '../../components/ProgramCards';
 import { NewsSection } from '../../components/NewsSection';
 import { TopRequests } from '../../components/TopRequests';
+import { useSettings } from '../../context/SettingsContext';
 import { GlowingDivider } from '../../components/ui/GlowingDivider';
 
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '../../components/ui/carousel';
@@ -10,28 +11,20 @@ import { Radio, Video, Headphones } from 'lucide-react';
 import { usePlayer } from '../../context/PlayerContext';
 import { Link } from 'react-router';
 import { useState, useEffect } from 'react';
+import Autoplay from 'embla-carousel-autoplay';
 const motion = { div: 'div' } as any;
 
 export default function Home() {
   const { activePlayer, setActivePlayer } = usePlayer();
   const [banners, setBanners] = useState<any[]>([]);
+  const { banners: contextBanners, settings } = useSettings();
 
   useEffect(() => {
-    const loadBanners = () => {
-      const storedBanners = localStorage.getItem('siteBanners');
-      if (storedBanners) {
-        try {
-          setBanners(JSON.parse(storedBanners));
-        } catch (e) {
-          console.error("Erro ao carregar banners", e);
-        }
-      }
-    };
-    
-    loadBanners();
-    window.addEventListener('bannersUpdated', loadBanners);
-    return () => window.removeEventListener('bannersUpdated', loadBanners);
-  }, []);
+    if (contextBanners && contextBanners.length > 0) {
+      setBanners(contextBanners);
+    }
+  }, [contextBanners]);
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -55,7 +48,15 @@ export default function Home() {
       {/* Glowing Divider */}
       <GlowingDivider className="my-10" />
 
-      <Carousel className="w-full mb-10" opts={{ loop: true }}>
+      <Carousel 
+        className="w-full mb-10" 
+        opts={{ loop: true }}
+        plugins={[
+          Autoplay({
+            delay: (Number(settings.bannerInterval) || 5) * 1000,
+          }),
+        ]}
+      >
         <CarouselContent>
           {banners.length > 0 ? (
             banners.map((banner, index) => (

@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
-import { motion } from 'framer-motion';
 import { Trash2, EyeOff, Eye, RefreshCw } from 'lucide-react';
+import { useSettings } from '../../context/SettingsContext';
 
 interface NewsItem {
   title: string;
@@ -20,21 +20,34 @@ export default function AdminNews() {
   const [hiddenIds, setHiddenIds] = useState<string[]>([]);
   const [deletedIds, setDeletedIds] = useState<string[]>([]);
 
-  const sources = [
-    { name: 'G1 PARÁ', url: 'https://g1.globo.com/rss/g1/pa/para/' },
-    { name: 'DOL', url: 'https://dol.com.br/rss' },
-    { name: 'O LIBERAL', url: 'https://www.oliberal.com/rss' }
-  ];
+  const { settings, saveSettings } = useSettings();
 
+  const [sources, setSources] = useState<{name: string, url: string}[]>([
+    { name: 'ENTRETENIMENTO', url: 'https://g1.globo.com/rss/g1/pop-arte/' },
+    { name: 'ESPORTE', url: 'https://jovempan.com.br/esportes/feed' },
+    { name: 'POLÍTICA', url: 'https://g1.globo.com/rss/g1/politica/' }
+  ]);
+  const [newSourceName, setNewSourceName] = useState('');
+  const [newSourceUrl, setNewSourceUrl] = useState('');
+  const [savingSources, setSavingSources] = useState(false);
+  
   useEffect(() => {
-    // Carregar IDs ocultos e excluídos do localStorage
-    const storedHidden = localStorage.getItem('hiddenNewsLinks');
-    const storedDeleted = localStorage.getItem('deletedNewsLinks');
-    
-    if (storedHidden) setHiddenIds(JSON.parse(storedHidden));
-    if (storedDeleted) setDeletedIds(JSON.parse(storedDeleted));
+    // Carregar IDs ocultos e excluídos do context
+    if (settings.hiddenNewsLinks) {
+      try { setHiddenIds(JSON.parse(settings.hiddenNewsLinks)); } catch(e) {}
+    }
+    if (settings.deletedNewsLinks) {
+      try { setDeletedIds(JSON.parse(settings.deletedNewsLinks)); } catch(e) {}
+    }
+    let currentSources = sources;
+    if (settings.rssSources) {
+      try { 
+        currentSources = JSON.parse(settings.rssSources);
+        setSources(currentSources);
+      } catch(e) {}
+    }
 
-    fetchNews();
+    fetchNews(currentSources);
 
     if (location.state?.startTour) {
       navigate('.', { replace: true, state: {} });
@@ -47,47 +60,36 @@ export default function AdminNews() {
       });
       setTimeout(() => driverObj.drive(), 500);
     }
-  }, [location, navigate]);
+  }, [settings.hiddenNewsLinks, settings.deletedNewsLinks, settings.rssSources, location, navigate]);
 
-  const fetchNews = async () => {
+  const fetchNews = async (sourcesToFetch = sources) => {
     setLoading(true);
     const allNews: NewsItem[] = [];
 
-    for (const source of sources) {
+    for (const source of sourcesToFetch) {
       try {
-        const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(source.url)}`);
+        const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(source.url)}`);
         if (!response.ok) continue;
         
-        const xmlText = await response.text();
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+        const data = await response.json();
+        if (data.status !== 'ok') continue;
         
-        const items = xmlDoc.querySelectorAll("item");
-        
-        const parsed = Array.from(items).slice(0, 10).map(item => {
-          const title = item.querySelector("title")?.textContent || "";
-          const link = item.querySelector("link")?.textContent || "";
-          const description = item.querySelector("description")?.textContent || "";
+        const parsed = data.items.slice(0, 10).map((item: any) => {
+          const title = item.title || "";
+          const link = item.link || "";
           
-          let image = "";
-          const mediaContent = item.getElementsByTagName("media:content")[0] || item.getElementsByTagName("content")[0];
-          if (mediaContent) {
-            image = mediaContent.getAttribute("url") || "";
-          }
+          let image = item.thumbnail || item.enclosure?.link || "";
           
-          if (!image) {
-            const imgMatch = description.match(/src="([^"]+)"/);
+          if (!image && item.description) {
+            const imgMatch = item.description.match(/src="([^"]+)"/);
             image = imgMatch ? imgMatch[1] : '';
           }
 
-          if (!image) {
-            image = source.name === 'G1 PARÁ' 
-              ? 'https://s2-g1.glbimg.com/E8S9hP0H5yH5yH5yH5yH5yH5yH5y=/0x0:1920x1080/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_59edd422c128475bb6a11030283f6f1c/internal_photos/bs/2023/q/r/ABCDEF.jpg'
-              : 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400&h=300&fit=crop';
+          if (image) {
+            return { title, link, image, source: source.name };
           }
-
-          return { title, link, image, source: source.name };
-        });
+          return null;
+        }).filter((item: any) => item !== null) as NewsItem[];
 
         allNews.push(...parsed);
       } catch (error) {
@@ -99,7 +101,7 @@ export default function AdminNews() {
     setLoading(false);
   };
 
-  const handleHide = (link: string) => {
+  const handleHide = async (link: string) => {
     let newHidden;
     if (hiddenIds.includes(link)) {
       newHidden = hiddenIds.filter(id => id !== link);
@@ -107,20 +109,59 @@ export default function AdminNews() {
       newHidden = [...hiddenIds, link];
     }
     setHiddenIds(newHidden);
-    localStorage.setItem('hiddenNewsLinks', JSON.stringify(newHidden));
+    try {
+      await saveSettings({ hiddenNewsLinks: JSON.stringify(newHidden) });
+    } catch (e) {
+      console.warn("Failed to save to API");
+    }
   };
 
-  const handleDelete = (link: string) => {
+  const handleDelete = async (link: string) => {
     if (window.confirm("Tem certeza que deseja excluir esta notícia? Ela não aparecerá mais no site.")) {
       const newDeleted = [...deletedIds, link];
       setDeletedIds(newDeleted);
-      localStorage.setItem('deletedNewsLinks', JSON.stringify(newDeleted));
       setNews(news.filter(item => item.link !== link));
+      try {
+        await saveSettings({ deletedNewsLinks: JSON.stringify(newDeleted) });
+      } catch (e) {
+        console.warn("Failed to save to API");
+      }
     }
   };
 
   // Filtrar notícias que foram excluídas
   const visibleNews = news.filter(item => !deletedIds.includes(item.link));
+
+  const handleAddSource = async () => {
+    if (!newSourceName || !newSourceUrl) return;
+    setSavingSources(true);
+    const updated = [...sources, { name: newSourceName.toUpperCase(), url: newSourceUrl }];
+    setSources(updated);
+    setNewSourceName('');
+    setNewSourceUrl('');
+    try {
+      await saveSettings({ rssSources: JSON.stringify(updated) });
+      fetchNews(updated);
+    } catch(e) {
+      console.warn("Failed to save sources");
+    }
+    setSavingSources(false);
+  };
+
+  const handleDeleteSource = async (index: number) => {
+    if (window.confirm("Deseja mesmo remover esta fonte?")) {
+      setSavingSources(true);
+      const updated = sources.filter((_, i) => i !== index);
+      setSources(updated);
+      try {
+        await saveSettings({ rssSources: JSON.stringify(updated) });
+        fetchNews(updated);
+      } catch(e) {
+        console.warn("Failed to save sources");
+      }
+      setSavingSources(false);
+    }
+  };
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -137,6 +178,57 @@ export default function AdminNews() {
           <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
           Atualizar
         </button>
+      </div>
+
+      {/* Gerenciador de Fontes RSS */}
+      <div className="bg-slate-800/50 backdrop-blur-md rounded-xl p-6 border border-white/5 shadow-2xl mb-8">
+        <h2 className="text-white font-bold text-lg mb-4 uppercase tracking-wider text-sm">Fontes de Notícias (RSS)</h2>
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <input 
+              type="text" 
+              placeholder="Nome da Categoria (Ex: ECONOMIA)" 
+              value={newSourceName}
+              onChange={e => setNewSourceName(e.target.value)}
+              className="bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
+            />
+            <input 
+              type="text" 
+              placeholder="Link do Feed RSS (Ex: https://g1.../rss)" 
+              value={newSourceUrl}
+              onChange={e => setNewSourceUrl(e.target.value)}
+              className="md:col-span-2 bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          <button 
+            onClick={handleAddSource}
+            disabled={savingSources || !newSourceName || !newSourceUrl}
+            className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold py-2 rounded-lg transition-colors text-sm"
+          >
+            Adicionar Fonte
+          </button>
+        </div>
+
+        <div className="mt-6 space-y-2">
+          {sources.map((source, idx) => (
+            <div key={idx} className="flex justify-between items-center bg-slate-900/50 border border-white/5 p-3 rounded-lg">
+              <div>
+                <span className="text-xs font-black bg-blue-600/20 text-blue-400 px-2 py-1 rounded uppercase mr-3">
+                  {source.name}
+                </span>
+                <span className="text-slate-400 text-xs break-all">{source.url}</span>
+              </div>
+              <button 
+                onClick={() => handleDeleteSource(idx)}
+                disabled={savingSources}
+                className="text-slate-500 hover:text-red-400 p-2"
+                title="Excluir Fonte"
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div id="tour-news-table" className="bg-slate-800/50 backdrop-blur-md rounded-xl overflow-hidden border border-white/5 shadow-2xl">

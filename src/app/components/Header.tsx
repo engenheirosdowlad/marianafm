@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Logo } from './ui/Logo';
 import { WeatherWidget } from './WeatherWidget';
 import { AudioVisualizer } from './AudioVisualizer';
+import { useSettings } from '../context/SettingsContext';
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -12,22 +13,10 @@ interface HeaderProps {
 export function Header({ onMenuClick }: HeaderProps) {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith('/admin');
+  const { settings } = useSettings();
   
-  const [title, setTitle] = useState('Seja bem-vindo a Cidade FM');
-  const [subtitle, setSubtitle] = useState('onde nasce o sucesso');
-
-  useEffect(() => {
-    const loadTexts = () => {
-      const storedTitle = localStorage.getItem('headerTitle');
-      const storedSub = localStorage.getItem('headerSubtitle');
-      if (storedTitle) setTitle(storedTitle);
-      if (storedSub) setSubtitle(storedSub);
-    };
-    
-    loadTexts();
-    window.addEventListener('settingsUpdated', loadTexts);
-    return () => window.removeEventListener('settingsUpdated', loadTexts);
-  }, []);
+  const title = settings.headerTitle || 'Seja bem-vindo a Cidade FM';
+  const subtitle = settings.headerSubtitle || 'onde nasce o sucesso';
 
   if (isAdmin) return null;
 

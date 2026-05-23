@@ -33,13 +33,29 @@ export default function AdminSchedule() {
   });
 
   useEffect(() => {
-    const storedPrograms = localStorage.getItem('radioPrograms');
-    if (storedPrograms) {
-      setPrograms(JSON.parse(storedPrograms));
-    } else {
-      setPrograms(initialProgramData);
-      localStorage.setItem('radioPrograms', JSON.stringify(initialProgramData));
-    }
+    const loadSchedule = async () => {
+      try {
+        const response = await fetch('/api/schedule.php');
+        if (response.ok) {
+          const data = await response.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setPrograms(data);
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn("API Schedule indisponível, usando fallback");
+      }
+
+      const storedPrograms = localStorage.getItem('radioPrograms');
+      if (storedPrograms) {
+        setPrograms(JSON.parse(storedPrograms));
+      } else {
+        setPrograms(initialProgramData);
+        localStorage.setItem('radioPrograms', JSON.stringify(initialProgramData));
+      }
+    };
+    loadSchedule();
 
     if (location.state?.startTour) {
       // Clear state so it doesn't run again on refresh
@@ -59,11 +75,15 @@ export default function AdminSchedule() {
 
   const filteredPrograms = programs.filter(prog => prog.days.includes(selectedDay));
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (window.confirm("Tem certeza que deseja excluir este programa?")) {
       const updated = programs.filter(p => p.id !== id);
       setPrograms(updated);
+      try {
+      await fetch('/api/schedule.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updated) });
+    } catch (e) {
       localStorage.setItem('radioPrograms', JSON.stringify(updated));
+    }
     }
   };
 
@@ -86,7 +106,7 @@ export default function AdminSchedule() {
     setIsModalOpen(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!formData.title.trim() || !formData.time.trim()) {
       alert("Título e Horário são obrigatórios");
       return;
@@ -100,7 +120,11 @@ export default function AdminSchedule() {
     }
     
     setPrograms(updated);
-    localStorage.setItem('radioPrograms', JSON.stringify(updated));
+    try {
+      await fetch('/api/schedule.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updated) });
+    } catch (e) {
+      localStorage.setItem('radioPrograms', JSON.stringify(updated));
+    }
     setIsModalOpen(false);
   };
 

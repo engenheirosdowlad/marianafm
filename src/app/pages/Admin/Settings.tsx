@@ -3,10 +3,13 @@ import { useLocation, useNavigate } from 'react-router';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { Save, Radio, Video, Globe, MessageCircle, Instagram, Facebook, Phone, Upload } from 'lucide-react';
+import { useSettings } from '../../context/SettingsContext';
 
 export default function AdminSettings() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { settings, saveSettings } = useSettings();
+  
   const [audioStream, setAudioStream] = useState('https://link.radio.br:18630/stream');
   const [videoStream, setVideoStream] = useState('https://link.radio.br:18630/video');
   const [siteName, setSiteName] = useState('CIDADE FM 87,9 MHZ');
@@ -30,43 +33,24 @@ export default function AdminSettings() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    const storedAudio = localStorage.getItem('audioStreamUrl');
-    const storedVideo = localStorage.getItem('videoStreamUrl');
-    const storedName = localStorage.getItem('siteName');
-    const storedLogo = localStorage.getItem('logoUrl');
-    const storedHTitle = localStorage.getItem('headerTitle');
-    const storedHSub = localStorage.getItem('headerSubtitle');
-    const storedWaUrl = localStorage.getItem('whatsappUrl');
-    const storedWaNum = localStorage.getItem('whatsappNumber');
-    const storedInsta = localStorage.getItem('instagramUrl');
-    const storedFb = localStorage.getItem('facebookUrl');
-    const storedYt = localStorage.getItem('youtubeUrl');
+    if (settings.audioStreamUrl) setAudioStream(settings.audioStreamUrl);
+    if (settings.videoStreamUrl) setVideoStream(settings.videoStreamUrl);
+    if (settings.siteName) setSiteName(settings.siteName);
+    if (settings.logoUrl) setLogoUrl(settings.logoUrl);
+    if (settings.headerTitle) setHeaderTitle(settings.headerTitle);
+    if (settings.headerSubtitle) setHeaderSubtitle(settings.headerSubtitle);
+    if (settings.whatsappUrl) setWhatsappUrl(settings.whatsappUrl);
+    if (settings.whatsappNumber) setWhatsappNumber(settings.whatsappNumber);
+    if (settings.instagramUrl) setInstagramUrl(settings.instagramUrl);
+    if (settings.facebookUrl) setFacebookUrl(settings.facebookUrl);
+    if (settings.youtubeUrl) setYoutubeUrl(settings.youtubeUrl);
     
-    const storedThick = localStorage.getItem('dividerThickness');
-    const storedGlow = localStorage.getItem('dividerGlow');
+    if (settings.dividerThickness) setDividerThickness(settings.dividerThickness);
+    if (settings.dividerGlow) setDividerGlow(settings.dividerGlow);
 
-    const storedVisColor = localStorage.getItem('visualizerColor');
-    const storedVisInt = localStorage.getItem('visualizerIntensity');
-    const storedVisThick = localStorage.getItem('visualizerThickness');
-
-    if (storedAudio) setAudioStream(storedAudio);
-    if (storedVideo) setVideoStream(storedVideo);
-    if (storedName) setSiteName(storedName);
-    if (storedLogo) setLogoUrl(storedLogo);
-    if (storedHTitle) setHeaderTitle(storedHTitle);
-    if (storedHSub) setHeaderSubtitle(storedHSub);
-    if (storedWaUrl) setWhatsappUrl(storedWaUrl);
-    if (storedWaNum) setWhatsappNumber(storedWaNum);
-    if (storedInsta) setInstagramUrl(storedInsta);
-    if (storedFb) setFacebookUrl(storedFb);
-    if (storedYt) setYoutubeUrl(storedYt);
-    
-    if (storedThick) setDividerThickness(storedThick);
-    if (storedGlow) setDividerGlow(storedGlow);
-
-    if (storedVisColor) setVisualizerColor(storedVisColor);
-    if (storedVisInt) setVisualizerIntensity(storedVisInt);
-    if (storedVisThick) setVisualizerThickness(storedVisThick);
+    if (settings.visualizerColor) setVisualizerColor(settings.visualizerColor);
+    if (settings.visualizerIntensity) setVisualizerIntensity(settings.visualizerIntensity);
+    if (settings.visualizerThickness) setVisualizerThickness(settings.visualizerThickness);
 
     if (location.state?.startTour) {
       navigate('.', { replace: true, state: {} });
@@ -80,37 +64,38 @@ export default function AdminSettings() {
       });
       setTimeout(() => driverObj.drive(), 500);
     }
-  }, [location, navigate]);
+  }, [settings, location, navigate]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setLoading(true);
-    localStorage.setItem('audioStreamUrl', audioStream);
-    localStorage.setItem('videoStreamUrl', videoStream);
-    localStorage.setItem('siteName', siteName);
-    localStorage.setItem('logoUrl', logoUrl);
-    localStorage.setItem('headerTitle', headerTitle);
-    localStorage.setItem('headerSubtitle', headerSubtitle);
-    localStorage.setItem('whatsappUrl', whatsappUrl);
-    localStorage.setItem('whatsappNumber', whatsappNumber);
-    localStorage.setItem('instagramUrl', instagramUrl);
-    localStorage.setItem('facebookUrl', facebookUrl);
-    localStorage.setItem('youtubeUrl', youtubeUrl);
     
-    localStorage.setItem('dividerThickness', dividerThickness);
-    localStorage.setItem('dividerGlow', dividerGlow);
-
-    localStorage.setItem('visualizerColor', visualizerColor);
-    localStorage.setItem('visualizerIntensity', visualizerIntensity);
-    localStorage.setItem('visualizerThickness', visualizerThickness);
-    
-    // Dispatch an event so components like Footer can update immediately
-    window.dispatchEvent(new Event('settingsUpdated'));
-    
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      await saveSettings({
+        audioStreamUrl: audioStream,
+        videoStreamUrl: videoStream,
+        siteName: siteName,
+        logoUrl: logoUrl,
+        headerTitle: headerTitle,
+        headerSubtitle: headerSubtitle,
+        whatsappUrl: whatsappUrl,
+        whatsappNumber: whatsappNumber,
+        instagramUrl: instagramUrl,
+        facebookUrl: facebookUrl,
+        youtubeUrl: youtubeUrl,
+        dividerThickness: dividerThickness,
+        dividerGlow: dividerGlow,
+        visualizerColor: visualizerColor,
+        visualizerIntensity: visualizerIntensity,
+        visualizerThickness: visualizerThickness
+      });
+      
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
-    }, 1000);
+    } catch (error) {
+      alert('Erro ao salvar as configurações.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -345,6 +330,8 @@ export default function AdminSettings() {
             />
           </div>
 
+
+
           <div className="space-y-1">
             <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
               Intensidade do Brilho/Neon das Barras
@@ -367,26 +354,6 @@ export default function AdminSettings() {
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
-                  Cor das Barras
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="color"
-                    value={visualizerColor}
-                    onChange={(e) => setVisualizerColor(e.target.value)}
-                    className="w-12 h-12 bg-slate-900 border border-white/5 rounded-lg cursor-pointer p-1"
-                  />
-                  <input 
-                    type="text" 
-                    value={visualizerColor} 
-                    onChange={(e) => setVisualizerColor(e.target.value)}
-                    className="flex-1 bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none transition-colors"
-                  />
-                </div>
-              </div>
-
               <div className="space-y-1">
                 <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between">
                   <span>Intensidade / Brilho</span>

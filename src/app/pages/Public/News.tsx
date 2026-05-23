@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { RefreshCw } from 'lucide-react';
+import { useSettings } from '../../context/SettingsContext';
 
 interface NewsItem {
   title: string;
@@ -13,11 +14,12 @@ export default function News() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const { settings } = useSettings();
 
   const sources = [
-    { name: 'POLÍTICA', url: 'https://g1.globo.com/rss/g1/politica/' },
-    { name: 'ESPORTE', url: 'https://ge.globo.com/rss/ge/' },
-    { name: 'ENTRETENIMENTO', url: 'https://g1.globo.com/rss/g1/pop-arte/' }
+    { name: 'ENTRETENIMENTO', url: 'https://g1.globo.com/rss/g1/pop-arte/' },
+    { name: 'ESPORTE', url: 'https://jovempan.com.br/esportes/feed' },
+    { name: 'POLÍTICA', url: 'https://g1.globo.com/rss/g1/politica/' }
   ];
 
   const fetchAllNews = useCallback(async () => {
@@ -26,37 +28,25 @@ export default function News() {
 
     for (const source of sources) {
       try {
-        const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(source.url)}`);
+        const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(source.url)}`);
         if (!response.ok) continue;
         
-        const xmlText = await response.text();
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+        const data = await response.json();
+        if (data.status !== 'ok') continue;
         
-        const items = xmlDoc.querySelectorAll("item");
-        
-        // Fetch up to 30 items per category to ensure a good amount of news on the full page
-        Array.from(items).slice(0, 30).forEach(item => {
-          const title = item.querySelector("title")?.textContent || "";
-          const link = item.querySelector("link")?.textContent || "";
-          const description = item.querySelector("description")?.textContent || "";
+        // Fetch up to 30 items per category
+        data.items.slice(0, 30).forEach((item: any) => {
+          const title = item.title || "";
+          const link = item.link || "";
           
           if (title.toUpperCase().includes('VÍDEO') || title.toUpperCase().includes('ASSISTA') || link.includes('video')) {
             return;
           }
 
-          let image = "";
-          const mediaContent = item.getElementsByTagName("media:content")[0] || item.getElementsByTagName("content")[0];
-          const enclosure = item.getElementsByTagName("enclosure")[0];
-
-          if (mediaContent) {
-            image = mediaContent.getAttribute("url") || "";
-          } else if (enclosure) {
-            image = enclosure.getAttribute("url") || "";
-          }
+          let image = item.thumbnail || item.enclosure?.link || "";
           
-          if (!image) {
-            const imgMatch = description.match(/src="([^"]+)"/);
+          if (!image && item.description) {
+            const imgMatch = item.description.match(/src="([^"]+)"/);
             if (imgMatch) {
               image = imgMatch[1];
             }
@@ -72,10 +62,15 @@ export default function News() {
       }
     }
 
-    const storedHidden = localStorage.getItem('hiddenNewsLinks');
-    const storedDeleted = localStorage.getItem('deletedNewsLinks');
-    const hiddenIds = storedHidden ? JSON.parse(storedHidden) : [];
-    const deletedIds = storedDeleted ? JSON.parse(storedDeleted) : [];
+    let hiddenIds: string[] = [];
+    let deletedIds: string[] = [];
+    
+    if (settings.hiddenNewsLinks) {
+      try { hiddenIds = JSON.parse(settings.hiddenNewsLinks); } catch(e) {}
+    }
+    if (settings.deletedNewsLinks) {
+      try { deletedIds = JSON.parse(settings.deletedNewsLinks); } catch(e) {}
+    }
 
     let filteredNews = allNews.filter(item => 
       !deletedIds.includes(item.link) && !hiddenIds.includes(item.link)

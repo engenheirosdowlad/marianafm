@@ -1,20 +1,9 @@
 import { Radio } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useSettings } from '../../context/SettingsContext';
 
 export function Logo() {
-  const [logoUrl, setLogoUrl] = useState('');
-
-  useEffect(() => {
-    const loadLogo = () => {
-      const storedLogo = localStorage.getItem('logoUrl');
-      if (storedLogo) setLogoUrl(storedLogo);
-      else setLogoUrl('');
-    };
-    
-    loadLogo();
-    window.addEventListener('settingsUpdated', loadLogo);
-    return () => window.removeEventListener('settingsUpdated', loadLogo);
-  }, []);
+  const { settings } = useSettings();
+  const logoUrl = settings.logoUrl;
 
   if (logoUrl) {
     return (

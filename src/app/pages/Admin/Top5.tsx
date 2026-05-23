@@ -25,14 +25,32 @@ export default function AdminTop5() {
   const navigate = useNavigate();
   const [items, setItems] = useState<Top5Item[]>(defaultTop5);
   const [isSaved, setIsSaved] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem('top5Requests');
-    if (stored) {
-      setItems(JSON.parse(stored));
-    } else {
-      localStorage.setItem('top5Requests', JSON.stringify(defaultTop5));
-    }
+    const loadTop5 = async () => {
+      try {
+        const response = await fetch('/api/top5.php');
+        if (response.ok) {
+          const data = await response.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setItems(data);
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn("API Top5 indisponível, usando fallback local");
+      }
+
+      const stored = localStorage.getItem('top5Requests');
+      if (stored) {
+        setItems(JSON.parse(stored));
+      } else {
+        setItems(defaultTop5);
+        localStorage.setItem('top5Requests', JSON.stringify(defaultTop5));
+      }
+    };
+    loadTop5();
 
     if (location.state?.startTour) {
       navigate('.', { replace: true, state: {} });
@@ -53,20 +71,36 @@ export default function AdminTop5() {
     setItems(newItems);
   };
 
-  const handleSave = () => {
-    localStorage.setItem('top5Requests', JSON.stringify(items));
+  const handleSave = async () => {
+    setLoading(true);
+    
+    try {
+      const response = await fetch('/api/top5.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(items)
+      });
+      if (!response.ok) throw new Error("Erro na API");
+    } catch (e) {
+      console.warn("API indisponível, usando localStorage");
+      localStorage.setItem('top5Requests', JSON.stringify(items));
+    }
+    
+    setLoading(false);
     setIsSaved(true);
+    window.dispatchEvent(new Event('top5Updated'));
     setTimeout(() => setIsSaved(false), 2000);
   };
 
-  const extractYoutubeId = (url: string) => {
+  const extractYoutubeId = (url?: string) => {
+    if (!url) return null;
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = url.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;
   };
 
   return (
-    <div className="space-y-6">
+    <div className="p-4 sm:p-8 max-w-4xl mx-auto pb-24 space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white flex items-center gap-2">

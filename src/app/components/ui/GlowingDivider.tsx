@@ -1,19 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useSettings } from '../../context/SettingsContext';
 
 export function GlowingDivider({ className = '' }: { className?: string }) {
-  const [thickness, setThickness] = useState('1');
-  const [glowIntensity, setGlowIntensity] = useState('20');
-
-  useEffect(() => {
-    const loadSettings = () => {
-      setThickness(localStorage.getItem('dividerThickness') || '1');
-      setGlowIntensity(localStorage.getItem('dividerGlow') || '20');
-    };
-    
-    loadSettings();
-    window.addEventListener('settingsUpdated', loadSettings);
-    return () => window.removeEventListener('settingsUpdated', loadSettings);
-  }, []);
+  const { settings } = useSettings();
+  const thickness = settings.dividerThickness || '1';
+  const glowIntensity = settings.dividerGlow || '20';
 
   return (
     <div 

@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react';
 import { usePlayer } from '../context/PlayerContext';
+import { useSettings } from '../context/SettingsContext';
 import { motion } from 'framer-motion';
 
 export function AudioVisualizer() {
   const { isPlaying } = usePlayer();
-  const [settings, setSettings] = useState({
-    color: '#3b82f6',
-    intensity: 50,
-    thickness: 5
-  });
+  const { settings: globalSettings } = useSettings();
+  
+  const settings = {
+    color: globalSettings.visualizerColor || '#3b82f6',
+    intensity: parseInt(globalSettings.visualizerIntensity || '50'),
+    thickness: parseInt(globalSettings.visualizerThickness || '5')
+  };
 
   // Calculate number of bars based on screen width (approximate)
   const [barCount, setBarCount] = useState(100);
@@ -25,24 +28,14 @@ export function AudioVisualizer() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  useEffect(() => {
-    const loadSettings = () => {
-      setSettings({
-        color: localStorage.getItem('visualizerColor') || '#3b82f6',
-        intensity: parseInt(localStorage.getItem('visualizerIntensity') || '50'),
-        thickness: parseInt(localStorage.getItem('visualizerThickness') || '5')
-      });
-    };
-    loadSettings();
-    window.addEventListener('settingsUpdated', loadSettings);
-    return () => window.removeEventListener('settingsUpdated', loadSettings);
-  }, []);
-
   return (
-    <div className="absolute bottom-0 left-0 w-full h-[60%] flex items-end justify-center gap-1 opacity-90 px-4">
+    <div className="absolute bottom-0 left-0 w-full h-[60%] flex items-end justify-center gap-[2px] px-4">
       {Array.from({ length: barCount }).map((_, i) => {
-        // Rainbow color logic based on index
-        const hue = (i / barCount) * 360; 
+        // Calculate gradient hue (Blue -> Purple -> Orange)
+        // Blue is ~220, Orange is ~30. We transition from 220 to 30.
+        const ratio = i / barCount;
+        const hue = 220 - (190 * ratio);
+        const color = `hsl(${hue}, 80%, 60%)`;
         
         // Bell curve to make edges shorter
         const distRatio = Math.abs((i / barCount) - 0.5) * 2; 
@@ -66,9 +59,9 @@ export function AudioVisualizer() {
               ease: "easeInOut"
             }}
             style={{
-              backgroundColor: isPlaying ? `hsl(${hue}, 80%, 60%)` : '#334155',
+              backgroundColor: isPlaying ? color : '#334155',
               width: `${settings.thickness}px`,
-              boxShadow: isPlaying ? `0 0 ${settings.intensity / 2}px ${settings.intensity / 5}px hsl(${hue}, 80%, 60%)` : 'none'
+              boxShadow: isPlaying ? `0 0 ${settings.intensity}px ${color}80` : 'none'
             }}
             className="rounded-t-full transition-colors duration-500"
           />

@@ -4,36 +4,15 @@ import { Link } from 'react-router';
 import { useState, useEffect } from 'react';
 import defaultLogo from '../../assets/logo.png';
 
+import { useSettings } from '../context/SettingsContext';
+
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
-  const [settings, setSettings] = useState({
-    whatsappUrl: '',
-    instagramUrl: '',
-    facebookUrl: '',
-    youtubeUrl: '',
-    logoUrl: '',
-    siteName: 'CIDADE FM'
-  });
-
-  useEffect(() => {
-    const loadSettings = () => {
-      setSettings({
-        whatsappUrl: localStorage.getItem('whatsappUrl') || '',
-        instagramUrl: localStorage.getItem('instagramUrl') || '',
-        facebookUrl: localStorage.getItem('facebookUrl') || '',
-        youtubeUrl: localStorage.getItem('youtubeUrl') || '',
-        logoUrl: localStorage.getItem('logoUrl') || '',
-        siteName: localStorage.getItem('siteName') || 'CIDADE FM'
-      });
-    };
-    loadSettings();
-    window.addEventListener('settingsUpdated', loadSettings);
-    return () => window.removeEventListener('settingsUpdated', loadSettings);
-  }, []);
+  const { settings } = useSettings();
 
   const menuItems = [
     { label: 'Rádio Ao Vivo', icon: Radio, path: '/' },

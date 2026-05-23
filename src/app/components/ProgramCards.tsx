@@ -1,24 +1,42 @@
 import { useEffect, useState } from 'react';
 import { Radio } from 'lucide-react';
 import { teamData, programData, Program } from '../data/mockData';
+import { useSettings } from '../context/SettingsContext';
 
 export function ProgramCards() {
+  const { settings } = useSettings();
   const [programs, setPrograms] = useState<Program[]>([]);
   const [whatsappUrl, setWhatsappUrl] = useState('#');
 
   useEffect(() => {
-    const loadWa = () => setWhatsappUrl(localStorage.getItem('whatsappUrl') || '#');
-    loadWa();
-    window.addEventListener('settingsUpdated', loadWa);
-    
-    const stored = localStorage.getItem('radioPrograms');
-    if (stored) {
-      setPrograms(JSON.parse(stored));
-    } else {
-      setPrograms(programData);
+    if (settings.whatsappUrl) {
+      setWhatsappUrl(settings.whatsappUrl);
     }
+  }, [settings.whatsappUrl]);
+
+  useEffect(() => {
+    const loadPrograms = async () => {
+      try {
+        const response = await fetch('/api/schedule.php');
+        if (response.ok) {
+          const data = await response.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setPrograms(data);
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn("API indisponível");
+      }
+      const stored = localStorage.getItem('radioPrograms');
+      if (stored) {
+        setPrograms(JSON.parse(stored));
+      } else {
+        setPrograms(programData);
+      }
+    };
     
-    return () => window.removeEventListener('settingsUpdated', loadWa);
+    loadPrograms();
   }, []);
 
   const getCurrentAndNext = () => {

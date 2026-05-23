@@ -21,13 +21,37 @@ export function TopRequests() {
   const [requests, setRequests] = useState<Top5Item[]>(defaultTop5);
 
   useEffect(() => {
-    const stored = localStorage.getItem('top5Requests');
-    if (stored) {
-      setRequests(JSON.parse(stored));
-    }
+    const loadTop5 = async () => {
+      try {
+        const response = await fetch('/api/top5.php');
+        if (response.ok) {
+          const data = await response.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setRequests(data);
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn("API Top5 indisponível, usando fallback local");
+      }
+
+      const stored = localStorage.getItem('top5Requests');
+      if (stored) {
+        try {
+          setRequests(JSON.parse(stored));
+        } catch (e) {
+          console.error("Erro ao carregar top 5", e);
+        }
+      }
+    };
+    
+    loadTop5();
+    window.addEventListener('top5Updated', loadTop5);
+    return () => window.removeEventListener('top5Updated', loadTop5);
   }, []);
 
-  const extractYoutubeId = (url: string) => {
+  const extractYoutubeId = (url?: string) => {
+    if (!url) return null;
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = url.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;

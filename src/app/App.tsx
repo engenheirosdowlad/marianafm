@@ -16,6 +16,7 @@ import AdminSettings from './pages/Admin/Settings';
 import AdminTop5 from './pages/Admin/Top5';
 import HelpCenter from './pages/Admin/HelpCenter';
 import { PlayerProvider } from './context/PlayerContext';
+import { SettingsProvider } from './context/SettingsContext';
 
 // Mock simpler versions of other pages for now
 const MockPage = ({ title }: { title: string }) => (
@@ -30,36 +31,38 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <PlayerProvider>
-        <Routes>
-          {/* Public Routes */}
-          <Route element={isNative ? <Navigate to="/tv" replace /> : <PublicLayout />}>
-            <Route index element={<Home />} />
-            <Route path="news" element={<News />} />
-            <Route path="schedule" element={<Schedule />} />
-          </Route>
-          
-          {/* Standalone TV Route */}
-          <Route path="tv" element={<TV />} />
-          
-          <Route path="login" element={<Login />} />
+      <SettingsProvider>
+        <PlayerProvider>
+          <Routes>
+            {/* Public Routes */}
+            <Route element={isNative ? <Navigate to="/tv" replace /> : <PublicLayout />}>
+              <Route index element={<Home />} />
+              <Route path="news" element={<News />} />
+              <Route path="schedule" element={<Schedule />} />
+            </Route>
+            
+            {/* Standalone TV Route */}
+            <Route path="tv" element={<TV />} />
+            
+            <Route path="login" element={<Login />} />
 
-          {/* Admin Routes */}
-          <Route path="admin" element={<AdminLayout />}>
-            <Route index element={<AdminDashboard />} />
-            <Route path="schedule" element={<AdminSchedule />} />
-            <Route path="news" element={<AdminNews />} />
-            <Route path="banners" element={<AdminBanners />} />
-            <Route path="team" element={<AdminTeam />} />
-            <Route path="top5" element={<AdminTop5 />} />
-            <Route path="settings" element={<AdminSettings />} />
-            <Route path="help" element={<HelpCenter />} />
-          </Route>
+            {/* Admin Routes */}
+            <Route path="admin" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="schedule" element={<AdminSchedule />} />
+              <Route path="news" element={<AdminNews />} />
+              <Route path="banners" element={<AdminBanners />} />
+              <Route path="team" element={<AdminTeam />} />
+              <Route path="top5" element={<AdminTop5 />} />
+              <Route path="settings" element={<AdminSettings />} />
+              <Route path="help" element={<HelpCenter />} />
+            </Route>
 
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </PlayerProvider>
+            {/* Fallback */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </PlayerProvider>
+      </SettingsProvider>
     </BrowserRouter>
 
   );

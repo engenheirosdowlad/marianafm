@@ -59,7 +59,7 @@ export default function HelpCenter() {
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="space-y-8 max-w-4xl"
+      className="p-6 space-y-8 max-w-4xl mx-auto pb-24"
     >
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold text-white flex items-center gap-3">
