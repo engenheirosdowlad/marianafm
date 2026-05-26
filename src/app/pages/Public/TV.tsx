@@ -2,12 +2,16 @@ import { useState, useEffect, useRef } from 'react';
 import { usePlayer } from '../../context/PlayerContext';
 import { teamData, programData, Program } from '../../data/mockData';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Capacitor } from '@capacitor/core';
 
 export default function TV() {
   const { isPlaying, setIsPlaying, activePlayer, setActivePlayer } = usePlayer();
   const [programs, setPrograms] = useState<Program[]>([]);
+  const [team, setTeam] = useState<any[]>([]);
   const [showUI, setShowUI] = useState(true);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  const isNative = Capacitor.isNativePlatform();
 
   // Auto-play audio na TV
   useEffect(() => {
@@ -16,8 +20,10 @@ export default function TV() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Lógica de inatividade para esconder a UI e focar no vídeo
+  // Lógica de inatividade para esconder a UI (apenas na web, não no app nativo)
   useEffect(() => {
+    if (isNative) return;
+
     const handleActivity = () => {
       setShowUI(true);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -37,12 +43,11 @@ export default function TV() {
       window.removeEventListener('keydown', handleActivity);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, []);
+  }, [isNative]);
 
   // Navegação por teclado (Controle Remoto TV)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // DPAD UP/DOWN/LEFT/RIGHT/ENTER
       if (e.key === 'Enter' || e.key === 'MediaPlayPause') {
         setIsPlaying(!isPlaying);
       }
@@ -51,13 +56,52 @@ export default function TV() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isPlaying, setIsPlaying]);
 
+  // Carrega dados da API com fallback
   useEffect(() => {
-    const stored = localStorage.getItem('radioPrograms');
-    if (stored) {
-      setPrograms(JSON.parse(stored));
-    } else {
-      setPrograms(programData);
-    }
+    const loadData = async () => {
+      try {
+        const [progRes, teamRes] = await Promise.all([
+          fetch('/api/schedule.php'),
+          fetch('/api/team.php')
+        ]);
+        
+        let fetchedProgs = [];
+        let fetchedTeam = [];
+        
+        if (progRes.ok) {
+          fetchedProgs = await progRes.json();
+        }
+        if (teamRes.ok) {
+          fetchedTeam = await teamRes.json();
+        }
+        
+        if (Array.isArray(fetchedProgs) && fetchedProgs.length > 0) {
+          setPrograms(fetchedProgs);
+        } else {
+          const stored = localStorage.getItem('radioPrograms');
+          if (stored) setPrograms(JSON.parse(stored));
+          else setPrograms(programData);
+        }
+        
+        if (Array.isArray(fetchedTeam) && fetchedTeam.length > 0) {
+          setTeam(fetchedTeam);
+        } else {
+          const storedTeam = localStorage.getItem('radioTeam');
+          if (storedTeam) setTeam(JSON.parse(storedTeam));
+          else setTeam(teamData);
+        }
+      } catch (e) {
+        console.warn("API indisponível no player de TV, usando fallback local", e);
+        const stored = localStorage.getItem('radioPrograms');
+        if (stored) setPrograms(JSON.parse(stored));
+        else setPrograms(programData);
+
+        const storedTeam = localStorage.getItem('radioTeam');
+        if (storedTeam) setTeam(JSON.parse(storedTeam));
+        else setTeam(teamData);
+      }
+    };
+    loadData();
   }, []);
 
   const getCurrentAndNext = () => {
@@ -99,9 +143,47 @@ export default function TV() {
   };
 
   const { current, next } = getCurrentAndNext();
-  const currentPresenter = current ? teamData.find(t => t.id === current.presenterId) : null;
+  const currentPresenter = current ? team.find(t => t.id === (current.presenterId || current.host)) : null;
   const isAudioPlaying = isPlaying && activePlayer === 'audio';
 
+  // --- SE FOR APLICATIVO NATIVO (APK/MÓVEL) ---
+  if (isNative) {
+    return (
+      <div className="fixed inset-0 bg-black overflow-hidden flex flex-col justify-end">
+        {/* Vídeo em Tela Cheia no Fundo */}
+        <div className="absolute inset-0 z-0">
+          <iframe 
+            src="https://player.radiosnaweb.com/clappr/video.php?urlplayer=https://5a57bda70564a.streamlock.net/marianafm/marianafm.sdp/playlist.m3u8&autoplay=true"
+            className="w-full h-full border-0 absolute inset-0 pointer-events-none"
+            allow="autoplay; encrypted-media"
+            allowFullScreen
+          />
+        </div>
+
+        {/* Barra inferior permanente com info do programa atual e a próxima atração */}
+        <div className="relative z-10 w-full bg-slate-950/90 backdrop-blur-md border-t border-white/10 p-4 flex items-center justify-between text-white shadow-2xl safe-bottom">
+          <div className="flex flex-col min-w-0 flex-1 pr-4">
+            <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest leading-none mb-1">Ouvindo Agora</span>
+            <span className="font-bold text-sm truncate leading-tight">{current?.title || "Programação Rádio"}</span>
+            {currentPresenter && (
+              <span className="text-slate-400 text-xs truncate mt-0.5">Com {currentPresenter.name}</span>
+            )}
+          </div>
+          
+          {next && (
+            <div className="flex flex-col items-end text-right border-l border-white/15 pl-4 max-w-[50%] flex-shrink-0">
+              <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">
+                A Seguir ({next.time.split(' - ')[0]})
+              </span>
+              <span className="font-bold text-xs truncate w-full leading-tight text-slate-200">{next.title}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // --- INTERFACE WEB COMPARTILHADA / DESKTOP / TV ---
   return (
     <div className={`fixed inset-0 bg-black overflow-hidden flex flex-col justify-end ${!showUI ? 'cursor-none' : ''}`}>
       {/* Vídeo em Tela Cheia no Fundo */}
@@ -164,11 +246,6 @@ export default function TV() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Indicador de carregamento invisível do áudio da rádio */}
-      <div className="hidden">
-        {/* O áudio real está tocando lá no PlayerContext global. Aqui só controlamos a UI. */}
-      </div>
     </div>
   );
 }
