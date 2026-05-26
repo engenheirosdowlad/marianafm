@@ -26,15 +26,16 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->exec("DELETE FROM banners");
             
             // Insere os novos
-            $stmt = $pdo->prepare("INSERT INTO banners (id, imageUrl, linkUrl, position) VALUES (?, ?, ?, ?)");
+            $stmt = $pdo->prepare("INSERT INTO banners (id, imageUrl, mobileImageUrl, linkUrl, position) VALUES (?, ?, ?, ?, ?)");
             
             foreach ($banners as $banner) {
                 $id = $banner['id'] ?? uniqid();
                 $imageUrl = $banner['imageUrl'] ?? '';
+                $mobileImageUrl = $banner['mobileImageUrl'] ?? '';
                 $linkUrl = $banner['linkUrl'] ?? '';
                 $position = $banner['position'] ?? 'center';
                 
-                $stmt->execute([$id, $imageUrl, $linkUrl, $position]);
+                $stmt->execute([$id, $imageUrl, $mobileImageUrl, $linkUrl, $position]);
             }
             
             $pdo->commit();

@@ -63,11 +63,17 @@ export default function Home() {
               <CarouselItem key={banner.id || index}>
                 {banner.linkUrl ? (
                   <a href={banner.linkUrl} target="_blank" rel="noopener noreferrer" className="block relative group overflow-hidden bg-slate-900 rounded-3xl border border-white/5 shadow-2xl h-[200px] md:h-[250px] w-full">
-                    <img src={banner.imageUrl} alt={`Banner ${index + 1}`} className={`w-full h-full object-cover object-${banner.position || 'center'} group-hover:scale-105 transition-transform duration-700`} />
+                    <picture className="w-full h-full">
+                      {banner.mobileImageUrl && <source media="(max-width: 640px)" srcSet={banner.mobileImageUrl} />}
+                      <img src={banner.imageUrl} alt={`Banner ${index + 1}`} className={`w-full h-full object-cover object-${banner.position || 'center'} group-hover:scale-105 transition-transform duration-700`} />
+                    </picture>
                   </a>
                 ) : (
                   <div className="relative group overflow-hidden bg-slate-900 rounded-3xl border border-white/5 shadow-2xl h-[200px] md:h-[250px] w-full">
-                    <img src={banner.imageUrl} alt={`Banner ${index + 1}`} className={`w-full h-full object-cover object-${banner.position || 'center'} group-hover:scale-105 transition-transform duration-700`} />
+                    <picture className="w-full h-full">
+                      {banner.mobileImageUrl && <source media="(max-width: 640px)" srcSet={banner.mobileImageUrl} />}
+                      <img src={banner.imageUrl} alt={`Banner ${index + 1}`} className={`w-full h-full object-cover object-${banner.position || 'center'} group-hover:scale-105 transition-transform duration-700`} />
+                    </picture>
                   </div>
                 )}
               </CarouselItem>

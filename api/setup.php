@@ -5,9 +5,11 @@ require_once 'db.php';
 
 $queries = [
     // Tabela de Banners
-    "CREATE TABLE IF NOT EXISTS banners (
+    "DROP TABLE IF EXISTS banners",
+    "CREATE TABLE banners (
         id VARCHAR(255) PRIMARY KEY,
         imageUrl TEXT NOT NULL,
+        mobileImageUrl TEXT,
         linkUrl TEXT,
         position VARCHAR(50) DEFAULT 'center',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

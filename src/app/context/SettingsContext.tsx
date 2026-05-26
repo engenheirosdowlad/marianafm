@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 interface Banner {
   id: string;
   imageUrl: string;
+  mobileImageUrl: string;
   linkUrl: string;
   position: string;
 }

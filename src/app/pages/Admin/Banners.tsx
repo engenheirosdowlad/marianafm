@@ -9,6 +9,7 @@ import { useSettings } from '../../context/SettingsContext';
 interface Banner {
   id: string;
   imageUrl: string;
+  mobileImageUrl: string;
   linkUrl: string;
   position?: string;
 }
@@ -24,7 +25,7 @@ export default function AdminBanners() {
 
   useEffect(() => {
     if (contextBanners && contextBanners.length > 0) {
-      setBanners(contextBanners);
+      setBanners(contextBanners as Banner[]);
     }
     if (settings && settings.bannerInterval) {
       setBannerInterval(settings.bannerInterval);
@@ -67,6 +68,7 @@ export default function AdminBanners() {
     const newBanner: Banner = {
       id: Date.now().toString(),
       imageUrl: '',
+      mobileImageUrl: '',
       linkUrl: '',
       position: 'center'
     };
@@ -81,12 +83,12 @@ export default function AdminBanners() {
     setBanners(banners.map(b => b.id === id ? { ...b, [field]: value } : b));
   };
 
-  const handleImageUpload = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = (id: string, e: React.ChangeEvent<HTMLInputElement>, type: 'imageUrl' | 'mobileImageUrl') => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        updateBanner(id, 'imageUrl', reader.result as string);
+        updateBanner(id, type, reader.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -101,7 +103,7 @@ export default function AdminBanners() {
           </h1>
           <p className="text-slate-400 mt-1 text-sm">Gerencie as imagens rotativas da página inicial</p>
           <div className="inline-block mt-2 px-3 py-1 bg-blue-500/10 border border-blue-500/20 rounded-lg text-blue-400 text-xs font-medium">
-            💡 Tamanho recomendado: 1200x400 pixels (ou proporção 3:1)
+            💡 Forneça imagens específicas para computador (3:1) e celular (1:1) para melhor visualização.
           </div>
         </div>
         
@@ -167,63 +169,102 @@ export default function AdminBanners() {
                 </button>
               </div>
 
-              <div className="space-y-4">
-                <div className="space-y-1">
-                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                    <ImageIcon size={14} className="text-blue-400" /> Imagem do Banner (URL ou Upload)
-                  </label>
-                  <div className="flex gap-2">
+              <div className="space-y-6">
+                {/* Responsive banner grid inputs side-by-side */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  
+                  {/* Desktop Banner Input & Preview */}
+                  <div className="space-y-2">
+                    <label className="text-slate-400 text-[10px] font-black uppercase tracking-wider flex items-center gap-2">
+                      <ImageIcon size={14} className="text-blue-400" /> Imagem Desktop (ex: 1200x400)
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={banner.imageUrl}
+                        onChange={(e) => updateBanner(banner.id, 'imageUrl', e.target.value)}
+                        className="w-full bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-white text-xs focus:border-blue-500 outline-none transition-colors"
+                        placeholder="Link da imagem desktop"
+                      />
+                      <label className="flex items-center justify-center bg-blue-600/20 border border-blue-500/30 hover:bg-blue-600 hover:border-blue-500 text-blue-400 hover:text-white px-3 rounded-lg cursor-pointer transition-all shrink-0">
+                        <Upload size={14} />
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          className="hidden" 
+                          onChange={(e) => handleImageUpload(banner.id, e, 'imageUrl')} 
+                        />
+                      </label>
+                    </div>
+                    {banner.imageUrl && (
+                      <div className="rounded-lg overflow-hidden border border-white/10 h-28 w-full bg-slate-900 relative">
+                        <img src={banner.imageUrl} alt={`Preview desktop ${index + 1}`} className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Mobile Banner Input & Preview */}
+                  <div className="space-y-2">
+                    <label className="text-slate-400 text-[10px] font-black uppercase tracking-wider flex items-center gap-2">
+                      <ImageIcon size={14} className="text-blue-400" /> Imagem Mobile (ex: 800x800)
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={banner.mobileImageUrl || ''}
+                        onChange={(e) => updateBanner(banner.id, 'mobileImageUrl', e.target.value)}
+                        className="w-full bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-white text-xs focus:border-blue-500 outline-none transition-colors"
+                        placeholder="Link da imagem mobile"
+                      />
+                      <label className="flex items-center justify-center bg-blue-600/20 border border-blue-500/30 hover:bg-blue-600 hover:border-blue-500 text-blue-400 hover:text-white px-3 rounded-lg cursor-pointer transition-all shrink-0">
+                        <Upload size={14} />
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          className="hidden" 
+                          onChange={(e) => handleImageUpload(banner.id, e, 'mobileImageUrl')} 
+                        />
+                      </label>
+                    </div>
+                    {banner.mobileImageUrl && (
+                      <div className="rounded-lg overflow-hidden border border-white/10 h-28 w-full bg-slate-900 relative flex items-center justify-center">
+                        <img src={banner.mobileImageUrl} alt={`Preview mobile ${index + 1}`} className="h-full object-contain" />
+                      </div>
+                    )}
+                  </div>
+
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                      <ImageIcon size={14} className="text-emerald-400" /> Posição da Imagem Desktop
+                    </label>
+                    <select
+                      value={banner.position || 'center'}
+                      onChange={(e) => updateBanner(banner.id, 'position', e.target.value)}
+                      className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                    >
+                      <option value="top">Topo (Focar na parte de cima)</option>
+                      <option value="center">Centro (Padrão)</option>
+                      <option value="bottom">Base (Focar na parte de baixo)</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                      <LinkIcon size={14} className="text-purple-400" /> Link de Destino (Opcional)
+                    </label>
                     <input
                       type="text"
-                      value={banner.imageUrl}
-                      onChange={(e) => updateBanner(banner.id, 'imageUrl', e.target.value)}
+                      value={banner.linkUrl}
+                      onChange={(e) => updateBanner(banner.id, 'linkUrl', e.target.value)}
                       className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
-                      placeholder="Cole um link ou faça upload ->"
+                      placeholder="Ex: https://wa.me/558199999999"
                     />
-                    <label className="flex items-center justify-center bg-blue-600/20 border border-blue-500/30 hover:bg-blue-600 hover:border-blue-500 text-blue-400 hover:text-white px-4 rounded-lg cursor-pointer transition-all shrink-0">
-                      <Upload size={18} />
-                      <input 
-                        type="file" 
-                        accept="image/*" 
-                        className="hidden" 
-                        onChange={(e) => handleImageUpload(banner.id, e)} 
-                      />
-                    </label>
                   </div>
-                  {banner.imageUrl && (
-                    <div className="mt-3 rounded-lg overflow-hidden border border-white/10 h-32 w-full bg-slate-900 relative">
-                      <img src={banner.imageUrl} alt={`Preview banner ${index + 1}`} className={`w-full h-full object-cover object-${banner.position || 'center'}`} />
-                    </div>
-                  )}
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                    <ImageIcon size={14} className="text-emerald-400" /> Posição da Imagem no Banner
-                  </label>
-                  <select
-                    value={banner.position || 'center'}
-                    onChange={(e) => updateBanner(banner.id, 'position', e.target.value)}
-                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
-                  >
-                    <option value="top">Topo (Focar na parte de cima)</option>
-                    <option value="center">Centro (Padrão)</option>
-                    <option value="bottom">Base (Focar na parte de baixo)</option>
-                  </select>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                    <LinkIcon size={14} className="text-purple-400" /> Link de Destino (Opcional)
-                  </label>
-                  <input
-                    type="text"
-                    value={banner.linkUrl}
-                    onChange={(e) => updateBanner(banner.id, 'linkUrl', e.target.value)}
-                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
-                    placeholder="Ex: https://wa.me/558199999999"
-                  />
-                </div>
               </div>
             </motion.div>
           ))}
