@@ -33,6 +33,20 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       if (settingsRes.ok) {
         const data = await settingsRes.json();
         const defaultSettings = {
+          siteName: 'CIDADE FM 87,9 MHZ',
+          audioStreamUrl: 'https://link.radio.br:18630/stream',
+          videoStreamUrl: 'https://link.radio.br:18630/video',
+          whatsappNumber: '(91) 98273-6292',
+          whatsappUrl: 'https://wa.me/5591982736292',
+          instagramUrl: 'https://www.instagram.com/marianafmdigital',
+          facebookUrl: 'https://www.facebook.com/jpscardoso88',
+          youtubeUrl: 'https://www.youtube.com/@LaMarianaFMProgramas',
+          headerTitle: 'Seja bem-vindo a Cidade FM',
+          headerSubtitle: 'onde nasce o sucesso',
+          dividerThickness: '4',
+          dividerGlow: '20',
+          visualizerIntensity: '100',
+          visualizerThickness: '10',
           rssSources: JSON.stringify([
             { name: 'ENTRETENIMENTO', url: 'https://g1.globo.com/rss/g1/pop-arte/' },
             { name: 'ESPORTE', url: 'https://jovempan.com.br/esportes/feed' },
@@ -50,14 +64,22 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       console.error('Failed to load settings from API:', error);
       // Fallback for visual settings if API fails
       setSettings({
+        siteName: 'CIDADE FM 87,9 MHZ',
         audioStreamUrl: 'https://link.radio.br:18630/stream',
         videoStreamUrl: 'https://link.radio.br:18630/video',
-        siteName: 'CIDADE FM',
-        dividerThickness: '1',
+        whatsappNumber: '(91) 98273-6292',
+        whatsappUrl: 'https://wa.me/5591982736292',
+        instagramUrl: 'https://www.instagram.com/marianafmdigital',
+        facebookUrl: 'https://www.facebook.com/jpscardoso88',
+        youtubeUrl: 'https://www.youtube.com/@LaMarianaFMProgramas',
+        headerTitle: 'Seja bem-vindo a Cidade FM',
+        headerSubtitle: 'onde nasce o sucesso',
+        dividerThickness: '4',
         dividerGlow: '20',
         bannerInterval: '5',
-        visualizerIntensity: '50',
-        visualizerThickness: '5',
+        visualizerColor: '#3b82f6',
+        visualizerIntensity: '100',
+        visualizerThickness: '10',
         rssSources: JSON.stringify([
           { name: 'ENTRETENIMENTO', url: 'https://g1.globo.com/rss/g1/pop-arte/' },
           { name: 'ESPORTE', url: 'https://jovempan.com.br/esportes/feed' },

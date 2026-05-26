@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, Clock, User } from 'lucide-react';
+import { programData, teamData } from '../../data/mockData';
 
 const daysOfWeek = [
   { id: 'seg', name: 'Segunda' },
@@ -24,14 +25,41 @@ export default function Schedule() {
           fetch('/api/schedule.php'),
           fetch('/api/team.php')
         ]);
-        if (progRes.ok) setPrograms(await progRes.json());
-        if (teamRes.ok) setTeam(await teamRes.json());
+        
+        let fetchedProgs = [];
+        let fetchedTeam = [];
+        
+        if (progRes.ok) {
+          fetchedProgs = await progRes.json();
+        }
+        if (teamRes.ok) {
+          fetchedTeam = await teamRes.json();
+        }
+        
+        if (Array.isArray(fetchedProgs) && fetchedProgs.length > 0) {
+          setPrograms(fetchedProgs);
+        } else {
+          const storedProg = localStorage.getItem('radioPrograms');
+          if (storedProg) setPrograms(JSON.parse(storedProg));
+          else setPrograms(programData);
+        }
+        
+        if (Array.isArray(fetchedTeam) && fetchedTeam.length > 0) {
+          setTeam(fetchedTeam);
+        } else {
+          const storedTeam = localStorage.getItem('radioTeam');
+          if (storedTeam) setTeam(JSON.parse(storedTeam));
+          else setTeam(teamData);
+        }
       } catch (e) {
-        console.warn("API indisponível, usando fallback local");
+        console.warn("API indisponível, usando fallback local", e);
         const storedProg = localStorage.getItem('radioPrograms');
         const storedTeam = localStorage.getItem('radioTeam');
         if (storedProg) setPrograms(JSON.parse(storedProg));
+        else setPrograms(programData);
+        
         if (storedTeam) setTeam(JSON.parse(storedTeam));
+        else setTeam(teamData);
       }
     };
     loadData();
@@ -95,7 +123,7 @@ export default function Schedule() {
               </div>
             ) : (
               filteredPrograms.map((prog, index) => {
-                const presenter = team.find(t => t.id === prog.host);
+                const presenter = team.find(t => t.id === (prog.presenterId || prog.host));
                 return (
                   <motion.div
                     key={prog.id}

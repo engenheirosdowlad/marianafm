@@ -49,7 +49,34 @@ $queries = [
         description TEXT,
         presenterId TEXT,
         days TEXT NOT NULL
-    )"
+    )",
+    
+    // Inserir configurações padrão da Cidade FM 87,9 MHZ
+    "INSERT INTO settings (setting_key, setting_value) VALUES 
+    ('siteName', 'CIDADE FM 87,9 MHZ'),
+    ('audioStreamUrl', 'https://link.radio.br:18630/stream'),
+    ('videoStreamUrl', 'https://link.radio.br:18630/video'),
+    ('whatsappNumber', '(91) 98273-6292'),
+    ('whatsappUrl', 'https://wa.me/5591982736292'),
+    ('instagramUrl', 'https://www.instagram.com/marianafmdigital'),
+    ('facebookUrl', 'https://www.facebook.com/jpscardoso88'),
+    ('youtubeUrl', 'https://www.youtube.com/@LaMarianaFMProgramas'),
+    ('headerTitle', 'Seja bem-vindo a Cidade FM'),
+    ('headerSubtitle', 'onde nasce o sucesso'),
+    ('dividerThickness', '4'),
+    ('dividerGlow', '20'),
+    ('visualizerIntensity', '100'),
+    ('visualizerThickness', '10')
+    ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)",
+
+    // Inserir Top 5 padrão da Cidade FM 87,9 MHZ
+    "INSERT INTO top5 (id, title, artist, youtubeUrl, position) VALUES 
+    ('top_1', 'Die With A Smile', 'Lady Gaga & Bruno Mars', 'https://www.youtube.com/watch?v=kPa7bsKwL-c', 1),
+    ('top_2', 'Birds of a Feather', 'Billie Eilish', 'https://www.youtube.com/watch?v=V9PVRfjEBTI', 2),
+    ('top_3', 'Espresso', 'Sabrina Carpenter', 'https://www.youtube.com/watch?v=eVli-tstM5E', 3),
+    ('top_4', 'Si Antes Te Hubiera Conocido', 'Karol G', 'https://www.youtube.com/watch?v=QCZZwZQ4qNs', 4),
+    ('top_5', 'A Bar Song (Tipsy)', 'Shaboozey', 'https://www.youtube.com/watch?v=t7bQwwqW-Hc', 5)
+    ON DUPLICATE KEY UPDATE title = VALUES(title), artist = VALUES(artist), youtubeUrl = VALUES(youtubeUrl), position = VALUES(position)"
 ];
 
 $success = true;

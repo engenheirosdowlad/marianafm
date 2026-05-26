@@ -13,7 +13,10 @@ export function WeatherWidget() {
   useEffect(() => {
     // Barcarena - PA coordinates: -1.5058, -48.6258
     fetch('https://api.open-meteo.com/v1/forecast?latitude=-1.5058&longitude=-48.6258&current=temperature_2m,is_day,weather_code')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Open-Meteo status ' + res.status);
+        return res.json();
+      })
       .then(data => {
         if (data && data.current) {
           setWeather({
@@ -23,7 +26,37 @@ export function WeatherWidget() {
           });
         }
       })
-      .catch(err => console.error('Failed to fetch weather', err));
+      .catch(err => {
+        console.error('Failed to fetch weather from Open-Meteo, trying wttr.in fallback...', err);
+        fetch('https://wttr.in/Barcarena?format=j1')
+          .then(res => res.json())
+          .then(data => {
+            if (data && data.current_condition && data.current_condition[0]) {
+              const current = data.current_condition[0];
+              const temp = Math.round(Number(current.temp_C));
+              const iconUrl = current.weatherIconUrl?.[0]?.value || '';
+              const isDay = !iconUrl.includes('night') && !iconUrl.includes('_night');
+              const wttrCode = Number(current.weatherCode);
+              
+              // Map WWO code to WMO code
+              let code = 3;
+              if (wttrCode === 113) code = 0;
+              else if (wttrCode === 116) code = 1;
+              else if (wttrCode === 119 || wttrCode === 122) code = 3;
+              else if (wttrCode >= 263 && wttrCode <= 308) code = 61; // Rain
+              else if (wttrCode >= 353 && wttrCode <= 359) code = 80; // Shower
+              else if (wttrCode >= 386 && wttrCode <= 395) code = 95; // Thunderstorm
+              else if (wttrCode >= 248 && wttrCode <= 260) code = 45; // Fog
+
+              setWeather({
+                temp,
+                isDay,
+                code,
+              });
+            }
+          })
+          .catch(fallbackErr => console.error('Failed to fetch weather from fallback', fallbackErr));
+      });
   }, []);
 
   const getWeatherIcon = () => {
