@@ -154,7 +154,7 @@ export default function TV() {
         <div className="absolute inset-0 z-0">
           <iframe 
             src="https://player.radiosnaweb.com/clappr/video.php?urlplayer=https://5a57bda70564a.streamlock.net/marianafm/marianafm.sdp/playlist.m3u8&autoplay=true"
-            className="w-full h-full border-0 absolute inset-0 pointer-events-none"
+            className="w-full h-full border-0 absolute inset-0"
             allow="autoplay; encrypted-media"
             allowFullScreen
           />
@@ -190,7 +190,7 @@ export default function TV() {
       <div className="absolute inset-0 z-0">
         <iframe 
           src="https://player.radiosnaweb.com/clappr/video.php?urlplayer=https://5a57bda70564a.streamlock.net/marianafm/marianafm.sdp/playlist.m3u8&autoplay=true"
-          className="w-full h-full object-cover pointer-events-none"
+          className="w-full h-full object-cover"
           allow="autoplay; encrypted-media"
           allowFullScreen
         />
