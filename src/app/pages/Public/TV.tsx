@@ -45,30 +45,6 @@ export default function TV() {
     };
   }, [isNative]);
 
-  // Navegação por teclado (Controle Remoto TV)
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Enter' || e.key === 'MediaPlayPause') {
-        setIsPlaying(!isPlaying);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isPlaying, setIsPlaying]);
-
-  // Parar de tocar ao sair/minimizar o aplicativo de TV
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        setIsPlaying(false);
-      }
-    };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, [setIsPlaying]);
-
   // Carrega dados da API com fallback
   useEffect(() => {
     const loadData = async () => {
@@ -162,31 +138,15 @@ export default function TV() {
   // --- SE FOR APLICATIVO NATIVO (APK/MÓVEL/TV) ---
   if (isNative) {
     return (
-      <div 
-        onClick={() => setIsPlaying(!isPlaying)}
-        className="fixed inset-0 bg-black overflow-hidden flex flex-col justify-end cursor-pointer"
-      >
+      <div className="fixed inset-0 bg-black overflow-hidden flex flex-col justify-end">
         {/* Vídeo em Tela Cheia no Fundo */}
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          {isPlaying ? (
-            <iframe 
-              src="https://player.radiosnaweb.com/clappr/video.php?urlplayer=https://5a57bda70564a.streamlock.net/marianafm/marianafm.sdp/playlist.m3u8&autoplay=true"
-              className="w-full h-full border-0 absolute inset-0"
-              allow="autoplay; encrypted-media"
-              allowFullScreen
-            />
-          ) : (
-            <div className="w-full h-full bg-slate-950 flex items-center justify-center">
-              <div className="text-center">
-                <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-500/50">
-                  <svg className="w-10 h-10 text-white fill-current translate-x-0.5" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                </div>
-                <p className="text-slate-400 font-medium text-sm">Pausado. Toque ou pressione ENTER para reproduzir.</p>
-              </div>
-            </div>
-          )}
+        <div className="absolute inset-0 z-0">
+          <iframe 
+            src="https://player.radiosnaweb.com/clappr/video.php?urlplayer=https://5a57bda70564a.streamlock.net/marianafm/marianafm.sdp/playlist.m3u8&autoplay=true"
+            className="w-full h-full border-0 absolute inset-0"
+            allow="autoplay; encrypted-media"
+            allowFullScreen
+          />
         </div>
 
         {/* Barra inferior permanente com info do programa atual e a próxima atração */}
@@ -194,9 +154,6 @@ export default function TV() {
           <div className="flex flex-col min-w-0 flex-1 pr-4">
             <div className="flex items-center gap-2 mb-1">
               <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest leading-none">Ouvindo Agora</span>
-              {!isPlaying && (
-                <span className="text-[9px] font-black text-red-500 uppercase tracking-widest leading-none bg-red-500/10 px-1 rounded">Pausado</span>
-              )}
             </div>
             <span className="font-bold text-sm truncate leading-tight">{current?.title || "Programação Rádio"}</span>
             {currentPresenter && (

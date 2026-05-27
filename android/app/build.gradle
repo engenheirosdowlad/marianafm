@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "com.marianafm.tvapp"
+    namespace = "com.marianafm.celular"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.marianafm.tvapp"
+        applicationId "com.marianafm.celular"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
