@@ -20,10 +20,8 @@ export default function TV() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Lógica de inatividade para esconder a UI (apenas na web, não no app nativo)
+  // Lógica de inatividade para esconder a UI (tanto na web quanto na TV nativa)
   useEffect(() => {
-    if (isNative) return;
-
     const handleActivity = () => {
       setShowUI(true);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -34,6 +32,8 @@ export default function TV() {
 
     window.addEventListener('mousemove', handleActivity);
     window.addEventListener('keydown', handleActivity);
+    window.addEventListener('click', handleActivity);
+    window.addEventListener('touchstart', handleActivity);
     
     // Inicia o timer
     handleActivity();
@@ -41,9 +41,11 @@ export default function TV() {
     return () => {
       window.removeEventListener('mousemove', handleActivity);
       window.removeEventListener('keydown', handleActivity);
+      window.removeEventListener('click', handleActivity);
+      window.removeEventListener('touchstart', handleActivity);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, [isNative]);
+  }, []);
 
   // Carrega dados da API com fallback
   useEffect(() => {
@@ -149,27 +151,37 @@ export default function TV() {
           />
         </div>
 
-        {/* Barra inferior permanente com info do programa atual e a próxima atração */}
-        <div className="relative z-10 w-full bg-slate-950/90 backdrop-blur-md border-t border-white/10 p-4 flex items-center justify-between text-white shadow-2xl safe-bottom">
-          <div className="flex flex-col min-w-0 flex-1 pr-4">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest leading-none">Ouvindo Agora</span>
-            </div>
-            <span className="font-bold text-sm truncate leading-tight">{current?.title || "Programação Rádio"}</span>
-            {currentPresenter && (
-              <span className="text-slate-400 text-xs truncate mt-0.5">Com {currentPresenter.name}</span>
-            )}
-          </div>
-          
-          {next && (
-            <div className="flex flex-col items-end text-right border-l border-white/15 pl-4 max-w-[50%] flex-shrink-0">
-              <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">
-                A Seguir ({next.time.split(' - ')[0]})
-              </span>
-              <span className="font-bold text-xs truncate w-full leading-tight text-slate-200">{next.title}</span>
-            </div>
+        {/* Barra inferior que some por inatividade */}
+        <AnimatePresence>
+          {showUI && (
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 50 }}
+              transition={{ duration: 0.5 }}
+              className="relative z-10 w-full bg-slate-950/90 backdrop-blur-md border-t border-white/10 p-4 flex items-center justify-between text-white shadow-2xl safe-bottom"
+            >
+              <div className="flex flex-col min-w-0 flex-1 pr-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest leading-none">Ouvindo Agora</span>
+                </div>
+                <span className="font-bold text-sm truncate leading-tight">{current?.title || "Programação Rádio"}</span>
+                {currentPresenter && (
+                  <span className="text-slate-400 text-xs truncate mt-0.5">Com {currentPresenter.name}</span>
+                )}
+              </div>
+              
+              {next && (
+                <div className="flex flex-col items-end text-right border-l border-white/15 pl-4 max-w-[50%] flex-shrink-0">
+                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">
+                    A Seguir ({next.time.split(' - ')[0]})
+                  </span>
+                  <span className="font-bold text-xs truncate w-full leading-tight text-slate-200">{next.title}</span>
+                </div>
+              )}
+            </motion.div>
           )}
-        </div>
+        </AnimatePresence>
       </div>
     );
   }
