@@ -33,32 +33,6 @@ export default function App() {
     !/mobile/i.test(navigator.userAgent)
   );
 
-  useEffect(() => {
-    if (Capacitor.isNativePlatform()) {
-      const enableBackgroundMode = () => {
-        const cordova = (window as any).cordova;
-        if (cordova && cordova.plugins && cordova.plugins.backgroundMode) {
-          // Ativa o modo de segundo plano
-          cordova.plugins.backgroundMode.enable();
-          
-          // Configurações da notificação do foreground service
-          cordova.plugins.backgroundMode.setDefaults({
-            title: 'Cidade FM 87.9',
-            text: 'Rádio tocando ao vivo em segundo plano',
-            icon: 'ic_launcher', // Usa o ícone do app
-            color: '1E3A8A', // Tom azul escuro
-            resume: true,
-            hidden: false
-          });
-        }
-      };
-
-      // Tenta ativar quando o dispositivo estiver pronto
-      document.addEventListener('deviceready', enableBackgroundMode, false);
-      // Fallback imediato
-      enableBackgroundMode();
-    }
-  }, []);
 
   return (
     <BrowserRouter>
