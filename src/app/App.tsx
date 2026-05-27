@@ -28,9 +28,11 @@ const MockPage = ({ title }: { title: string }) => (
 );
 
 export default function App() {
-  const isTV = Capacitor.isNativePlatform() && (
-    /android tv|googletv|smarttv|appletv|firetv|roku|chromecast/i.test(navigator.userAgent) ||
-    !/mobile/i.test(navigator.userAgent)
+  const isTV = import.meta.env.VITE_APP_TYPE === 'tv' || (
+    Capacitor.isNativePlatform() && (
+      /android tv|googletv|smarttv|appletv|firetv|roku|chromecast/i.test(navigator.userAgent) ||
+      !/mobile/i.test(navigator.userAgent)
+    )
   );
 
   return (
