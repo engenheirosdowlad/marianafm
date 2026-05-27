@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Cidade FM</string>
-    <string name="title_activity_main">Cidade FM</string>
-    <string name="package_name">com.marianafm.tvapp</string>
-    <string name="custom_url_scheme">com.marianafm.tvapp</string>
+    <string name="app_name">Cidade Celular</string>
+    <string name="title_activity_main">Cidade Celular</string>
+    <string name="package_name">com.marianafm.celular</string>
+    <string name="custom_url_scheme">com.marianafm.celular</string>
 </resources>

@@ -27,7 +27,10 @@ const MockPage = ({ title }: { title: string }) => (
 );
 
 export default function App() {
-  const isNative = Capacitor.isNativePlatform();
+  const isTV = Capacitor.isNativePlatform() && (
+    /android tv|googletv|smarttv|appletv|firetv|roku|chromecast/i.test(navigator.userAgent) ||
+    !/mobile/i.test(navigator.userAgent)
+  );
 
   return (
     <BrowserRouter>
@@ -35,7 +38,7 @@ export default function App() {
         <PlayerProvider>
           <Routes>
             {/* Public Routes */}
-            <Route element={isNative ? <Navigate to="/tv" replace /> : <PublicLayout />}>
+            <Route element={isTV ? <Navigate to="/tv" replace /> : <PublicLayout />}>
               <Route index element={<Home />} />
               <Route path="news" element={<News />} />
               <Route path="schedule" element={<Schedule />} />
