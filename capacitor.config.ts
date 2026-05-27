@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.marianafm.celular',
-  appName: 'Cidade Celular',
+  appId: 'com.marianafm.tvapp',
+  appName: 'Cidade FM (TV)',
   webDir: 'dist'
 };
 

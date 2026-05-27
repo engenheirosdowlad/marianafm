@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
+import { HashRouter, Routes, Route, Navigate } from 'react-router';
 import { Capacitor } from '@capacitor/core';
 import { PublicLayout } from './layouts/PublicLayout';
 import { AdminLayout } from './layouts/AdminLayout';
@@ -33,9 +33,8 @@ export default function App() {
     !/mobile/i.test(navigator.userAgent)
   );
 
-
   return (
-    <BrowserRouter>
+    <HashRouter>
       <SettingsProvider>
         <PlayerProvider>
           <Routes>
@@ -68,7 +67,7 @@ export default function App() {
           </Routes>
         </PlayerProvider>
       </SettingsProvider>
-    </BrowserRouter>
+    </HashRouter>
 
   );
 }

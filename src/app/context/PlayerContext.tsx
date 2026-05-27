@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useSettings } from './SettingsContext';
 import { Capacitor } from '@capacitor/core';
-import { NativeAudio } from '@capgo/native-audio';
 
 type PlayerType = 'audio' | 'video';
 
@@ -19,6 +18,9 @@ const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
 
 const isNative = Capacitor.isNativePlatform();
 
+// Acessa o plugin nativo de forma segura através do objeto de plugins do Capacitor
+const NativeAudio = (Capacitor.Plugins as any).NativeAudio;
+
 export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const [isPlaying, setIsPlaying] = useState(true);
   const [activePlayer, setActivePlayer] = useState<PlayerType>('video'); // Padrão vídeo como no esboço
@@ -27,14 +29,14 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const { settings } = useSettings();
   const streamUrl = settings.audioStreamUrl || "https://link.radio.br:18630/stream";
 
-  // Configura o áudio nativo uma vez no início
+  // Configura o áudio nativo uma vez no início se o plugin estiver disponível
   useEffect(() => {
-    if (isNative) {
+    if (isNative && NativeAudio) {
       NativeAudio.configure({
         backgroundPlayback: true,
         showNotification: true,
         focus: true
-      }).catch(err => {
+      }).catch((err: any) => {
         console.error("Erro ao configurar NativeAudio:", err);
       });
     }
@@ -47,7 +49,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
   // Gerenciamento da reprodução (Natividade vs Web)
   useEffect(() => {
-    if (isNative) {
+    if (isNative && NativeAudio) {
       const handleNativePlay = async () => {
         try {
           if (isPlaying && activePlayer === 'audio') {
@@ -96,7 +98,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
   // Controle de volume
   useEffect(() => {
-    if (isNative) {
+    if (isNative && NativeAudio) {
       NativeAudio.setVolume({ assetId: 'live_stream', volume: volume }).catch(() => {});
     } else if (audioRef.current) {
       audioRef.current.volume = volume;
@@ -114,8 +116,8 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       audioRef
     }}>
       {children}
-      {/* O elemento HTML5 só executa se não for nativo */}
-      {!isNative && (
+      {/* O elemento HTML5 só executa se não for nativo ou se o áudio nativo não estiver ativo */}
+      {(!isNative || !NativeAudio) && (
         <audio ref={audioRef} src={activePlayer === 'audio' ? streamUrl : ''} />
       )}
     </PlayerContext.Provider>
