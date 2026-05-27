@@ -13,9 +13,9 @@ export default function TV() {
   
   const isNative = Capacitor.isNativePlatform();
 
-  // Auto-play audio na TV
+  // Auto-play vídeo na TV (e não o áudio nativo em background)
   useEffect(() => {
-    setActivePlayer('audio');
+    setActivePlayer('video');
     setIsPlaying(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
