@@ -52,6 +52,13 @@ export function Header({ onMenuClick }: HeaderProps) {
   const subtitleEnabled = settings.headerSubtitleEnabled !== 'false';
   const subtitle = settings.headerSubtitle || 'onde nasce o sucesso';
 
+  const parsedPhrases = phrases.map(line => {
+    const parts = line.split('|');
+    const mainText = parts[0]?.trim() || '';
+    const subText = parts[1]?.trim() || null;
+    return { mainText, subText };
+  });
+
   const showDuration = Number(settings.headerTextDuration || '5000');
   const transitionSpeed = Number(settings.headerTransitionSpeed || '700');
 
@@ -77,6 +84,9 @@ export function Header({ onMenuClick }: HeaderProps) {
 
   if (isAdmin) return null;
 
+  const currentPhrase = parsedPhrases[currentPhraseIndex];
+  const activeSubtitle = currentPhrase?.subText || (subtitleEnabled ? subtitle : null);
+
   return (
     <header className="sticky top-0 z-50 px-6 py-4 shadow-2xl border-b border-white/5 h-20 flex items-center justify-between">
       {/* Visualizer Background */}
@@ -96,28 +106,28 @@ export function Header({ onMenuClick }: HeaderProps) {
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center text-center pointer-events-none w-max">
           <div 
             style={{ transitionDuration: `${transitionSpeed}ms` }}
-            className={`transition-all ease-in-out transform ${isFading ? 'opacity-0 scale-95 translate-y-1' : 'opacity-100 scale-100 translate-y-0'} ${animationClass}`}
+            className={`transition-all ease-in-out transform ${isFading ? 'opacity-0 scale-95 translate-y-1' : 'opacity-100 scale-100 translate-y-0'} ${animationClass} flex flex-col items-center`}
           >
             <h2 
               style={titleStyle}
               className="font-black uppercase tracking-[0.1em] md:tracking-[0.2em] drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]"
             >
-              {phrases[currentPhraseIndex] || ''}
+              {currentPhrase?.mainText || ''}
             </h2>
+            
+            {activeSubtitle && (
+              <div className="flex items-center gap-2 md:gap-4 mt-1 md:mt-1.5">
+                <div className="h-[1px] w-4 md:w-8 bg-gradient-to-r from-transparent to-blue-500" style={{ backgroundColor: headerTextColor, opacity: 0.3 }} />
+                <p 
+                  style={subtitleStyle}
+                  className="font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase drop-shadow-[0_2px_5px_rgba(0,0,0,0.8)]"
+                >
+                  {activeSubtitle}
+                </p>
+                <div className="h-[1px] w-4 md:w-8 bg-gradient-to-l from-transparent to-blue-500" style={{ backgroundColor: headerTextColor, opacity: 0.3 }} />
+              </div>
+            )}
           </div>
-          
-          {subtitleEnabled && subtitle && (
-            <div className="flex items-center gap-2 md:gap-4 mt-1 md:mt-1.5">
-              <div className="h-[1px] w-4 md:w-8 bg-gradient-to-r from-transparent to-blue-500" style={{ backgroundColor: headerTextColor, opacity: 0.3 }} />
-              <p 
-                style={subtitleStyle}
-                className="font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase drop-shadow-[0_2px_5px_rgba(0,0,0,0.8)]"
-              >
-                {subtitle}
-              </p>
-              <div className="h-[1px] w-4 md:w-8 bg-gradient-to-l from-transparent to-blue-500" style={{ backgroundColor: headerTextColor, opacity: 0.3 }} />
-            </div>
-          )}
         </div>
 
         <div className="flex items-center gap-4">

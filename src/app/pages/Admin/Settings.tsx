@@ -266,16 +266,17 @@ export default function AdminSettings() {
             <Globe className="text-blue-500" size={18} /> Textos do Cabeçalho Animado
           </h2>
 
-          <div className="space-y-1">
-            <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-              Frases Rotativas (Uma por Linha)
+           <div className="space-y-1">
+            <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex flex-col gap-1">
+              <span>Frases Rotativas (Uma por Linha)</span>
+              <span className="text-slate-500 text-[10px] lowercase normal-case">Use a barra vertical | para adicionar um subtítulo específico à frase.</span>
             </label>
             <textarea
               value={headerPhrases}
               onChange={(e) => setHeaderPhrases(e.target.value)}
               rows={4}
               className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors resize-none"
-              placeholder="Digite as frases, uma em cada linha.&#10;Ex:&#10;Seja bem-vindo a Cidade FM&#10;A rádio que você ama&#10;Onde nasce o sucesso"
+              placeholder="Ex:&#10;Seja bem-vindo a Cidade FM | A sua rádio preferida&#10;Onde nasce o sucesso!&#10;Melhores músicas | 24 horas no ar"
             />
           </div>
 
