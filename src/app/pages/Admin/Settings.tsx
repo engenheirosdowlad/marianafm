@@ -409,10 +409,10 @@ export default function AdminSettings() {
           </div>
         </div>
 
-        {/* Social Links */}
+        {/* Footer/Rodape Settings */}
         <div id="tour-settings-social" className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
           <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
-            <Globe className="text-blue-500" size={18} /> Redes Sociais e Contato
+            <Globe className="text-blue-500" size={18} /> Rodapé
           </h2>
 
           <div className="space-y-1">

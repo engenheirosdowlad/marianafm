@@ -7,7 +7,7 @@ export default function AdminAbout() {
   const { settings, saveSettings } = useSettings();
   
   const [aboutText, setAboutText] = useState('');
-  const [contactEmail, setContactEmail] = useState('');
+  const [aboutTitle, setAboutTitle] = useState('Quem Somos');
   const [aboutImageUrl, setAboutImageUrl] = useState('');
   const [aboutImageSize, setAboutImageSize] = useState('192');
   const [aboutTextSize, setAboutTextSize] = useState('16');
@@ -21,7 +21,7 @@ export default function AdminAbout() {
 
   useEffect(() => {
     if (settings.aboutText) setAboutText(settings.aboutText);
-    if (settings.contactEmail) setContactEmail(settings.contactEmail);
+    setAboutTitle(settings.aboutTitle || 'Quem Somos');
     if (settings.aboutImageUrl) setAboutImageUrl(settings.aboutImageUrl);
     if (settings.aboutImageSize) setAboutImageSize(settings.aboutImageSize);
     if (settings.aboutTextSize) setAboutTextSize(settings.aboutTextSize);
@@ -36,7 +36,7 @@ export default function AdminAbout() {
     try {
       await saveSettings({
         aboutText,
-        contactEmail,
+        aboutTitle,
         aboutImageUrl,
         aboutImageSize,
         aboutTextSize,
@@ -97,14 +97,14 @@ export default function AdminAbout() {
 
             <div className="space-y-1">
               <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
-                E-mail de Contato
+                Título da Seção
               </label>
               <input
-                type="email"
-                value={contactEmail}
-                onChange={(e) => setContactEmail(e.target.value)}
+                type="text"
+                value={aboutTitle}
+                onChange={(e) => setAboutTitle(e.target.value)}
                 className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
-                placeholder="Ex: contato@cidadefmpa.com.br"
+                placeholder="Ex: Quem Somos"
               />
             </div>
 
@@ -306,7 +306,7 @@ export default function AdminAbout() {
               </div>
 
               <div className="w-full space-y-4">
-                <h4 className="text-white font-bold text-lg tracking-tight text-center">Quem Somos</h4>
+                <h4 className="text-white font-bold text-lg tracking-tight text-center">{aboutTitle || 'Quem Somos'}</h4>
                 <div 
                   style={{ 
                     fontFamily: selectedFont,

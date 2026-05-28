@@ -24,6 +24,8 @@ export default function About() {
   };
   const selectedFont = fontMap[aboutTextFont] || fontMap.sans;
 
+  const aboutTitle = settings.aboutTitle || 'Quem Somos';
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 py-16 px-6 relative overflow-hidden">
       {/* Background glow */}
@@ -66,7 +68,7 @@ export default function About() {
           </div>
 
           <div className="flex-1 w-full space-y-6">
-            <h2 className="text-white font-bold text-2xl tracking-tight">Quem Somos</h2>
+            <h2 className="text-white font-bold text-2xl tracking-tight">{aboutTitle}</h2>
             <div 
               style={{
                 fontFamily: selectedFont,
