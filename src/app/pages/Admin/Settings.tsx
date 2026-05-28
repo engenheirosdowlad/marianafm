@@ -53,6 +53,7 @@ export default function AdminSettings() {
   const [audioTitleFont, setAudioTitleFont] = useState('sans');
   const [audioSubtitleSize, setAudioSubtitleSize] = useState('14');
   const [audioSubtitleColor, setAudioSubtitleColor] = useState('#cbd5e1');
+  const [audioSubtitleFont, setAudioSubtitleFont] = useState('sans');
   const [footerAddressStreet, setFooterAddressStreet] = useState('Avenida Cronge da Silveira, nº 805');
   const [footerAddressDetails, setFooterAddressDetails] = useState('Altos, Sala 02 — Centro');
   const [footerAddressCity, setFooterAddressCity] = useState('CEP: 67400-112 — Barcarena, Pará');
