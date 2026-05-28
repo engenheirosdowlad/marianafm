@@ -48,6 +48,7 @@ export default function AdminSettings() {
   
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [activeTab, setActiveTab] = useState('transmission');
 
   useEffect(() => {
     if (settings.audioStreamUrl) setAudioStream(settings.audioStreamUrl);
@@ -179,86 +180,113 @@ export default function AdminSettings() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Stream Settings */}
-        <div id="tour-settings-streams" className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
-          <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
-            <Radio className="text-blue-500" size={18} /> Transmissão
-          </h2>
+      {/* Tabs navigation */}
+      <div className="flex flex-wrap gap-2 border-b border-white/5 pb-4">
+        {[
+          { id: 'transmission', label: 'Transmissão', icon: Radio },
+          { id: 'header', label: 'Cabeçalho', icon: Globe },
+          { id: 'layout', label: 'Layout', icon: Info },
+          { id: 'video', label: 'Vídeo', icon: Video },
+          { id: 'footer', label: 'Rodapé', icon: Phone },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex items-center gap-2 px-5 py-3 rounded-xl font-bold transition-all text-sm ${
+              activeTab === tab.id
+                ? 'bg-blue-600/10 text-blue-500 border border-blue-600/20'
+                : 'text-slate-400 hover:bg-slate-800/40 hover:text-white border border-transparent'
+            }`}
+          >
+            <tab.icon size={16} />
+            {tab.label}
+          </button>
+        ))}
+      </div>
 
-          <div className="space-y-1">
-            <div className="flex justify-between items-center">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                <Globe size={14} className="text-blue-400" /> Nome da Rádio / Site
-              </label>
-              <button 
-                type="button" 
-                onClick={() => setSiteName('CIDADE FM 87,9 MHZ')}
-                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
-                title="Restaurar valor padrão"
-              >
-                <RotateCcw size={10} /> Padrão
-              </button>
-            </div>
-            <input
-              type="text"
-              value={siteName}
-              onChange={(e) => setSiteName(e.target.value)}
-              className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
-              placeholder="Ex: CIDADE FM 87,9 MHZ"
-            />
-          </div>
+      <div className="max-w-3xl mx-auto w-full space-y-6">
+        {activeTab === 'transmission' && (
+          <div id="tour-settings-streams" className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
+            <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
+              <Radio className="text-blue-500" size={18} /> Transmissão
+            </h2>
 
-          <div className="space-y-1">
-            <div className="flex justify-between items-center">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                <Radio size={14} className="text-green-400" /> Link do Stream de Áudio
-              </label>
-              <button 
-                type="button" 
-                onClick={() => setAudioStream('https://link.radio.br:18630/stream')}
-                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
-                title="Restaurar valor padrão"
-              >
-                <RotateCcw size={10} /> Padrão
-              </button>
+            <div className="space-y-1">
+              <div className="flex justify-between items-center">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                  <Globe size={14} className="text-blue-400" /> Nome da Rádio / Site
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setSiteName('CIDADE FM 87,9 MHZ')}
+                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                  title="Restaurar valor padrão"
+                >
+                  <RotateCcw size={10} /> Padrão
+                </button>
+              </div>
+              <input
+                type="text"
+                value={siteName}
+                onChange={(e) => setSiteName(e.target.value)}
+                className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                placeholder="Ex: CIDADE FM 87,9 MHZ"
+              />
             </div>
-            <input
-              type="text"
-              value={audioStream}
-              onChange={(e) => setAudioStream(e.target.value)}
-              className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
-            />
-          </div>
 
-          <div className="space-y-1">
-            <div className="flex justify-between items-center">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                <Video size={14} className="text-red-400" /> Link do Stream de Vídeo
-              </label>
-              <button 
-                type="button" 
-                onClick={() => setVideoStream('https://link.radio.br:18630/video')}
-                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
-                title="Restaurar valor padrão"
-              >
-                <RotateCcw size={10} /> Padrão
-              </button>
+            <div className="space-y-1">
+              <div className="flex justify-between items-center">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                  <Radio size={14} className="text-green-400" /> Link do Stream de Áudio
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setAudioStream('https://link.radio.br:18630/stream')}
+                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                  title="Restaurar valor padrão"
+                >
+                  <RotateCcw size={10} /> Padrão
+                </button>
+              </div>
+              <input
+                type="text"
+                value={audioStream}
+                onChange={(e) => setAudioStream(e.target.value)}
+                className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
+              />
             </div>
-            <input
-              type="text"
-              value={videoStream}
-              onChange={(e) => setVideoStream(e.target.value)}
-              className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
-            />
+
+            <div className="space-y-1">
+              <div className="flex justify-between items-center">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                  <Video size={14} className="text-red-400" /> Link do Stream de Vídeo
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setVideoStream('https://link.radio.br:18630/video')}
+                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                  title="Restaurar valor padrão"
+                >
+                  <RotateCcw size={10} /> Padrão
+                </button>
+              </div>
+              <input
+                type="text"
+                value={videoStream}
+                onChange={(e) => setVideoStream(e.target.value)}
+                className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Header Texts Settings */}
-        <div className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
-          <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
-            <Globe className="text-blue-500" size={18} /> Textos do Cabeçalho Animado
-          </h2>
+        {activeTab === 'header' && (
+          <div className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
+            <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
+              <Globe className="text-blue-500" size={18} /> Textos do Cabeçalho Animado
+            </h2>
 
            <div className="space-y-1">
             <div className="flex justify-between items-center">
@@ -482,12 +510,14 @@ export default function AdminSettings() {
             </div>
           </div>
         </div>
+      )}
 
         {/* Footer/Rodape Settings */}
-        <div id="tour-settings-social" className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
-          <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
-            <Globe className="text-blue-500" size={18} /> Rodapé
-          </h2>
+        {activeTab === 'footer' && (
+          <div id="tour-settings-social" className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
+            <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
+              <Globe className="text-blue-500" size={18} /> Rodapé
+            </h2>
 
           <div className="space-y-1">
             <div className="flex justify-between items-center">
@@ -626,12 +656,14 @@ export default function AdminSettings() {
             />
           </div>
         </div>
+      )}
 
         {/* Layout Customization */}
-        <div className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
-          <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
-            <Globe className="text-blue-500" size={18} /> Estilos do Layout
-          </h2>
+        {activeTab === 'layout' && (
+          <div className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
+            <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
+              <Globe className="text-blue-500" size={18} /> Estilos do Layout
+            </h2>
 
           <div className="space-y-1">
             <div className="flex justify-between items-center">
@@ -835,12 +867,14 @@ export default function AdminSettings() {
             </div>
           </div>
         </div>
+      )}
 
         {/* Player de Vídeo */}
-        <div className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6 lg:col-span-2">
-          <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
-            <Video className="text-blue-500" size={18} /> Player de Vídeo (Overlay de Play)
-          </h2>
+        {activeTab === 'video' && (
+          <div className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6 lg:col-span-2">
+            <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
+              <Video className="text-blue-500" size={18} /> Player de Vídeo (Overlay de Play)
+            </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1">
@@ -959,8 +993,7 @@ export default function AdminSettings() {
             </div>
           </div>
         </div>
-
-
+      )}
       </div>
 
 
