@@ -908,7 +908,7 @@ export default function AdminSettings() {
                 <div className="space-y-1">
                   <div className="flex justify-between items-center">
                     <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
-                      Título do Áudio (Now Playing)
+                      Título do Áudio
                     </label>
                     <button 
                       type="button" 
