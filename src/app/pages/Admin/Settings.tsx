@@ -53,7 +53,22 @@ export default function AdminSettings() {
   const [audioTitleFont, setAudioTitleFont] = useState('sans');
   const [audioSubtitleSize, setAudioSubtitleSize] = useState('14');
   const [audioSubtitleColor, setAudioSubtitleColor] = useState('#cbd5e1');
-  const [audioSubtitleFont, setAudioSubtitleFont] = useState('sans');
+  const [footerAddressStreet, setFooterAddressStreet] = useState('Avenida Cronge da Silveira, nº 805');
+  const [footerAddressDetails, setFooterAddressDetails] = useState('Altos, Sala 02 — Centro');
+  const [footerAddressCity, setFooterAddressCity] = useState('CEP: 67400-112 — Barcarena, Pará');
+  const [footerMapsQuery, setFooterMapsQuery] = useState('Avenida Cronge da Silveira, 805 - Centro, Barcarena - PA, 67400-112');
+  const [footerStreetViewUrl, setFooterStreetViewUrl] = useState('https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=-1.5058,-48.6258');
+  const [footerCopyrightText, setFooterCopyrightText] = useState('Cidade FM PA. Todos os direitos reservados.');
+  const [footerHeaderColor, setFooterHeaderColor] = useState('#f59e0b');
+  const [footerHeaderSize, setFooterHeaderSize] = useState('11');
+  const [footerContentColor, setFooterContentColor] = useState('#cbd5e1');
+  const [footerContentSize, setFooterContentSize] = useState('14');
+  const [footerIconSize, setFooterIconSize] = useState('18');
+  const [footerIconColor, setFooterIconColor] = useState('#94a3b8');
+  const [footerIconWhatsapp, setFooterIconWhatsapp] = useState('');
+  const [footerIconInstagram, setFooterIconInstagram] = useState('');
+  const [footerIconFacebook, setFooterIconFacebook] = useState('');
+  const [footerIconYoutube, setFooterIconYoutube] = useState('');
 
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -108,6 +123,23 @@ export default function AdminSettings() {
     if (settings.audioSubtitleSize) setAudioSubtitleSize(settings.audioSubtitleSize);
     if (settings.audioSubtitleColor) setAudioSubtitleColor(settings.audioSubtitleColor);
     if (settings.audioSubtitleFont) setAudioSubtitleFont(settings.audioSubtitleFont);
+
+    if (settings.footerAddressStreet) setFooterAddressStreet(settings.footerAddressStreet);
+    if (settings.footerAddressDetails) setFooterAddressDetails(settings.footerAddressDetails);
+    if (settings.footerAddressCity) setFooterAddressCity(settings.footerAddressCity);
+    if (settings.footerMapsQuery) setFooterMapsQuery(settings.footerMapsQuery);
+    if (settings.footerStreetViewUrl) setFooterStreetViewUrl(settings.footerStreetViewUrl);
+    if (settings.footerCopyrightText) setFooterCopyrightText(settings.footerCopyrightText);
+    if (settings.footerHeaderColor) setFooterHeaderColor(settings.footerHeaderColor);
+    if (settings.footerHeaderSize) setFooterHeaderSize(settings.footerHeaderSize);
+    if (settings.footerContentColor) setFooterContentColor(settings.footerContentColor);
+    if (settings.footerContentSize) setFooterContentSize(settings.footerContentSize);
+    if (settings.footerIconSize) setFooterIconSize(settings.footerIconSize);
+    if (settings.footerIconColor) setFooterIconColor(settings.footerIconColor);
+    if (settings.footerIconWhatsapp) setFooterIconWhatsapp(settings.footerIconWhatsapp);
+    if (settings.footerIconInstagram) setFooterIconInstagram(settings.footerIconInstagram);
+    if (settings.footerIconFacebook) setFooterIconFacebook(settings.footerIconFacebook);
+    if (settings.footerIconYoutube) setFooterIconYoutube(settings.footerIconYoutube);
 
     if (location.state?.startTour) {
       navigate('.', { replace: true, state: {} });
@@ -167,7 +199,23 @@ export default function AdminSettings() {
         audioTitleFont,
         audioSubtitleSize,
         audioSubtitleColor,
-        audioSubtitleFont
+        audioSubtitleFont,
+        footerAddressStreet,
+        footerAddressDetails,
+        footerAddressCity,
+        footerMapsQuery,
+        footerStreetViewUrl,
+        footerCopyrightText,
+        footerHeaderColor,
+        footerHeaderSize,
+        footerContentColor,
+        footerContentSize,
+        footerIconSize,
+        footerIconColor,
+        footerIconWhatsapp,
+        footerIconInstagram,
+        footerIconFacebook,
+        footerIconYoutube
       });
       
       setSaved(true);
@@ -540,149 +588,645 @@ export default function AdminSettings() {
 
         {/* Footer/Rodape Settings */}
         {activeTab === 'footer' && (
-          <div id="tour-settings-social" className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
-            <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
-              <Globe className="text-blue-500" size={18} /> Rodapé
-            </h2>
+          <div className="space-y-6 lg:col-span-2">
+            {/* 1. Redes Sociais & Ícones Personalizados */}
+            <div className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
+              <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
+                <Globe className="text-blue-500" size={18} /> 1. Redes Sociais & Ícones Personalizados
+              </h2>
 
-          <div className="space-y-1">
-            <div className="flex justify-between items-center">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                <Phone size={14} className="text-slate-400" /> Número de Contato / WhatsApp
-              </label>
-              <button 
-                type="button" 
-                onClick={() => setWhatsappNumber('(91) 98273-6292')}
-                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
-                title="Restaurar valor padrão"
-              >
-                <RotateCcw size={10} /> Padrão
-              </button>
-            </div>
-            <input
-              type="text"
-              value={whatsappNumber}
-              onChange={(e) => setWhatsappNumber(e.target.value)}
-              className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
-              placeholder="Ex: (81) 99999-9999"
-            />
-          </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* WhatsApp Link & Icon */}
+                <div className="space-y-3">
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center">
+                      <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                        <MessageCircle size={14} className="text-green-500" /> Link do WhatsApp
+                      </label>
+                      <button 
+                        type="button" 
+                        onClick={() => setWhatsappUrl('https://wa.me/5591982736292')}
+                        className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                        title="Restaurar valor padrão"
+                      >
+                        <RotateCcw size={10} /> Padrão
+                      </button>
+                    </div>
+                    <input
+                      type="url"
+                      value={whatsappUrl}
+                      onChange={(e) => setWhatsappUrl(e.target.value)}
+                      className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
+                      placeholder="https://wa.me/..."
+                    />
+                  </div>
 
-          <div className="space-y-1">
-            <div className="flex justify-between items-center">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                <Info size={14} className="text-slate-400" /> E-mail de Contato (Rodapé)
-              </label>
-              <button 
-                type="button" 
-                onClick={() => setContactEmail('contato@cidadefmpa.com.br')}
-                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
-                title="Restaurar valor padrão"
-              >
-                <RotateCcw size={10} /> Padrão
-              </button>
-            </div>
-            <input
-              type="email"
-              value={contactEmail}
-              onChange={(e) => setContactEmail(e.target.value)}
-              className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
-              placeholder="Ex: contato@cidadefmpa.com.br"
-            />
-          </div>
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center">
+                      <label className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+                        Ícone WhatsApp (Upload ou URL)
+                      </label>
+                      <button 
+                        type="button" 
+                        onClick={() => setFooterIconWhatsapp('')}
+                        className="text-[9px] text-slate-500 hover:text-blue-400 flex items-center gap-0.5 transition-colors"
+                      >
+                        <RotateCcw size={8} /> Padrão
+                      </button>
+                    </div>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={footerIconWhatsapp}
+                        onChange={(e) => setFooterIconWhatsapp(e.target.value)}
+                        className="w-full bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-white text-xs focus:border-blue-500 outline-none transition-colors font-mono"
+                        placeholder="Deixe em branco para ícone padrão"
+                      />
+                      <label className="flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white px-3 rounded-lg cursor-pointer transition-colors shrink-0" title="Upload de Ícone">
+                        <Upload size={14} />
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          className="hidden" 
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                setFooterIconWhatsapp(reader.result as string);
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }} 
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
 
-          <div className="space-y-1">
-            <div className="flex justify-between items-center">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                <MessageCircle size={14} className="text-green-500" /> Link do WhatsApp
-              </label>
-              <button 
-                type="button" 
-                onClick={() => setWhatsappUrl('https://wa.me/5591982736292')}
-                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
-                title="Restaurar valor padrão"
-              >
-                <RotateCcw size={10} /> Padrão
-              </button>
-            </div>
-            <input
-              type="url"
-              value={whatsappUrl}
-              onChange={(e) => setWhatsappUrl(e.target.value)}
-              className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
-              placeholder="https://wa.me/..."
-            />
-          </div>
+                {/* Instagram Link & Icon */}
+                <div className="space-y-3">
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center">
+                      <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                        <Instagram size={14} className="text-pink-500" /> Link do Instagram
+                      </label>
+                      <button 
+                        type="button" 
+                        onClick={() => setInstagramUrl('https://www.instagram.com/marianafmdigital')}
+                        className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                        title="Restaurar valor padrão"
+                      >
+                        <RotateCcw size={10} /> Padrão
+                      </button>
+                    </div>
+                    <input
+                      type="url"
+                      value={instagramUrl}
+                      onChange={(e) => setInstagramUrl(e.target.value)}
+                      className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
+                      placeholder="https://instagram.com/..."
+                    />
+                  </div>
 
-          <div className="space-y-1">
-            <div className="flex justify-between items-center">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                <Instagram size={14} className="text-pink-500" /> Link do Instagram
-              </label>
-              <button 
-                type="button" 
-                onClick={() => setInstagramUrl('https://www.instagram.com/marianafmdigital')}
-                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
-                title="Restaurar valor padrão"
-              >
-                <RotateCcw size={10} /> Padrão
-              </button>
-            </div>
-            <input
-              type="url"
-              value={instagramUrl}
-              onChange={(e) => setInstagramUrl(e.target.value)}
-              className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
-              placeholder="https://instagram.com/..."
-            />
-          </div>
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center">
+                      <label className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+                        Ícone Instagram (Upload ou URL)
+                      </label>
+                      <button 
+                        type="button" 
+                        onClick={() => setFooterIconInstagram('')}
+                        className="text-[9px] text-slate-500 hover:text-blue-400 flex items-center gap-0.5 transition-colors"
+                      >
+                        <RotateCcw size={8} /> Padrão
+                      </button>
+                    </div>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={footerIconInstagram}
+                        onChange={(e) => setFooterIconInstagram(e.target.value)}
+                        className="w-full bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-white text-xs focus:border-blue-500 outline-none transition-colors font-mono"
+                        placeholder="Deixe em branco para ícone padrão"
+                      />
+                      <label className="flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white px-3 rounded-lg cursor-pointer transition-colors shrink-0" title="Upload de Ícone">
+                        <Upload size={14} />
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          className="hidden" 
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                setFooterIconInstagram(reader.result as string);
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }} 
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
 
-          <div className="space-y-1">
-            <div className="flex justify-between items-center">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                <Facebook size={14} className="text-blue-500" /> Link do Facebook
-              </label>
-              <button 
-                type="button" 
-                onClick={() => setFacebookUrl('https://www.facebook.com/jpscardoso88')}
-                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
-                title="Restaurar valor padrão"
-              >
-                <RotateCcw size={10} /> Padrão
-              </button>
-            </div>
-            <input
-              type="url"
-              value={facebookUrl}
-              onChange={(e) => setFacebookUrl(e.target.value)}
-              className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
-              placeholder="https://facebook.com/..."
-            />
-          </div>
+                {/* Facebook Link & Icon */}
+                <div className="space-y-3">
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center">
+                      <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                        <Facebook size={14} className="text-blue-500" /> Link do Facebook
+                      </label>
+                      <button 
+                        type="button" 
+                        onClick={() => setFacebookUrl('https://www.facebook.com/jpscardoso88')}
+                        className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                        title="Restaurar valor padrão"
+                      >
+                        <RotateCcw size={10} /> Padrão
+                      </button>
+                    </div>
+                    <input
+                      type="url"
+                      value={facebookUrl}
+                      onChange={(e) => setFacebookUrl(e.target.value)}
+                      className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
+                      placeholder="https://facebook.com/..."
+                    />
+                  </div>
 
-          <div className="space-y-1">
-            <div className="flex justify-between items-center">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                <Globe size={14} className="text-red-500" /> Link do YouTube
-              </label>
-              <button 
-                type="button" 
-                onClick={() => setYoutubeUrl('https://www.youtube.com/@LaMarianaFMProgramas')}
-                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
-                title="Restaurar valor padrão"
-              >
-                <RotateCcw size={10} /> Padrão
-              </button>
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center">
+                      <label className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+                        Ícone Facebook (Upload ou URL)
+                      </label>
+                      <button 
+                        type="button" 
+                        onClick={() => setFooterIconFacebook('')}
+                        className="text-[9px] text-slate-500 hover:text-blue-400 flex items-center gap-0.5 transition-colors"
+                      >
+                        <RotateCcw size={8} /> Padrão
+                      </button>
+                    </div>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={footerIconFacebook}
+                        onChange={(e) => setFooterIconFacebook(e.target.value)}
+                        className="w-full bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-white text-xs focus:border-blue-500 outline-none transition-colors font-mono"
+                        placeholder="Deixe em branco para ícone padrão"
+                      />
+                      <label className="flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white px-3 rounded-lg cursor-pointer transition-colors shrink-0" title="Upload de Ícone">
+                        <Upload size={14} />
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          className="hidden" 
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                setFooterIconFacebook(reader.result as string);
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }} 
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* YouTube Link & Icon */}
+                <div className="space-y-3">
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center">
+                      <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                        <Globe size={14} className="text-red-500" /> Link do YouTube
+                      </label>
+                      <button 
+                        type="button" 
+                        onClick={() => setYoutubeUrl('https://www.youtube.com/@LaMarianaFMProgramas')}
+                        className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                        title="Restaurar valor padrão"
+                      >
+                        <RotateCcw size={10} /> Padrão
+                      </button>
+                    </div>
+                    <input
+                      type="text"
+                      value={youtubeUrl}
+                      onChange={(e) => setYoutubeUrl(e.target.value)}
+                      className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center">
+                      <label className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+                        Ícone YouTube (Upload ou URL)
+                      </label>
+                      <button 
+                        type="button" 
+                        onClick={() => setFooterIconYoutube('')}
+                        className="text-[9px] text-slate-500 hover:text-blue-400 flex items-center gap-0.5 transition-colors"
+                      >
+                        <RotateCcw size={8} /> Padrão
+                      </button>
+                    </div>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={footerIconYoutube}
+                        onChange={(e) => setFooterIconYoutube(e.target.value)}
+                        className="w-full bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-white text-xs focus:border-blue-500 outline-none transition-colors font-mono"
+                        placeholder="Deixe em branco para ícone padrão"
+                      />
+                      <label className="flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white px-3 rounded-lg cursor-pointer transition-colors shrink-0" title="Upload de Ícone">
+                        <Upload size={14} />
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          className="hidden" 
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                setFooterIconYoutube(reader.result as string);
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }} 
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <input
-              type="text"
-              value={youtubeUrl}
-              onChange={(e) => setYoutubeUrl(e.target.value)}
-              className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
-            />
+
+            {/* 2. Informações de Contato & Endereço */}
+            <div className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
+              <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
+                <Phone className="text-blue-500" size={18} /> 2. Informações de Contato & Endereço
+              </h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                      Número do WhatsApp (Exibição)
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setWhatsappNumber('(91) 98273-6292')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={whatsappNumber}
+                    onChange={(e) => setWhatsappNumber(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                      E-mail de Contato
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setContactEmail('contato@cidadefmpa.com.br')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="email"
+                    value={contactEmail}
+                    onChange={(e) => setContactEmail(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Endereço (Rua e Número)
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setFooterAddressStreet('Avenida Cronge da Silveira, nº 805')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={footerAddressStreet}
+                    onChange={(e) => setFooterAddressStreet(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Endereço (Altos / Sala / Bairro)
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setFooterAddressDetails('Altos, Sala 02 — Centro')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={footerAddressDetails}
+                    onChange={(e) => setFooterAddressDetails(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Endereço (CEP / Cidade / Estado)
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setFooterAddressCity('CEP: 67400-112 — Barcarena, Pará')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={footerAddressCity}
+                    onChange={(e) => setFooterAddressCity(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Texto do Copyright (Rodapé)
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setFooterCopyrightText('Cidade FM PA. Todos os direitos reservados.')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={footerCopyrightText}
+                    onChange={(e) => setFooterCopyrightText(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 3. Links de Mapas */}
+            <div className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
+              <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
+                <MapPin className="text-blue-500" size={18} /> 3. Integração com Mapas
+              </h2>
+
+              <div className="grid grid-cols-1 gap-6">
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Termo de Busca do Google Maps (Ver no Mapa)
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setFooterMapsQuery('Avenida Cronge da Silveira, 805 - Centro, Barcarena - PA, 67400-112')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={footerMapsQuery}
+                    onChange={(e) => setFooterMapsQuery(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Link do Street View
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setFooterStreetViewUrl('https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=-1.5058,-48.6258')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="url"
+                    value={footerStreetViewUrl}
+                    onChange={(e) => setFooterStreetViewUrl(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 4. Estilos Visuais do Rodapé */}
+            <div className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
+              <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
+                <Globe className="text-blue-500" size={18} /> 4. Estilos Visuais do Rodapé
+              </h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Header Color */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Cor dos Títulos de Seção
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setFooterHeaderColor('#f59e0b')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={footerHeaderColor}
+                      onChange={(e) => setFooterHeaderColor(e.target.value)}
+                      className="w-12 h-10 bg-slate-900 border border-white/5 rounded-lg cursor-pointer p-0 border-0"
+                    />
+                    <input
+                      type="text"
+                      value={footerHeaderColor}
+                      onChange={(e) => setFooterHeaderColor(e.target.value)}
+                      className="w-full bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-white text-sm outline-none font-mono"
+                    />
+                  </div>
+                </div>
+
+                {/* Content Color */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Cor Geral dos Textos
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setFooterContentColor('#cbd5e1')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={footerContentColor}
+                      onChange={(e) => setFooterContentColor(e.target.value)}
+                      className="w-12 h-10 bg-slate-900 border border-white/5 rounded-lg cursor-pointer p-0 border-0"
+                    />
+                    <input
+                      type="text"
+                      value={footerContentColor}
+                      onChange={(e) => setFooterContentColor(e.target.value)}
+                      className="w-full bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-white text-sm outline-none font-mono"
+                    />
+                  </div>
+                </div>
+
+                {/* Icon Hover Color */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Cor dos Ícones de Redes
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setFooterIconColor('#94a3b8')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={footerIconColor}
+                      onChange={(e) => setFooterIconColor(e.target.value)}
+                      className="w-12 h-10 bg-slate-900 border border-white/5 rounded-lg cursor-pointer p-0 border-0"
+                    />
+                    <input
+                      type="text"
+                      value={footerIconColor}
+                      onChange={(e) => setFooterIconColor(e.target.value)}
+                      className="w-full bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-white text-sm outline-none font-mono"
+                    />
+                  </div>
+                </div>
+
+                {/* Header Size */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                      <span>Tamanho da Fonte dos Títulos ({footerHeaderSize}px)</span>
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setFooterHeaderSize('11')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="range"
+                    min="9"
+                    max="18"
+                    value={footerHeaderSize}
+                    onChange={(e) => setFooterHeaderSize(e.target.value)}
+                    className="w-full h-8 accent-blue-500"
+                  />
+                </div>
+
+                {/* Content Size */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                      <span>Tamanho Geral das Fontes ({footerContentSize}px)</span>
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setFooterContentSize('14')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="range"
+                    min="10"
+                    max="22"
+                    value={footerContentSize}
+                    onChange={(e) => setFooterContentSize(e.target.value)}
+                    className="w-full h-8 accent-blue-500"
+                  />
+                </div>
+
+                {/* Icon Size */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                      <span>Tamanho dos Ícones ({footerIconSize}px)</span>
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setFooterIconSize('18')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="range"
+                    min="12"
+                    max="32"
+                    value={footerIconSize}
+                    onChange={(e) => setFooterIconSize(e.target.value)}
+                    className="w-full h-8 accent-blue-500"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
         {/* Layout Customization */}
         {activeTab === 'layout' && (
