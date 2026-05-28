@@ -24,6 +24,7 @@ export default function AdminSettings() {
   const [instagramUrl, setInstagramUrl] = useState('');
   const [facebookUrl, setFacebookUrl] = useState('');
   const [youtubeUrl, setYoutubeUrl] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
 
   
   const [dividerThickness, setDividerThickness] = useState('1');
@@ -67,6 +68,7 @@ export default function AdminSettings() {
     if (settings.instagramUrl) setInstagramUrl(settings.instagramUrl);
     if (settings.facebookUrl) setFacebookUrl(settings.facebookUrl);
     if (settings.youtubeUrl) setYoutubeUrl(settings.youtubeUrl);
+    if (settings.contactEmail) setContactEmail(settings.contactEmail);
 
     
     if (settings.dividerThickness) setDividerThickness(settings.dividerThickness);
@@ -120,6 +122,7 @@ export default function AdminSettings() {
         instagramUrl: instagramUrl,
         facebookUrl: facebookUrl,
         youtubeUrl: youtubeUrl,
+        contactEmail: contactEmail,
         dividerThickness: dividerThickness,
         dividerGlow: dividerGlow,
         visualizerColor: visualizerColor,
