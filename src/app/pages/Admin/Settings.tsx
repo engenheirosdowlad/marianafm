@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
-import { Save, Radio, Video, Globe, MessageCircle, Instagram, Facebook, Phone, Upload, Info } from 'lucide-react';
+import { Save, Radio, Video, Globe, MessageCircle, Instagram, Facebook, Phone, Upload, Info, RotateCcw } from 'lucide-react';
 import { useSettings } from '../../context/SettingsContext';
 
 export default function AdminSettings() {
@@ -187,9 +187,19 @@ export default function AdminSettings() {
           </h2>
 
           <div className="space-y-1">
-            <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-              <Globe size={14} className="text-blue-400" /> Nome da Rádio / Site
-            </label>
+            <div className="flex justify-between items-center">
+              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                <Globe size={14} className="text-blue-400" /> Nome da Rádio / Site
+              </label>
+              <button 
+                type="button" 
+                onClick={() => setSiteName('CIDADE FM 87,9 MHZ')}
+                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                title="Restaurar valor padrão"
+              >
+                <RotateCcw size={10} /> Padrão
+              </button>
+            </div>
             <input
               type="text"
               value={siteName}
@@ -200,9 +210,19 @@ export default function AdminSettings() {
           </div>
 
           <div className="space-y-1">
-            <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-              <Radio size={14} className="text-green-400" /> Link do Stream de Áudio
-            </label>
+            <div className="flex justify-between items-center">
+              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                <Radio size={14} className="text-green-400" /> Link do Stream de Áudio
+              </label>
+              <button 
+                type="button" 
+                onClick={() => setAudioStream('https://link.radio.br:18630/stream')}
+                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                title="Restaurar valor padrão"
+              >
+                <RotateCcw size={10} /> Padrão
+              </button>
+            </div>
             <input
               type="text"
               value={audioStream}
@@ -212,9 +232,19 @@ export default function AdminSettings() {
           </div>
 
           <div className="space-y-1">
-            <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-              <Video size={14} className="text-red-400" /> Link do Stream de Vídeo
-            </label>
+            <div className="flex justify-between items-center">
+              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                <Video size={14} className="text-red-400" /> Link do Stream de Vídeo
+              </label>
+              <button 
+                type="button" 
+                onClick={() => setVideoStream('https://link.radio.br:18630/video')}
+                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                title="Restaurar valor padrão"
+              >
+                <RotateCcw size={10} /> Padrão
+              </button>
+            </div>
             <input
               type="text"
               value={videoStream}
@@ -231,10 +261,20 @@ export default function AdminSettings() {
           </h2>
 
            <div className="space-y-1">
-            <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex flex-col gap-1">
-              <span>Frases Rotativas (Uma por Linha)</span>
-              <span className="text-slate-500 text-[10px] lowercase normal-case">Use a barra vertical | para adicionar um subtítulo específico à frase.</span>
-            </label>
+            <div className="flex justify-between items-center">
+              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex flex-col gap-0.5">
+                <span>Frases Rotativas (Uma por Linha)</span>
+                <span className="text-slate-500 text-[10px] lowercase normal-case">Use a barra vertical | para adicionar um subtítulo específico à frase.</span>
+              </label>
+              <button 
+                type="button" 
+                onClick={() => setHeaderPhrases('Seja bem-vindo a Cidade FM\nOnde nasce o sucesso!')}
+                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                title="Restaurar valor padrão"
+              >
+                <RotateCcw size={10} /> Padrão
+              </button>
+            </div>
             <textarea
               value={headerPhrases}
               onChange={(e) => setHeaderPhrases(e.target.value)}
@@ -259,9 +299,19 @@ export default function AdminSettings() {
 
           {headerSubtitleEnabled && (
             <div className="space-y-1 animate-fadeIn">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                Texto do Subtítulo Fixo
-              </label>
+              <div className="flex justify-between items-center">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                  Texto do Subtítulo Fixo
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setHeaderSubtitle('onde nasce o sucesso')}
+                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                  title="Restaurar valor padrão"
+                >
+                  <RotateCcw size={10} /> Padrão
+                </button>
+              </div>
               <input
                 type="text"
                 value={headerSubtitle}
@@ -274,10 +324,20 @@ export default function AdminSettings() {
 
           <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
             <div className="space-y-1 col-span-2 sm:col-span-1">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between">
-                <span>Tamanho da Fonte</span>
-                <span className="text-blue-400">{headerTextSize}px</span>
-              </label>
+              <div className="flex justify-between items-center">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                  <span>Tamanho da Fonte</span>
+                  <span className="text-blue-400">{headerTextSize}px</span>
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setHeaderTextSize('24')}
+                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                  title="Restaurar valor padrão"
+                >
+                  <RotateCcw size={10} /> Padrão
+                </button>
+              </div>
               <input
                 type="range"
                 min="12"
@@ -289,9 +349,19 @@ export default function AdminSettings() {
             </div>
 
             <div className="space-y-1 col-span-2 sm:col-span-1">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
-                Cor do Texto
-              </label>
+              <div className="flex justify-between items-center">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                  Cor do Texto
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setHeaderTextColor('#ffffff')}
+                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                  title="Restaurar valor padrão"
+                >
+                  <RotateCcw size={10} /> Padrão
+                </button>
+              </div>
               <div className="flex gap-2">
                 <input
                   type="color"
@@ -310,9 +380,19 @@ export default function AdminSettings() {
             </div>
 
             <div className="space-y-1 col-span-2 sm:col-span-1">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
-                Tipo da Fonte
-              </label>
+              <div className="flex justify-between items-center">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                  Tipo da Fonte
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setHeaderTextFont('sans')}
+                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                  title="Restaurar valor padrão"
+                >
+                  <RotateCcw size={10} /> Padrão
+                </button>
+              </div>
               <select
                 value={headerTextFont}
                 onChange={(e) => setHeaderTextFont(e.target.value)}
@@ -325,9 +405,19 @@ export default function AdminSettings() {
             </div>
 
             <div className="space-y-1 col-span-2 sm:col-span-1">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
-                Efeito Visual
-              </label>
+              <div className="flex justify-between items-center">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                  Efeito Visual
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setHeaderTextEffect('fade')}
+                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                  title="Restaurar valor padrão"
+                >
+                  <RotateCcw size={10} /> Padrão
+                </button>
+              </div>
               <select
                 value={headerTextEffect}
                 onChange={(e) => setHeaderTextEffect(e.target.value)}
@@ -340,10 +430,20 @@ export default function AdminSettings() {
             </div>
 
             <div className="space-y-1 col-span-2 sm:col-span-1">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between">
-                <span>Tempo de Exibição</span>
-                <span className="text-blue-400">{(Number(headerTextDuration) / 1000).toFixed(1)}s</span>
-              </label>
+              <div className="flex justify-between items-center">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                  <span>Tempo de Exibição</span>
+                  <span className="text-blue-400">{(Number(headerTextDuration) / 1000).toFixed(1)}s</span>
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setHeaderTextDuration('5000')}
+                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                  title="Restaurar valor padrão"
+                >
+                  <RotateCcw size={10} /> Padrão
+                </button>
+              </div>
               <input
                 type="range"
                 min="1500"
@@ -356,10 +456,20 @@ export default function AdminSettings() {
             </div>
 
             <div className="space-y-1 col-span-2 sm:col-span-1">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between">
-                <span>Velocidade de Transição</span>
-                <span className="text-blue-400">{headerTransitionSpeed}ms</span>
-              </label>
+              <div className="flex justify-between items-center">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                  <span>Velocidade de Transição</span>
+                  <span className="text-blue-400">{headerTransitionSpeed}ms</span>
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setHeaderTransitionSpeed('700')}
+                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                  title="Restaurar valor padrão"
+                >
+                  <RotateCcw size={10} /> Padrão
+                </button>
+              </div>
               <input
                 type="range"
                 min="100"
@@ -380,9 +490,19 @@ export default function AdminSettings() {
           </h2>
 
           <div className="space-y-1">
-            <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-              <Phone size={14} className="text-slate-400" /> Número de Contato / WhatsApp
-            </label>
+            <div className="flex justify-between items-center">
+              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                <Phone size={14} className="text-slate-400" /> Número de Contato / WhatsApp
+              </label>
+              <button 
+                type="button" 
+                onClick={() => setWhatsappNumber('(91) 98273-6292')}
+                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                title="Restaurar valor padrão"
+              >
+                <RotateCcw size={10} /> Padrão
+              </button>
+            </div>
             <input
               type="text"
               value={whatsappNumber}
@@ -393,9 +513,19 @@ export default function AdminSettings() {
           </div>
 
           <div className="space-y-1">
-            <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-              <Info size={14} className="text-slate-400" /> E-mail de Contato (Rodapé)
-            </label>
+            <div className="flex justify-between items-center">
+              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                <Info size={14} className="text-slate-400" /> E-mail de Contato (Rodapé)
+              </label>
+              <button 
+                type="button" 
+                onClick={() => setContactEmail('contato@cidadefmpa.com.br')}
+                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                title="Restaurar valor padrão"
+              >
+                <RotateCcw size={10} /> Padrão
+              </button>
+            </div>
             <input
               type="email"
               value={contactEmail}
@@ -406,9 +536,19 @@ export default function AdminSettings() {
           </div>
 
           <div className="space-y-1">
-            <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-              <MessageCircle size={14} className="text-green-500" /> Link do WhatsApp
-            </label>
+            <div className="flex justify-between items-center">
+              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                <MessageCircle size={14} className="text-green-500" /> Link do WhatsApp
+              </label>
+              <button 
+                type="button" 
+                onClick={() => setWhatsappUrl('https://wa.me/5591982736292')}
+                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                title="Restaurar valor padrão"
+              >
+                <RotateCcw size={10} /> Padrão
+              </button>
+            </div>
             <input
               type="url"
               value={whatsappUrl}
@@ -419,9 +559,19 @@ export default function AdminSettings() {
           </div>
 
           <div className="space-y-1">
-            <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-              <Instagram size={14} className="text-pink-500" /> Link do Instagram
-            </label>
+            <div className="flex justify-between items-center">
+              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                <Instagram size={14} className="text-pink-500" /> Link do Instagram
+              </label>
+              <button 
+                type="button" 
+                onClick={() => setInstagramUrl('https://www.instagram.com/marianafmdigital')}
+                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                title="Restaurar valor padrão"
+              >
+                <RotateCcw size={10} /> Padrão
+              </button>
+            </div>
             <input
               type="url"
               value={instagramUrl}
@@ -432,9 +582,19 @@ export default function AdminSettings() {
           </div>
 
           <div className="space-y-1">
-            <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-              <Facebook size={14} className="text-blue-500" /> Link do Facebook
-            </label>
+            <div className="flex justify-between items-center">
+              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                <Facebook size={14} className="text-blue-500" /> Link do Facebook
+              </label>
+              <button 
+                type="button" 
+                onClick={() => setFacebookUrl('https://www.facebook.com/jpscardoso88')}
+                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                title="Restaurar valor padrão"
+              >
+                <RotateCcw size={10} /> Padrão
+              </button>
+            </div>
             <input
               type="url"
               value={facebookUrl}
@@ -445,9 +605,19 @@ export default function AdminSettings() {
           </div>
 
           <div className="space-y-1">
-            <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-              <Globe size={14} className="text-red-500" /> Link do YouTube
-            </label>
+            <div className="flex justify-between items-center">
+              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                <Globe size={14} className="text-red-500" /> Link do YouTube
+              </label>
+              <button 
+                type="button" 
+                onClick={() => setYoutubeUrl('https://www.youtube.com/@LaMarianaFMProgramas')}
+                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                title="Restaurar valor padrão"
+              >
+                <RotateCcw size={10} /> Padrão
+              </button>
+            </div>
             <input
               type="text"
               value={youtubeUrl}
@@ -464,9 +634,19 @@ export default function AdminSettings() {
           </h2>
 
           <div className="space-y-1">
-            <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-              Logo do Site (URL ou Upload)
-            </label>
+            <div className="flex justify-between items-center">
+              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                Logo do Site (URL ou Upload)
+              </label>
+              <button 
+                type="button" 
+                onClick={() => setLogoUrl('')}
+                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                title="Restaurar valor padrão"
+              >
+                <RotateCcw size={10} /> Padrão
+              </button>
+            </div>
             <div className="flex gap-2">
               <input
                 type="text"
@@ -500,9 +680,19 @@ export default function AdminSettings() {
           </div>
 
           <div className="space-y-1">
-            <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-              Espessura das Barras Divisórias (px)
-            </label>
+            <div className="flex justify-between items-center">
+              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                Espessura das Barras Divisórias (px)
+              </label>
+              <button 
+                type="button" 
+                onClick={() => setDividerThickness('1')}
+                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                title="Restaurar valor padrão"
+              >
+                <RotateCcw size={10} /> Padrão
+              </button>
+            </div>
             <input
               type="number"
               min="1"
@@ -513,12 +703,21 @@ export default function AdminSettings() {
             />
           </div>
 
-
-
           <div className="space-y-1">
-            <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-              Intensidade do Brilho/Neon das Barras
-            </label>
+            <div className="flex justify-between items-center">
+              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                <span>Intensidade do Brilho/Neon das Barras</span>
+                <span className="text-slate-500 text-[10px]">{dividerGlow}px de propagação</span>
+              </label>
+              <button 
+                type="button" 
+                onClick={() => setDividerGlow('20')}
+                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                title="Restaurar valor padrão"
+              >
+                <RotateCcw size={10} /> Padrão
+              </button>
+            </div>
             <input
               type="range"
               min="0"
@@ -527,7 +726,6 @@ export default function AdminSettings() {
               onChange={(e) => setDividerGlow(e.target.value)}
               className="w-full accent-blue-500"
             />
-            <div className="text-right text-slate-500 text-xs mt-1">{dividerGlow}px de propagação</div>
           </div>
 
           {/* Visualizador de Áudio */}
@@ -538,10 +736,19 @@ export default function AdminSettings() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between">
-                  <span>Intensidade / Brilho</span>
-                  <span className="text-blue-400">{visualizerIntensity}%</span>
-                </label>
+                <div className="flex justify-between items-center">
+                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                    <span>Intensidade / Brilho ({visualizerIntensity}%)</span>
+                  </label>
+                  <button 
+                    type="button" 
+                    onClick={() => setVisualizerIntensity('50')}
+                    className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                    title="Restaurar valor padrão"
+                  >
+                    <RotateCcw size={10} /> Padrão
+                  </button>
+                </div>
                 <input
                   type="range"
                   min="0"
@@ -553,10 +760,19 @@ export default function AdminSettings() {
               </div>
 
               <div className="space-y-1 sm:col-span-2">
-                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between">
-                  <span>Espessura das Barras</span>
-                  <span className="text-blue-400">{visualizerThickness}px</span>
-                </label>
+                <div className="flex justify-between items-center">
+                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                    <span>Espessura das Barras ({visualizerThickness}px)</span>
+                  </label>
+                  <button 
+                    type="button" 
+                    onClick={() => setVisualizerThickness('5')}
+                    className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                    title="Restaurar valor padrão"
+                  >
+                    <RotateCcw size={10} /> Padrão
+                  </button>
+                </div>
                 <input
                   type="range"
                   min="1"
@@ -568,10 +784,19 @@ export default function AdminSettings() {
               </div>
 
               <div className="space-y-1 sm:col-span-2 pt-4 border-t border-white/5">
-                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between">
-                  <span>Tamanho do Botão "Assistir ao Vivo"</span>
-                  <span className="text-blue-400">{playImageSize}px</span>
-                </label>
+                <div className="flex justify-between items-center">
+                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                    <span>Tamanho do Botão "Assistir ao Vivo" ({playImageSize}px)</span>
+                  </label>
+                  <button 
+                    type="button" 
+                    onClick={() => setPlayImageSize('200')}
+                    className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                    title="Restaurar valor padrão"
+                  >
+                    <RotateCcw size={10} /> Padrão
+                  </button>
+                </div>
                 <input
                   type="range"
                   min="100"
@@ -584,10 +809,19 @@ export default function AdminSettings() {
               </div>
 
               <div className="space-y-1 sm:col-span-2 pt-4 border-t border-white/5">
-                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between">
-                  <span>Tamanho da Logo do Cabeçalho</span>
-                  <span className="text-blue-400">{logoSize}px</span>
-                </label>
+                <div className="flex justify-between items-center">
+                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                    <span>Tamanho da Logo do Cabeçalho ({logoSize}px)</span>
+                  </label>
+                  <button 
+                    type="button" 
+                    onClick={() => setLogoSize('60')}
+                    className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                    title="Restaurar valor padrão"
+                  >
+                    <RotateCcw size={10} /> Padrão
+                  </button>
+                </div>
                 <input
                   type="range"
                   min="30"
@@ -610,9 +844,19 @@ export default function AdminSettings() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                Ícone do Player (Favicon ou URL)
-              </label>
+              <div className="flex justify-between items-center">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                  Ícone do Player (Favicon ou URL)
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setVideoPlayIcon('/favicon.png')}
+                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                  title="Restaurar valor padrão"
+                >
+                  <RotateCcw size={10} /> Padrão
+                </button>
+              </div>
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -643,10 +887,19 @@ export default function AdminSettings() {
             </div>
 
             <div className="space-y-1">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between">
-                <span>Tamanho do Ícone</span>
-                <span className="text-blue-400">{videoPlayIconSize}px</span>
-              </label>
+              <div className="flex justify-between items-center">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                  <span>Tamanho do Ícone ({videoPlayIconSize}px)</span>
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setVideoPlayIconSize('100')}
+                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                  title="Restaurar valor padrão"
+                >
+                  <RotateCcw size={10} /> Padrão
+                </button>
+              </div>
               <input
                 type="range"
                 min="30"
@@ -659,9 +912,19 @@ export default function AdminSettings() {
             </div>
 
             <div className="space-y-1">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
-                Texto do Botão
-              </label>
+              <div className="flex justify-between items-center">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                  Texto do Botão
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setVideoPlayText('ASSISTA')}
+                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                  title="Restaurar valor padrão"
+                >
+                  <RotateCcw size={10} /> Padrão
+                </button>
+              </div>
               <input
                 type="text"
                 value={videoPlayText}
@@ -672,10 +935,19 @@ export default function AdminSettings() {
             </div>
 
             <div className="space-y-1">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between">
-                <span>Tamanho da Fonte do Texto</span>
-                <span className="text-blue-400">{videoPlayTextSize}px</span>
-              </label>
+              <div className="flex justify-between items-center">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                  <span>Tamanho da Fonte do Texto ({videoPlayTextSize}px)</span>
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setVideoPlayTextSize('16')}
+                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                  title="Restaurar valor padrão"
+                >
+                  <RotateCcw size={10} /> Padrão
+                </button>
+              </div>
               <input
                 type="range"
                 min="10"

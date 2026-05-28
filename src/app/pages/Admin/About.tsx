@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Save, Info, Upload, AlignLeft, AlignCenter, AlignRight, AlignJustify, Image as ImageIcon } from 'lucide-react';
+import { Save, Info, Upload, AlignLeft, AlignCenter, AlignRight, AlignJustify, Image as ImageIcon, RotateCcw } from 'lucide-react';
 import { useSettings } from '../../context/SettingsContext';
 import defaultLogo from '../../../assets/logo.png';
 
@@ -96,9 +96,19 @@ export default function AdminAbout() {
             </h2>
 
             <div className="space-y-1">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
-                Título da Seção
-              </label>
+              <div className="flex justify-between items-center">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                  Título da Seção
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setAboutTitle('Quem Somos')}
+                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                  title="Restaurar valor padrão"
+                >
+                  <RotateCcw size={10} /> Padrão
+                </button>
+              </div>
               <input
                 type="text"
                 value={aboutTitle}
@@ -109,9 +119,19 @@ export default function AdminAbout() {
             </div>
 
             <div className="space-y-1">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
-                História da Rádio
-              </label>
+              <div className="flex justify-between items-center">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                  História da Rádio
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setAboutText('A rádio Cidade FM 87,9 MHZ é líder em audiência em Barcarena, Pará, trazendo o melhor da música, jornalismo e entretenimento para todos os nossos ouvintes. Onde nasce o sucesso!')}
+                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                  title="Restaurar valor padrão"
+                >
+                  <RotateCcw size={10} /> Padrão
+                </button>
+              </div>
               <textarea
                 value={aboutText}
                 onChange={(e) => setAboutText(e.target.value)}
@@ -127,11 +147,21 @@ export default function AdminAbout() {
               <ImageIcon className="text-blue-500" size={18} /> Mídia e Personalização
             </h2>
 
-            {/* Custom Image */}
+             {/* Custom Image */}
             <div className="space-y-1">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
-                Imagem da Seção Sobre (URL ou Upload)
-              </label>
+              <div className="flex justify-between items-center">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                  Imagem da Seção Sobre (URL ou Upload)
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setAboutImageUrl('')}
+                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                  title="Restaurar valor padrão"
+                >
+                  <RotateCcw size={10} /> Padrão
+                </button>
+              </div>
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -163,10 +193,20 @@ export default function AdminAbout() {
 
             {/* Image Size Slider */}
             <div className="space-y-1">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between">
-                <span>Tamanho da Imagem</span>
-                <span className="text-blue-400">{aboutImageSize}px</span>
-              </label>
+              <div className="flex justify-between items-center">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                  <span>Tamanho da Imagem</span>
+                  <span className="text-blue-400">{aboutImageSize}px</span>
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setAboutImageSize('192')}
+                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                  title="Restaurar valor padrão"
+                >
+                  <RotateCcw size={10} /> Padrão
+                </button>
+              </div>
               <input
                 type="range"
                 min="100"
@@ -178,13 +218,22 @@ export default function AdminAbout() {
               />
             </div>
 
-            {/* Formatting Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
               <div className="space-y-1">
-                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between">
-                  <span>Tamanho da Fonte</span>
-                  <span className="text-blue-400">{aboutTextSize}px</span>
-                </label>
+                <div className="flex justify-between items-center">
+                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                    <span>Tamanho da Fonte</span>
+                    <span className="text-blue-400">{aboutTextSize}px</span>
+                  </label>
+                  <button 
+                    type="button" 
+                    onClick={() => setAboutTextSize('16')}
+                    className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                    title="Restaurar valor padrão"
+                  >
+                    <RotateCcw size={10} /> Padrão
+                  </button>
+                </div>
                 <input
                   type="range"
                   min="12"
@@ -196,9 +245,19 @@ export default function AdminAbout() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
-                  Tipo da Fonte
-                </label>
+                <div className="flex justify-between items-center">
+                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                    Tipo da Fonte
+                  </label>
+                  <button 
+                    type="button" 
+                    onClick={() => setAboutTextFont('sans')}
+                    className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    title="Restaurar valor padrão"
+                  >
+                    <RotateCcw size={10} /> Padrão
+                  </button>
+                </div>
                 <select
                   value={aboutTextFont}
                   onChange={(e) => setAboutTextFont(e.target.value)}
@@ -211,9 +270,19 @@ export default function AdminAbout() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
-                  Alinhamento do Texto
-                </label>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                    Alinhamento do Texto
+                  </label>
+                  <button 
+                    type="button" 
+                    onClick={() => setAboutTextAlign('left')}
+                    className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    title="Restaurar valor padrão"
+                  >
+                    <RotateCcw size={10} /> Padrão
+                  </button>
+                </div>
                 <div className="flex gap-1 bg-slate-900 p-1 rounded-lg border border-white/5">
                   {[
                     { align: 'left', icon: AlignLeft },
@@ -237,9 +306,19 @@ export default function AdminAbout() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
-                  Cor do Texto
-                </label>
+                <div className="flex justify-between items-center">
+                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                    Cor do Texto
+                  </label>
+                  <button 
+                    type="button" 
+                    onClick={() => setAboutTextColor('#cbd5e1')}
+                    className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    title="Restaurar valor padrão"
+                  >
+                    <RotateCcw size={10} /> Padrão
+                  </button>
+                </div>
                 <div className="flex gap-2">
                   <input
                     type="color"
@@ -258,9 +337,19 @@ export default function AdminAbout() {
               </div>
 
               <div className="space-y-1 md:col-span-2">
-                <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
-                  Cor do Fundo do Card
-                </label>
+                <div className="flex justify-between items-center">
+                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                    Cor do Fundo do Card
+                  </label>
+                  <button 
+                    type="button" 
+                    onClick={() => setAboutCardBgColor('rgba(15, 23, 42, 0.5)')}
+                    className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    title="Restaurar valor padrão"
+                  >
+                    <RotateCcw size={10} /> Padrão
+                  </button>
+                </div>
                 <div className="flex gap-2">
                   <input
                     type="color"
