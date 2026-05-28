@@ -8,8 +8,8 @@ $queries = [
     "DROP TABLE IF EXISTS banners",
     "CREATE TABLE banners (
         id VARCHAR(255) PRIMARY KEY,
-        imageUrl TEXT NOT NULL,
-        mobileImageUrl TEXT,
+        imageUrl LONGTEXT NOT NULL,
+        mobileImageUrl LONGTEXT,
         linkUrl TEXT,
         position VARCHAR(50) DEFAULT 'center',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -18,7 +18,7 @@ $queries = [
     // Tabela de Configurações Gerais
     "CREATE TABLE IF NOT EXISTS settings (
         setting_key VARCHAR(255) PRIMARY KEY,
-        setting_value TEXT NOT NULL
+        setting_value LONGTEXT NOT NULL
     )",
     
     // Tabela Top 5
@@ -36,7 +36,7 @@ $queries = [
         id VARCHAR(255) PRIMARY KEY,
         name TEXT NOT NULL,
         role TEXT NOT NULL,
-        imageUrl TEXT,
+        imageUrl LONGTEXT,
         facebook TEXT,
         instagram TEXT,
         twitter TEXT
@@ -78,7 +78,13 @@ $queries = [
     ('top_3', 'Espresso', 'Sabrina Carpenter', 'https://www.youtube.com/watch?v=eVli-tstM5E', 3),
     ('top_4', 'Si Antes Te Hubiera Conocido', 'Karol G', 'https://www.youtube.com/watch?v=QCZZwZQ4qNs', 4),
     ('top_5', 'A Bar Song (Tipsy)', 'Shaboozey', 'https://www.youtube.com/watch?v=t7bQwwqW-Hc', 5)
-    ON DUPLICATE KEY UPDATE title = VALUES(title), artist = VALUES(artist), youtubeUrl = VALUES(youtubeUrl), position = VALUES(position)"
+    ON DUPLICATE KEY UPDATE title = VALUES(title), artist = VALUES(artist), youtubeUrl = VALUES(youtubeUrl), position = VALUES(position)",
+    
+    // Atualizar colunas existentes para LONGTEXT para suportar imagens em Base64 grandes enviadas do PC
+    "ALTER TABLE settings MODIFY COLUMN setting_value LONGTEXT NOT NULL",
+    "ALTER TABLE banners MODIFY COLUMN imageUrl LONGTEXT NOT NULL",
+    "ALTER TABLE banners MODIFY COLUMN mobileImageUrl LONGTEXT",
+    "ALTER TABLE team MODIFY COLUMN imageUrl LONGTEXT"
 ];
 
 $success = true;
