@@ -24,8 +24,7 @@ export default function AdminSettings() {
   const [instagramUrl, setInstagramUrl] = useState('');
   const [facebookUrl, setFacebookUrl] = useState('');
   const [youtubeUrl, setYoutubeUrl] = useState('');
-  const [aboutText, setAboutText] = useState('');
-  const [contactEmail, setContactEmail] = useState('');
+
   
   const [dividerThickness, setDividerThickness] = useState('1');
   const [dividerGlow, setDividerGlow] = useState('20');
@@ -68,8 +67,7 @@ export default function AdminSettings() {
     if (settings.instagramUrl) setInstagramUrl(settings.instagramUrl);
     if (settings.facebookUrl) setFacebookUrl(settings.facebookUrl);
     if (settings.youtubeUrl) setYoutubeUrl(settings.youtubeUrl);
-    if (settings.aboutText) setAboutText(settings.aboutText);
-    if (settings.contactEmail) setContactEmail(settings.contactEmail);
+
     
     if (settings.dividerThickness) setDividerThickness(settings.dividerThickness);
     if (settings.dividerGlow) setDividerGlow(settings.dividerGlow);
@@ -127,8 +125,7 @@ export default function AdminSettings() {
         visualizerColor: visualizerColor,
         visualizerIntensity: visualizerIntensity,
         visualizerThickness: visualizerThickness,
-        aboutText: aboutText,
-        contactEmail: contactEmail,
+
         playImageSize: playImageSize,
         logoSize: logoSize,
         headerTextSize: headerTextSize,
@@ -687,38 +684,7 @@ export default function AdminSettings() {
           </div>
         </div>
 
-        {/* Conteúdo Institucional */}
-        <div className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6 lg:col-span-2">
-          <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
-            <Info className="text-blue-500" size={18} /> Conteúdo Institucional
-          </h2>
 
-          <div className="space-y-1">
-            <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-              E-mail de Contato
-            </label>
-            <input
-              type="email"
-              value={contactEmail}
-              onChange={(e) => setContactEmail(e.target.value)}
-              className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
-              placeholder="Ex: contato@cidadefmpa.com.br"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-              Sobre a Rádio (História, Missão, etc.)
-            </label>
-            <textarea
-              value={aboutText}
-              onChange={(e) => setAboutText(e.target.value)}
-              rows={6}
-              className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors resize-y"
-              placeholder="Escreva sobre a história da rádio, sua missão, etc. Suporta quebras de linha."
-            />
-          </div>
-        </div>
       </div>
 
 

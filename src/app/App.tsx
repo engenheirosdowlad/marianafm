@@ -17,6 +17,7 @@ import AdminNews from './pages/Admin/News';
 import AdminBanners from './pages/Admin/Banners';
 import AdminSchedule from './pages/Admin/Schedule';
 import AdminSettings from './pages/Admin/Settings';
+import AdminAbout from './pages/Admin/About';
 import AdminTop5 from './pages/Admin/Top5';
 import HelpCenter from './pages/Admin/HelpCenter';
 import { PlayerProvider } from './context/PlayerContext';
@@ -66,7 +67,8 @@ export default function App() {
               <Route path="banners" element={<AdminBanners />} />
               <Route path="team" element={<AdminTeam />} />
               <Route path="top5" element={<AdminTop5 />} />
-              <Route path="settings" element={<AdminSettings />} />
+               <Route path="settings" element={<AdminSettings />} />
+              <Route path="about" element={<AdminAbout />} />
               <Route path="help" element={<HelpCenter />} />
             </Route>
 
