@@ -48,7 +48,10 @@ export default function AdminTeam() {
     name: '',
     role: 'usuario',
     photo: '',
-    program: ''
+    program: '',
+    facebook: '',
+    instagram: '',
+    twitter: ''
   });
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -64,7 +67,11 @@ export default function AdminTeam() {
         if (response.ok) {
           const data = await response.json();
           if (Array.isArray(data) && data.length > 0) {
-            setTeam(data);
+            const mapped = data.map((m: any) => ({
+              ...m,
+              photo: m.photo || m.imageUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop'
+            }));
+            setTeam(mapped);
             return;
           }
         }
@@ -128,7 +135,16 @@ export default function AdminTeam() {
       const updated = team.filter(member => member.id !== id);
       setTeam(updated);
       try {
-        await fetch('/api/team.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updated) });
+        const bodyData = updated.map((m: any) => ({
+          ...m,
+          imageUrl: m.photo || m.imageUrl || '',
+          social: {
+            facebook: m.facebook || '',
+            instagram: m.instagram || '',
+            twitter: m.twitter || ''
+          }
+        }));
+        await fetch('/api/team.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(bodyData) });
       } catch (e) {
         localStorage.setItem('radioTeam', JSON.stringify(updated));
       }
@@ -142,29 +158,59 @@ export default function AdminTeam() {
       name: '',
       role: 'usuario',
       photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop',
-      program: ''
+      program: '',
+      facebook: '',
+      instagram: '',
+      twitter: ''
     });
     setIsModalOpen(true);
   };
 
   const openEditModal = (member: TeamMember) => {
     setModalMode('edit');
-    setFormData(member);
+    setFormData({
+      ...member,
+      facebook: member.facebook || '',
+      instagram: member.instagram || '',
+      twitter: member.twitter || ''
+    });
     setIsModalOpen(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!formData.name.trim()) {
       alert("Nome é obrigatório");
       return;
     }
     
+    let updated;
     if (modalMode === 'create') {
-      setTeam([...team, formData]);
+      updated = [...team, formData];
     } else {
-      setTeam(team.map(m => m.id === formData.id ? formData : m));
+      updated = team.map(m => m.id === formData.id ? formData : m);
     }
+    
+    setTeam(updated);
     setIsModalOpen(false);
+
+    try {
+      const bodyData = updated.map((m: any) => ({
+        ...m,
+        imageUrl: m.photo || m.imageUrl || '',
+        social: {
+          facebook: m.facebook || '',
+          instagram: m.instagram || '',
+          twitter: m.twitter || ''
+        }
+      }));
+      await fetch('/api/team.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyData)
+      });
+    } catch (e) {
+      localStorage.setItem('radioTeam', JSON.stringify(updated));
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -393,6 +439,44 @@ export default function AdminTeam() {
                         </select>
                       </div>
                     )}
+
+                    {/* Redes Sociais */}
+                    <div className="border-t border-white/5 pt-4 mt-4 space-y-3">
+                      <p className="text-slate-400 text-xs font-black uppercase tracking-wider mb-2">Redes Sociais</p>
+                      
+                      <div className="space-y-1">
+                        <label className="text-slate-500 text-[10px] font-black uppercase tracking-wider">Instagram (Link)</label>
+                        <input
+                          type="url"
+                          value={formData.instagram || ''}
+                          onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
+                          className="w-full bg-slate-800 border border-white/5 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                          placeholder="https://instagram.com/usuario"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-slate-500 text-[10px] font-black uppercase tracking-wider">Facebook (Link)</label>
+                        <input
+                          type="url"
+                          value={formData.facebook || ''}
+                          onChange={(e) => setFormData({ ...formData, facebook: e.target.value })}
+                          className="w-full bg-slate-800 border border-white/5 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                          placeholder="https://facebook.com/usuario"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-slate-500 text-[10px] font-black uppercase tracking-wider">Twitter / X (Link)</label>
+                        <input
+                          type="url"
+                          value={formData.twitter || ''}
+                          onChange={(e) => setFormData({ ...formData, twitter: e.target.value })}
+                          className="w-full bg-slate-800 border border-white/5 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                          placeholder="https://x.com/usuario"
+                        />
+                      </div>
+                    </div>
 
                     {/* Dados de Acesso (Sub-área) */}
                     {(formData.role === 'administrador' || formData.role === 'locutor') && (

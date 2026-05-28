@@ -4,6 +4,9 @@ export interface TeamMember {
   role: 'locutor' | 'administrador' | 'usuario';
   photo: string;
   program?: string;
+  facebook?: string;
+  instagram?: string;
+  twitter?: string;
 }
 
 export interface Program {

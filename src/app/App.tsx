@@ -9,6 +9,9 @@ import AdminDashboard from './pages/Admin/Dashboard';
 import News from './pages/Public/News';
 import Schedule from './pages/Public/Schedule';
 import Login from './pages/Public/Login';
+import About from './pages/Public/About';
+import Contact from './pages/Public/Contact';
+import Team from './pages/Public/Team';
 import AdminTeam from './pages/Admin/Team';
 import AdminNews from './pages/Admin/News';
 import AdminBanners from './pages/Admin/Banners';
@@ -45,6 +48,9 @@ export default function App() {
               <Route index element={<Home />} />
               <Route path="news" element={<News />} />
               <Route path="schedule" element={<Schedule />} />
+              <Route path="about" element={<About />} />
+              <Route path="contact" element={<Contact />} />
+              <Route path="team" element={<Team />} />
             </Route>
             
             {/* Standalone TV Route */}

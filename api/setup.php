@@ -68,7 +68,13 @@ $queries = [
     ('dividerThickness', '4'),
     ('dividerGlow', '20'),
     ('visualizerIntensity', '100'),
-    ('visualizerThickness', '10')
+    ('visualizerThickness', '10'),
+    ('playImageSize', '200'),
+    ('logoSize', '60'),
+    ('headerTextSize', '24'),
+    ('headerTextEffect', 'fade'),
+    ('headerTextFont', 'sans'),
+    ('headerTextColor', '#ffffff')
     ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)",
 
     // Inserir Top 5 padrão da Cidade FM 87,9 MHZ

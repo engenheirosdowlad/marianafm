@@ -6,6 +6,7 @@ import { useSettings } from '../context/SettingsContext';
 export function ProgramCards() {
   const { settings } = useSettings();
   const [programs, setPrograms] = useState<Program[]>([]);
+  const [team, setTeam] = useState<any[]>(teamData);
   const [whatsappUrl, setWhatsappUrl] = useState('#');
 
   useEffect(() => {
@@ -26,7 +27,7 @@ export function ProgramCards() {
           }
         }
       } catch (e) {
-        console.warn("API indisponível");
+        console.warn("API schedule indisponível");
       }
       const stored = localStorage.getItem('radioPrograms');
       if (stored) {
@@ -36,7 +37,23 @@ export function ProgramCards() {
       }
     };
     
+    const loadTeam = async () => {
+      try {
+        const response = await fetch('/api/team.php');
+        if (response.ok) {
+          const data = await response.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setTeam(data);
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn("API team indisponível");
+      }
+    };
+    
     loadPrograms();
+    loadTeam();
   }, []);
 
   const getCurrentAndNext = () => {
@@ -89,7 +106,7 @@ export function ProgramCards() {
   };
 
   const { current, next } = getCurrentAndNext();
-  const currentPresenter = current ? teamData.find(t => t.id === current.presenterId) : null;
+  const currentPresenter = current ? team.find(t => t.id === current.presenterId) : null;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -100,7 +117,7 @@ export function ProgramCards() {
           <>
             <div className="w-24 h-24 rounded-2xl bg-slate-700 overflow-hidden mb-4 border-2 border-blue-500/50 shadow-xl shadow-blue-500/20">
               <img
-                src={currentPresenter.photo}
+                src={currentPresenter.imageUrl || currentPresenter.photo || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop"}
                 alt={currentPresenter.name}
                 className="w-full h-full object-cover"
               />
@@ -124,7 +141,7 @@ export function ProgramCards() {
         <p className="text-slate-400 text-xs font-black uppercase tracking-wider mb-4">A Seguir na Cidade</p>
         <div className="space-y-4 flex-1">
           {next.map(prog => {
-            const presenter = teamData.find(t => t.id === prog.presenterId);
+            const presenter = team.find(t => t.id === prog.presenterId);
             return (
               <div key={prog.id} className="border-b border-white/5 pb-3 last:border-0 last:pb-0">
                 <div className="flex justify-between items-center mb-1">
@@ -143,7 +160,7 @@ export function ProgramCards() {
 
       {/* Card 3: Peça sua Música */}
       <div className="bg-slate-800/50 backdrop-blur-md rounded-xl p-6 border border-white/5 shadow-2xl flex flex-col items-center justify-between">
-        <p className="text-slate-400 text-xs font-black uppercase tracking-wider mb-2 text-center w-full">Participe Ao Vivo</p>
+        <p className="text-slate-400 text-xs font-black uppercase tracking-wider mb-2 text-center w-full">Participe</p>
         
         <div className="flex-1 flex items-center justify-center py-6">
           <svg viewBox="0 0 24 24" fill="currentColor" className="w-20 h-20 text-green-500 drop-shadow-[0_0_15px_rgba(34,197,94,0.4)]">

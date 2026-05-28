@@ -1,4 +1,4 @@
-import { X, Radio, Newspaper, Calendar, MessageCircle, Instagram, Facebook, Youtube } from 'lucide-react';
+import { X, Radio, Newspaper, Calendar, MessageCircle, Instagram, Facebook, Youtube, Info, Phone, Users } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router';
 import { useState, useEffect } from 'react';
@@ -18,6 +18,9 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     { label: 'Rádio Ao Vivo', icon: Radio, path: '/' },
     { label: 'Programação', icon: Calendar, path: '/schedule' },
     { label: 'Notícias', icon: Newspaper, path: '/news' },
+    { label: 'Sobre', icon: Info, path: '/about' },
+    { label: 'Equipe', icon: Users, path: '/team' },
+    { label: 'Contato', icon: Phone, path: '/contact' },
     { label: 'WhatsApp', icon: MessageCircle, url: settings.whatsappUrl, external: true },
   ];
 

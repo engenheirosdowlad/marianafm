@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useSettings } from './SettingsContext';
 import { Capacitor } from '@capacitor/core';
+import { useLocation } from 'react-router';
 
 type PlayerType = 'audio' | 'video';
 
@@ -15,20 +16,30 @@ interface PlayerContextType {
 }
 
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
-
+ 
 const isNative = Capacitor.isNativePlatform();
-
+ 
 // Acessa o plugin nativo de forma segura através do objeto de plugins do Capacitor
 const NativeAudio = (Capacitor.Plugins as any).NativeAudio;
-
+ 
 export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const [isPlaying, setIsPlaying] = useState(true);
-  const [activePlayer, setActivePlayer] = useState<PlayerType>('video'); // Padrão vídeo como no esboço
+  const [activePlayer, setActivePlayer] = useState<PlayerType>('audio'); // Padrão áudio para tocar no início
   const [volume, setVolume] = useState(0.7);
+  const [isAutoplayBlocked, setIsAutoplayBlocked] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const isFirstRender = useRef(true);
   const { settings } = useSettings();
   const streamUrl = settings.audioStreamUrl || "https://link.radio.br:18630/stream";
+  const location = useLocation();
 
+  // Pausa o player automaticamente ao entrar em rotas administrativas (/admin)
+  useEffect(() => {
+    if (location.pathname.startsWith('/admin')) {
+      setIsPlaying(false);
+    }
+  }, [location.pathname]);
+ 
   // Configura o áudio nativo uma vez no início se o plugin estiver disponível
   useEffect(() => {
     if (isNative && NativeAudio) {
@@ -41,12 +52,16 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       });
     }
   }, []);
-
+ 
   // Auto-play ao alternar
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
     setIsPlaying(true);
   }, [activePlayer]);
-
+ 
   // Gerenciamento da reprodução (Natividade vs Web)
   useEffect(() => {
     if (isNative && NativeAudio) {
@@ -57,7 +72,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
             try {
               await NativeAudio.unload({ assetId: 'live_stream' });
             } catch (e) {}
-
+ 
             // Prepara a transmissão
             await NativeAudio.preload({
               assetId: 'live_stream',
@@ -66,7 +81,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
               volume: volume,
               audioChannelNum: 1
             });
-
+ 
             // Toca a rádio
             await NativeAudio.play({ assetId: 'live_stream' });
           } else {
@@ -86,8 +101,8 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       if (audioRef.current) {
         if (isPlaying && activePlayer === 'audio') {
           audioRef.current.play().catch(err => {
-            console.error("Erro ao reproduzir áudio:", err);
-            setIsPlaying(false);
+            console.warn("Autoplay block or audio play error:", err);
+            setIsAutoplayBlocked(true);
           });
         } else {
           audioRef.current.pause();
@@ -95,7 +110,48 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       }
     }
   }, [isPlaying, activePlayer, streamUrl]);
-
+ 
+  // Recupera reprodução no primeiro toque/clique caso o autoplay seja bloqueado pelo navegador
+  useEffect(() => {
+    if (isNative && NativeAudio) return;
+ 
+    const handleInteraction = () => {
+      if (isPlaying && activePlayer === 'audio' && audioRef.current) {
+        if (audioRef.current.paused) {
+          audioRef.current.play()
+            .then(() => {
+              console.log("Áudio iniciado com sucesso após interação do usuário.");
+              setIsAutoplayBlocked(false);
+              cleanup();
+            })
+            .catch(err => {
+              console.warn("Falha ao iniciar áudio após interação:", err);
+            });
+        } else {
+          // Se já está tocando, removemos os listeners
+          setIsAutoplayBlocked(false);
+          cleanup();
+        }
+      }
+    };
+ 
+    const events = ['click', 'pointerdown', 'keydown', 'touchstart'];
+    
+    const cleanup = () => {
+      events.forEach(event => {
+        window.removeEventListener(event, handleInteraction);
+      });
+    };
+ 
+    if (isPlaying && activePlayer === 'audio') {
+      events.forEach(event => {
+        window.addEventListener(event, handleInteraction, { passive: true });
+      });
+    }
+ 
+    return cleanup;
+  }, [isPlaying, activePlayer]);
+ 
   // Controle de volume
   useEffect(() => {
     if (isNative && NativeAudio) {
@@ -104,7 +160,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       audioRef.current.volume = volume;
     }
   }, [volume]);
-
+ 
   return (
     <PlayerContext.Provider value={{
       isPlaying,

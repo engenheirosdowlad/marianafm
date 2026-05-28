@@ -6,7 +6,6 @@ export default function AdminDashboard() {
   const stats = [
     { label: 'Ouvintes Agora', value: '1.248', icon: Radio, color: 'text-blue-500' },
     { label: 'Notícias Postadas', value: '156', icon: Newspaper, color: 'text-purple-500' },
-    { label: 'Pedidos Pendentes', value: '12', icon: MessageSquare, color: 'text-orange-500' },
     { label: 'Equipe Ativa', value: '8', icon: Users, color: 'text-green-500' },
   ];
 
@@ -26,7 +25,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {stats.map((stat, i) => (
           <motion.div
             key={stat.label}
@@ -61,9 +60,9 @@ export default function AdminDashboard() {
               <Radio />
               Editar Grade
             </button>
-            <button className="p-4 bg-slate-900 border border-slate-700 rounded-xl text-slate-300 hover:bg-orange-600 hover:text-white hover:border-orange-500 transition-all text-sm font-semibold flex flex-col items-center gap-2">
-              <MessageSquare />
-              Ver Pedidos
+            <button className="p-4 bg-slate-900 border border-slate-700 rounded-xl text-slate-300 hover:bg-green-600 hover:text-white hover:border-green-500 transition-all text-sm font-semibold flex flex-col items-center gap-2">
+              <Users />
+              Gerenciar Equipe
             </button>
             <button className="p-4 bg-slate-900 border border-slate-700 rounded-xl text-slate-300 hover:bg-slate-700 hover:text-white hover:border-slate-600 transition-all text-sm font-semibold flex flex-col items-center gap-2">
               <Settings />
