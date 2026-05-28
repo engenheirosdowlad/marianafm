@@ -1236,209 +1236,184 @@ export default function AdminSettings() {
               <Globe className="text-blue-500" size={18} /> Estilos do Layout
             </h2>
 
-          <div className="space-y-1">
-            <div className="flex justify-between items-center">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                Logo do Site (URL ou Upload)
-              </label>
-              <button 
-                type="button" 
-                onClick={() => setLogoUrl('')}
-                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
-                title="Restaurar valor padrão"
-              >
-                <RotateCcw size={10} /> Padrão
-              </button>
+            <div className="space-y-1">
+              <div className="flex justify-between items-center">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                  Logo do Site (URL ou Upload)
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setLogoUrl('')}
+                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                  title="Restaurar valor padrão"
+                >
+                  <RotateCcw size={10} /> Padrão
+                </button>
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={logoUrl}
+                  onChange={(e) => setLogoUrl(e.target.value)}
+                  className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
+                  placeholder="Cole um link ou clique ao lado ->"
+                />
+                <label className="flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white px-4 rounded-lg cursor-pointer transition-colors shrink-0" title="Fazer upload de imagem">
+                  <Upload size={18} />
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    className="hidden" 
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setLogoUrl(reader.result as string);
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }} 
+                  />
+                </label>
+              </div>
+              {logoUrl && logoUrl.startsWith('data:image') && (
+                <p className="text-[10px] text-green-400 mt-1">✓ Imagem carregada do computador.</p>
+              )}
             </div>
-            <div className="flex gap-2">
+
+            <div className="space-y-1">
+              <div className="flex justify-between items-center">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                  <span>Tamanho da Logo ({logoSize}px)</span>
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setLogoSize('60')}
+                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                  title="Restaurar valor padrão"
+                >
+                  <RotateCcw size={10} /> Padrão
+                </button>
+              </div>
               <input
-                type="text"
-                value={logoUrl}
-                onChange={(e) => setLogoUrl(e.target.value)}
-                className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
-                placeholder="Cole um link ou clique ao lado ->"
+                type="range"
+                min="30"
+                max="150"
+                step="5"
+                value={logoSize}
+                onChange={(e) => setLogoSize(e.target.value)}
+                className="w-full h-8 accent-blue-500"
               />
-              <label className="flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white px-4 rounded-lg cursor-pointer transition-colors shrink-0" title="Fazer upload de imagem">
-                <Upload size={18} />
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  className="hidden" 
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onloadend = () => {
-                        setLogoUrl(reader.result as string);
-                      };
-                      reader.readAsDataURL(file);
-                    }
-                  }} 
-                />
-              </label>
             </div>
-            {logoUrl && logoUrl.startsWith('data:image') && (
-              <p className="text-[10px] text-green-400 mt-1">✓ Imagem carregada do computador.</p>
-            )}
-          </div>
 
-          <div className="space-y-1">
-            <div className="flex justify-between items-center">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                Espessura das Barras Divisórias (px)
-              </label>
-              <button 
-                type="button" 
-                onClick={() => setDividerThickness('1')}
-                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
-                title="Restaurar valor padrão"
-              >
-                <RotateCcw size={10} /> Padrão
-              </button>
+            <div className="space-y-1">
+              <div className="flex justify-between items-center">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                  Espessura das Barras Divisórias (px)
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setDividerThickness('1')}
+                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                  title="Restaurar valor padrão"
+                >
+                  <RotateCcw size={10} /> Padrão
+                </button>
+              </div>
+              <input
+                type="number"
+                min="1"
+                max="10"
+                value={dividerThickness}
+                onChange={(e) => setDividerThickness(e.target.value)}
+                className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
+              />
             </div>
-            <input
-              type="number"
-              min="1"
-              max="10"
-              value={dividerThickness}
-              onChange={(e) => setDividerThickness(e.target.value)}
-              className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
-            />
-          </div>
 
-          <div className="space-y-1">
-            <div className="flex justify-between items-center">
-              <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
-                <span>Intensidade do Brilho/Neon das Barras</span>
-                <span className="text-slate-500 text-[10px]">{dividerGlow}px de propagação</span>
-              </label>
-              <button 
-                type="button" 
-                onClick={() => setDividerGlow('20')}
-                className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
-                title="Restaurar valor padrão"
-              >
-                <RotateCcw size={10} /> Padrão
-              </button>
+            <div className="space-y-1">
+              <div className="flex justify-between items-center">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                  <span>Intensidade do Brilho/Neon das Barras</span>
+                  <span className="text-slate-500 text-[10px]">{dividerGlow}px de propagação</span>
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setDividerGlow('20')}
+                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                  title="Restaurar valor padrão"
+                >
+                  <RotateCcw size={10} /> Padrão
+                </button>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="50"
+                value={dividerGlow}
+                onChange={(e) => setDividerGlow(e.target.value)}
+                className="w-full accent-blue-500"
+              />
             </div>
-            <input
-              type="range"
-              min="0"
-              max="50"
-              value={dividerGlow}
-              onChange={(e) => setDividerGlow(e.target.value)}
-              className="w-full accent-blue-500"
-            />
-          </div>
 
-          {/* Visualizador de Áudio */}
-          <div className="pt-6 border-t border-white/10 space-y-4">
-            <h3 className="text-white font-bold text-sm flex items-center gap-2">
-              <Radio className="text-blue-500" size={16} /> Visualizador de Áudio (Fundo)
-            </h3>
+            {/* Efeito de barras de Som (Fundo) */}
+            <div className="pt-6 border-t border-white/10 space-y-4">
+              <h3 className="text-white font-bold text-sm flex items-center gap-2">
+                <Radio className="text-blue-500" size={16} /> Efeito de barras de Som (Fundo)
+              </h3>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <div className="flex justify-between items-center">
-                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
-                    <span>Intensidade / Brilho ({visualizerIntensity}%)</span>
-                  </label>
-                  <button 
-                    type="button" 
-                    onClick={() => setVisualizerIntensity('50')}
-                    className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
-                    title="Restaurar valor padrão"
-                  >
-                    <RotateCcw size={10} /> Padrão
-                  </button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                      <span>Intensidade / Brilho ({visualizerIntensity}%)</span>
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setVisualizerIntensity('50')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                      title="Restaurar valor padrão"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={visualizerIntensity}
+                    onChange={(e) => setVisualizerIntensity(e.target.value)}
+                    className="w-full h-8 accent-blue-500"
+                  />
                 </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={visualizerIntensity}
-                  onChange={(e) => setVisualizerIntensity(e.target.value)}
-                  className="w-full h-8 accent-blue-500"
-                />
-              </div>
 
-              <div className="space-y-1 sm:col-span-2">
-                <div className="flex justify-between items-center">
-                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
-                    <span>Espessura das Barras ({visualizerThickness}px)</span>
-                  </label>
-                  <button 
-                    type="button" 
-                    onClick={() => setVisualizerThickness('5')}
-                    className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
-                    title="Restaurar valor padrão"
-                  >
-                    <RotateCcw size={10} /> Padrão
-                  </button>
+                <div className="space-y-1 sm:col-span-2">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                      <span>Espessura das Barras ({visualizerThickness}px)</span>
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setVisualizerThickness('5')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                      title="Restaurar valor padrão"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="range"
+                    min="1"
+                    max="20"
+                    value={visualizerThickness}
+                    onChange={(e) => setVisualizerThickness(e.target.value)}
+                    className="w-full h-8 accent-blue-500"
+                  />
                 </div>
-                <input
-                  type="range"
-                  min="1"
-                  max="20"
-                  value={visualizerThickness}
-                  onChange={(e) => setVisualizerThickness(e.target.value)}
-                  className="w-full h-8 accent-blue-500"
-                />
-              </div>
-
-              <div className="space-y-1 sm:col-span-2 pt-4 border-t border-white/5">
-                <div className="flex justify-between items-center">
-                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
-                    <span>Tamanho do Botão "Assistir ao Vivo" ({playImageSize}px)</span>
-                  </label>
-                  <button 
-                    type="button" 
-                    onClick={() => setPlayImageSize('200')}
-                    className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
-                    title="Restaurar valor padrão"
-                  >
-                    <RotateCcw size={10} /> Padrão
-                  </button>
-                </div>
-                <input
-                  type="range"
-                  min="100"
-                  max="400"
-                  step="10"
-                  value={playImageSize}
-                  onChange={(e) => setPlayImageSize(e.target.value)}
-                  className="w-full h-8 accent-blue-500"
-                />
-              </div>
-
-              <div className="space-y-1 sm:col-span-2 pt-4 border-t border-white/5">
-                <div className="flex justify-between items-center">
-                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
-                    <span>Tamanho da Logo do Cabeçalho ({logoSize}px)</span>
-                  </label>
-                  <button 
-                    type="button" 
-                    onClick={() => setLogoSize('60')}
-                    className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
-                    title="Restaurar valor padrão"
-                  >
-                    <RotateCcw size={10} /> Padrão
-                  </button>
-                </div>
-                <input
-                  type="range"
-                  min="30"
-                  max="150"
-                  step="5"
-                  value={logoSize}
-                  onChange={(e) => setLogoSize(e.target.value)}
-                  className="w-full h-8 accent-blue-500"
-                />
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
         {/* Player de Áudio / Vídeo */}
         {activeTab === 'video' && (
