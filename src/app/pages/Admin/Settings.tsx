@@ -201,42 +201,6 @@ export default function AdminSettings() {
 
           <div className="space-y-1">
             <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-              Logo do Site (URL ou Upload)
-            </label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={logoUrl}
-                onChange={(e) => setLogoUrl(e.target.value)}
-                className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
-                placeholder="Cole um link ou clique ao lado ->"
-              />
-              <label className="flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white px-4 rounded-lg cursor-pointer transition-colors shrink-0" title="Fazer upload de imagem">
-                <Upload size={18} />
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  className="hidden" 
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onloadend = () => {
-                        setLogoUrl(reader.result as string);
-                      };
-                      reader.readAsDataURL(file);
-                    }
-                  }} 
-                />
-              </label>
-            </div>
-            {logoUrl && logoUrl.startsWith('data:image') && (
-              <p className="text-[10px] text-green-400 mt-1">✓ Imagem carregada do computador.</p>
-            )}
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
               <Radio size={14} className="text-green-400" /> Link do Stream de Áudio
             </label>
             <input
@@ -498,6 +462,42 @@ export default function AdminSettings() {
           <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
             <Globe className="text-blue-500" size={18} /> Estilos do Layout
           </h2>
+
+          <div className="space-y-1">
+            <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+              Logo do Site (URL ou Upload)
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={logoUrl}
+                onChange={(e) => setLogoUrl(e.target.value)}
+                className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
+                placeholder="Cole um link ou clique ao lado ->"
+              />
+              <label className="flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white px-4 rounded-lg cursor-pointer transition-colors shrink-0" title="Fazer upload de imagem">
+                <Upload size={18} />
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  className="hidden" 
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setLogoUrl(reader.result as string);
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }} 
+                />
+              </label>
+            </div>
+            {logoUrl && logoUrl.startsWith('data:image') && (
+              <p className="text-[10px] text-green-400 mt-1">✓ Imagem carregada do computador.</p>
+            )}
+          </div>
 
           <div className="space-y-1">
             <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
