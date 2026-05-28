@@ -46,6 +46,15 @@ export default function AdminSettings() {
   const [videoPlayText, setVideoPlayText] = useState('ASSISTA');
   const [videoPlayTextSize, setVideoPlayTextSize] = useState('16');
   
+  const [audioPlayTitle, setAudioPlayTitle] = useState('CIDADE FM 87,9 MHZ');
+  const [audioPlaySubtitle, setAudioPlaySubtitle] = useState('Onde nasce o sucesso!');
+  const [audioTitleSize, setAudioTitleSize] = useState('20');
+  const [audioTitleColor, setAudioTitleColor] = useState('#ffffff');
+  const [audioTitleFont, setAudioTitleFont] = useState('sans');
+  const [audioSubtitleSize, setAudioSubtitleSize] = useState('14');
+  const [audioSubtitleColor, setAudioSubtitleColor] = useState('#cbd5e1');
+  const [audioSubtitleFont, setAudioSubtitleFont] = useState('sans');
+
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [activeTab, setActiveTab] = useState('transmission');
@@ -90,6 +99,15 @@ export default function AdminSettings() {
     if (settings.videoPlayIconSize) setVideoPlayIconSize(settings.videoPlayIconSize);
     if (settings.videoPlayText) setVideoPlayText(settings.videoPlayText);
     if (settings.videoPlayTextSize) setVideoPlayTextSize(settings.videoPlayTextSize);
+
+    if (settings.audioPlayTitle) setAudioPlayTitle(settings.audioPlayTitle);
+    if (settings.audioPlaySubtitle) setAudioPlaySubtitle(settings.audioPlaySubtitle);
+    if (settings.audioTitleSize) setAudioTitleSize(settings.audioTitleSize);
+    if (settings.audioTitleColor) setAudioTitleColor(settings.audioTitleColor);
+    if (settings.audioTitleFont) setAudioTitleFont(settings.audioTitleFont);
+    if (settings.audioSubtitleSize) setAudioSubtitleSize(settings.audioSubtitleSize);
+    if (settings.audioSubtitleColor) setAudioSubtitleColor(settings.audioSubtitleColor);
+    if (settings.audioSubtitleFont) setAudioSubtitleFont(settings.audioSubtitleFont);
 
     if (location.state?.startTour) {
       navigate('.', { replace: true, state: {} });
@@ -141,7 +159,15 @@ export default function AdminSettings() {
         videoPlayIcon,
         videoPlayIconSize,
         videoPlayText,
-        videoPlayTextSize
+        videoPlayTextSize,
+        audioPlayTitle,
+        audioPlaySubtitle,
+        audioTitleSize,
+        audioTitleColor,
+        audioTitleFont,
+        audioSubtitleSize,
+        audioSubtitleColor,
+        audioSubtitleFont
       });
       
       setSaved(true);
@@ -186,7 +212,7 @@ export default function AdminSettings() {
           { id: 'transmission', label: 'Transmissão', icon: Radio },
           { id: 'header', label: 'Cabeçalho', icon: Globe },
           { id: 'layout', label: 'Layout', icon: Info },
-          { id: 'video', label: 'Vídeo', icon: Video },
+          { id: 'video', label: 'Áudio / Vídeo', icon: Video },
           { id: 'footer', label: 'Rodapé', icon: Phone },
         ].map((tab) => (
           <button
@@ -869,146 +895,349 @@ export default function AdminSettings() {
         </div>
       )}
 
-        {/* Player de Vídeo */}
+        {/* Player de Áudio / Vídeo */}
         {activeTab === 'video' && (
-          <div className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6 lg:col-span-2">
-            <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
-              <Video className="text-blue-500" size={18} /> Player de Vídeo (Overlay de Play)
-            </h2>
+          <div className="space-y-6 lg:col-span-2">
+            {/* Player de Áudio */}
+            <div className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
+              <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
+                <Radio className="text-blue-500" size={18} /> Player de Áudio (Informações do Stream)
+              </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-1">
-              <div className="flex justify-between items-center">
-                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                  Ícone do Player (Favicon ou URL)
-                </label>
-                <button 
-                  type="button" 
-                  onClick={() => setVideoPlayIcon('/favicon.png')}
-                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
-                  title="Restaurar valor padrão"
-                >
-                  <RotateCcw size={10} /> Padrão
-                </button>
-              </div>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={videoPlayIcon}
-                  onChange={(e) => setVideoPlayIcon(e.target.value)}
-                  className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
-                  placeholder="Ex: /favicon.png"
-                />
-                <label className="flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white px-4 rounded-lg cursor-pointer transition-colors shrink-0" title="Fazer upload do Ícone">
-                  <Upload size={18} />
-                  <input 
-                    type="file" 
-                    accept="image/*" 
-                    className="hidden" 
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        const reader = new FileReader();
-                        reader.onloadend = () => {
-                          setVideoPlayIcon(reader.result as string);
-                        };
-                        reader.readAsDataURL(file);
-                      }
-                    }} 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Título do Áudio (Now Playing)
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setAudioPlayTitle('CIDADE FM 87,9 MHZ')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                      title="Restaurar valor padrão"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={audioPlayTitle}
+                    onChange={(e) => setAudioPlayTitle(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                    placeholder="Ex: CIDADE FM 87,9 MHZ"
                   />
-                </label>
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Subtítulo do Áudio (Artista/Slogan)
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setAudioPlaySubtitle('Onde nasce o sucesso!')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                      title="Restaurar valor padrão"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={audioPlaySubtitle}
+                    onChange={(e) => setAudioPlaySubtitle(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                    placeholder="Ex: Onde nasce o sucesso!"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                      <span>Tamanho da Fonte do Título ({audioTitleSize}px)</span>
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setAudioTitleSize('20')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                      title="Restaurar valor padrão"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="range"
+                    min="12"
+                    max="36"
+                    value={audioTitleSize}
+                    onChange={(e) => setAudioTitleSize(e.target.value)}
+                    className="w-full h-8 accent-blue-500"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                      <span>Tamanho da Fonte do Subtítulo ({audioSubtitleSize}px)</span>
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setAudioSubtitleSize('14')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                      title="Restaurar valor padrão"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="range"
+                    min="10"
+                    max="28"
+                    value={audioSubtitleSize}
+                    onChange={(e) => setAudioSubtitleSize(e.target.value)}
+                    className="w-full h-8 accent-blue-500"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Cor do Título
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setAudioTitleColor('#ffffff')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                      title="Restaurar valor padrão"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={audioTitleColor}
+                      onChange={(e) => setAudioTitleColor(e.target.value)}
+                      className="w-12 h-10 bg-slate-900 border border-white/5 rounded-lg cursor-pointer p-0 border-0"
+                    />
+                    <input
+                      type="text"
+                      value={audioTitleColor}
+                      onChange={(e) => setAudioTitleColor(e.target.value)}
+                      className="w-full bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-white text-sm outline-none font-mono"
+                      placeholder="#ffffff"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Cor do Subtítulo
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setAudioSubtitleColor('#cbd5e1')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                      title="Restaurar valor padrão"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={audioSubtitleColor}
+                      onChange={(e) => setAudioSubtitleColor(e.target.value)}
+                      className="w-12 h-10 bg-slate-900 border border-white/5 rounded-lg cursor-pointer p-0 border-0"
+                    />
+                    <input
+                      type="text"
+                      value={audioSubtitleColor}
+                      onChange={(e) => setAudioSubtitleColor(e.target.value)}
+                      className="w-full bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-white text-sm outline-none font-mono"
+                      placeholder="#cbd5e1"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Fonte do Título
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setAudioTitleFont('sans')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                      title="Restaurar valor padrão"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <select
+                    value={audioTitleFont}
+                    onChange={(e) => setAudioTitleFont(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                  >
+                    <option value="sans">Sans-serif Moderno</option>
+                    <option value="system">Sistema Padrão</option>
+                    <option value="mono">Monospace Digital</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Fonte do Subtítulo
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setAudioSubtitleFont('sans')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                      title="Restaurar valor padrão"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <select
+                    value={audioSubtitleFont}
+                    onChange={(e) => setAudioSubtitleFont(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                  >
+                    <option value="sans">Sans-serif Moderno</option>
+                    <option value="system">Sistema Padrão</option>
+                    <option value="mono">Monospace Digital</option>
+                  </select>
+                </div>
               </div>
             </div>
 
-            <div className="space-y-1">
-              <div className="flex justify-between items-center">
-                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
-                  <span>Tamanho do Ícone ({videoPlayIconSize}px)</span>
-                </label>
-                <button 
-                  type="button" 
-                  onClick={() => setVideoPlayIconSize('100')}
-                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
-                  title="Restaurar valor padrão"
-                >
-                  <RotateCcw size={10} /> Padrão
-                </button>
-              </div>
-              <input
-                type="range"
-                min="30"
-                max="250"
-                step="5"
-                value={videoPlayIconSize}
-                onChange={(e) => setVideoPlayIconSize(e.target.value)}
-                className="w-full h-8 accent-blue-500"
-              />
-            </div>
+            {/* Player de Vídeo */}
+            <div className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
+              <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
+                <Video className="text-blue-500" size={18} /> Player de Vídeo (Overlay de Play)
+              </h2>
 
-            <div className="space-y-1">
-              <div className="flex justify-between items-center">
-                <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
-                  Texto do Botão
-                </label>
-                <button 
-                  type="button" 
-                  onClick={() => setVideoPlayText('ASSISTA')}
-                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
-                  title="Restaurar valor padrão"
-                >
-                  <RotateCcw size={10} /> Padrão
-                </button>
-              </div>
-              <input
-                type="text"
-                value={videoPlayText}
-                onChange={(e) => setVideoPlayText(e.target.value)}
-                className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
-                placeholder="Ex: ASSISTA"
-              />
-            </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                      Ícone do Player (Favicon ou URL)
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setVideoPlayIcon('/favicon.png')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                      title="Restaurar valor padrão"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={videoPlayIcon}
+                      onChange={(e) => setVideoPlayIcon(e.target.value)}
+                      className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
+                      placeholder="Ex: /favicon.png"
+                    />
+                    <label className="flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white px-4 rounded-lg cursor-pointer transition-colors shrink-0" title="Fazer upload do Ícone">
+                      <Upload size={18} />
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        className="hidden" 
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              setVideoPlayIcon(reader.result as string);
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }} 
+                      />
+                    </label>
+                  </div>
+                </div>
 
-            <div className="space-y-1">
-              <div className="flex justify-between items-center">
-                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
-                  <span>Tamanho da Fonte do Texto ({videoPlayTextSize}px)</span>
-                </label>
-                <button 
-                  type="button" 
-                  onClick={() => setVideoPlayTextSize('16')}
-                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
-                  title="Restaurar valor padrão"
-                >
-                  <RotateCcw size={10} /> Padrão
-                </button>
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                      <span>Tamanho do Ícone ({videoPlayIconSize}px)</span>
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setVideoPlayIconSize('100')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                      title="Restaurar valor padrão"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="range"
+                    min="30"
+                    max="250"
+                    step="5"
+                    value={videoPlayIconSize}
+                    onChange={(e) => setVideoPlayIconSize(e.target.value)}
+                    className="w-full h-8 accent-blue-500"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Texto do Botão
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setVideoPlayText('ASSISTA')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                      title="Restaurar valor padrão"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={videoPlayText}
+                    onChange={(e) => setVideoPlayText(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                    placeholder="Ex: ASSISTA"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                      <span>Tamanho da Fonte do Texto ({videoPlayTextSize}px)</span>
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setVideoPlayTextSize('16')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                      title="Restaurar valor padrão"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="range"
+                    min="10"
+                    max="36"
+                    value={videoPlayTextSize}
+                    onChange={(e) => setVideoPlayTextSize(e.target.value)}
+                    className="w-full h-8 accent-blue-500"
+                  />
+                </div>
               </div>
-              <input
-                type="range"
-                min="10"
-                max="36"
-                value={videoPlayTextSize}
-                onChange={(e) => setVideoPlayTextSize(e.target.value)}
-                className="w-full h-8 accent-blue-500"
-              />
             </div>
           </div>
-        </div>
-      )}
-      </div>
-
-
-      <div className="flex justify-end items-center gap-4">
-        {saved && (
-          <span className="text-green-400 text-sm font-bold animate-pulse">✓ Configurações salvas!</span>
         )}
-        <button
-          onClick={handleSave}
-          disabled={loading}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-700 text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-lg shadow-blue-600/20"
-        >
-          <Save size={18} className={loading ? 'animate-spin' : ''} />
-          {loading ? 'Salvando...' : 'Salvar Todas as Alterações'}
-        </button>
       </div>
     </div>
   );

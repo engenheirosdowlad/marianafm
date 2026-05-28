@@ -1,16 +1,29 @@
 import { Volume2, Play, Pause } from 'lucide-react';
-import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { usePlayer } from '../context/PlayerContext';
+import { useSettings } from '../context/SettingsContext';
 
 export function AudioPlayer() {
   const { isPlaying, setIsPlaying, volume, setVolume, activePlayer, setActivePlayer } = usePlayer();
+  const { settings } = useSettings();
   const isAudioPlaying = isPlaying && activePlayer === 'audio';
-  
-  const [currentTrack] = useState({
-    title: "CIDADE FM 87,9 MHZ",
-    artist: "Onde nasce o sucesso!"
-  });
+
+  const audioTitle = settings.audioPlayTitle || "CIDADE FM 87,9 MHZ";
+  const audioSubtitle = settings.audioPlaySubtitle || "Onde nasce o sucesso!";
+  const audioTitleSize = settings.audioTitleSize || "20";
+  const audioTitleColor = settings.audioTitleColor || "#ffffff";
+  const audioTitleFont = settings.audioTitleFont || "sans";
+  const audioSubtitleSize = settings.audioSubtitleSize || "14";
+  const audioSubtitleColor = settings.audioSubtitleColor || "#cbd5e1";
+  const audioSubtitleFont = settings.audioSubtitleFont || "sans";
+
+  const fontMap: Record<string, string> = {
+    sans: "'Outfit', 'Inter', sans-serif",
+    system: "system-ui, -apple-system, sans-serif",
+    mono: "monospace"
+  };
+  const selectedTitleFont = fontMap[audioTitleFont] || fontMap.sans;
+  const selectedSubtitleFont = fontMap[audioSubtitleFont] || fontMap.sans;
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setVolume(parseFloat(e.target.value));
@@ -73,11 +86,25 @@ export function AudioPlayer() {
         <p className="text-slate-400 text-[10px] font-black tracking-widest uppercase mb-1">
           Now Playing
         </p>
-        <h3 className="text-white font-bold text-xl tracking-tight leading-tight truncate px-2">
-          {currentTrack.title}
+        <h3 
+          style={{
+            fontFamily: selectedTitleFont,
+            fontSize: `${audioTitleSize}px`,
+            color: audioTitleColor
+          }}
+          className="font-bold tracking-tight leading-tight truncate px-2"
+        >
+          {audioTitle}
         </h3>
-        <p className="text-slate-400 text-sm font-medium truncate mt-0.5">
-          {currentTrack.artist}
+        <p 
+          style={{
+            fontFamily: selectedSubtitleFont,
+            fontSize: `${audioSubtitleSize}px`,
+            color: audioSubtitleColor
+          }}
+          className="font-medium truncate mt-0.5"
+        >
+          {audioSubtitle}
         </p>
       </div>
 
