@@ -5,53 +5,79 @@ export function Logo() {
   const { settings } = useSettings();
   const logoUrl = settings.logoUrl;
   const logoSize = settings.logoSize || '60';
+  const logoSizeMobile = settings.logoSizeMobile || '45';
 
   if (logoUrl) {
     return (
-      <img 
-        src={logoUrl} 
-        alt="Radio Logo" 
-        style={{ height: `${logoSize}px` }}
-        className="object-contain origin-left hover:scale-105 transition-transform duration-300"
-      />
+      <>
+        <style>{`
+          .radio-logo-img {
+            height: ${logoSizeMobile}px;
+          }
+          @media (min-width: 768px) {
+            .radio-logo-img {
+              height: ${logoSize}px;
+            }
+          }
+        `}</style>
+        <img 
+          src={logoUrl} 
+          alt="Radio Logo" 
+          className="radio-logo-img object-contain origin-left hover:scale-105 transition-transform duration-300"
+        />
+      </>
     );
   }
 
   const scaleFactor = Number(logoSize) / 60;
+  const scaleFactorMobile = Number(logoSizeMobile) / 60;
 
   return (
-    <div style={{ height: `${logoSize}px` }} className="flex items-center">
-      <div 
-        style={{ 
-          transform: `scale(${scaleFactor})`, 
-          transformOrigin: 'left center',
-          width: 'max-content'
-        }}
-        className="flex flex-col items-start leading-none group cursor-pointer transition-transform hover:scale-[1.05] duration-300 origin-left"
-      >
-        <div className="flex items-end gap-1">
-          <div className="relative">
-            <h1 className="text-2xl lg:text-5xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-blue-400 via-blue-600 to-indigo-800 drop-shadow-[0_2px_2px_rgba(255,255,255,0.3)]">
-              CIDADE
-            </h1>
-            {/* Internal Play Icon in 'D' - Simplified representation */}
-            <div className="absolute top-1/2 left-[60%] -translate-y-1/2 w-3 h-3 lg:w-5 lg:h-5 bg-white rounded-sm rotate-45 opacity-20" />
+    <>
+      <style>{`
+        .radio-logo-container {
+          height: ${logoSizeMobile}px;
+        }
+        .radio-logo-scale {
+          transform: scale(${scaleFactorMobile});
+          transform-origin: left center;
+          width: max-content;
+        }
+        @media (min-width: 768px) {
+          .radio-logo-container {
+            height: ${logoSize}px;
+          }
+          .radio-logo-scale {
+            transform: scale(${scaleFactor});
+          }
+        }
+      `}</style>
+      <div className="radio-logo-container flex items-center">
+        <div className="radio-logo-scale flex flex-col items-start leading-none group cursor-pointer transition-transform hover:scale-[1.05] duration-300 origin-left">
+          <div className="flex items-end gap-1">
+            <div className="relative">
+              <h1 className="text-2xl lg:text-5xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-blue-400 via-blue-600 to-indigo-800 drop-shadow-[0_2px_2px_rgba(255,255,255,0.3)]">
+                CIDADE
+              </h1>
+              {/* Internal Play Icon in 'D' - Simplified representation */}
+              <div className="absolute top-1/2 left-[60%] -translate-y-1/2 w-3 h-3 lg:w-5 lg:h-5 bg-white rounded-sm rotate-45 opacity-20" />
+            </div>
           </div>
-        </div>
-        
-        <div className="flex flex-col w-full">
-          <div className="h-[2px] lg:h-1 w-full bg-gradient-to-r from-red-600 via-yellow-500 to-purple-600 rounded-full my-0.5 lg:my-1 shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
-          <div className="flex items-center justify-between">
-             <span className="text-xs lg:text-2xl font-black italic text-white tracking-widest drop-shadow-md mt-0.5 lg:mt-0">
-               FM 87,9
-             </span>
+          
+          <div className="flex flex-col w-full">
+            <div className="h-[2px] lg:h-1 w-full bg-gradient-to-r from-red-600 via-yellow-500 to-purple-600 rounded-full my-0.5 lg:my-1 shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
+            <div className="flex items-center justify-between">
+               <span className="text-xs lg:text-2xl font-black italic text-white tracking-widest drop-shadow-md mt-0.5 lg:mt-0">
+                 FM 87,9
+               </span>
+            </div>
+            <p className="text-[6px] lg:text-[11px] font-bold italic text-slate-300 tracking-tight mt-0.5">
+              Onde nasce o sucesso!
+            </p>
           </div>
-          <p className="text-[6px] lg:text-[11px] font-bold italic text-slate-300 tracking-tight mt-0.5">
-            Onde nasce o sucesso!
-          </p>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

@@ -35,8 +35,10 @@ export default function AdminSettings() {
   const [visualizerThickness, setVisualizerThickness] = useState('5');
   const [playImageSize, setPlayImageSize] = useState('200');
   const [logoSize, setLogoSize] = useState('60');
+  const [logoSizeMobile, setLogoSizeMobile] = useState('45');
   
   const [headerTextSize, setHeaderTextSize] = useState('24');
+  const [headerTextSizeMobile, setHeaderTextSizeMobile] = useState('16');
   const [headerTextEffect, setHeaderTextEffect] = useState('fade');
   const [headerTextFont, setHeaderTextFont] = useState('sans');
   const [headerTextColor, setHeaderTextColor] = useState('#ffffff');
@@ -71,6 +73,13 @@ export default function AdminSettings() {
   const [footerIconFacebook, setFooterIconFacebook] = useState('');
   const [footerIconYoutube, setFooterIconYoutube] = useState('');
 
+  const [footerTitleContact, setFooterTitleContact] = useState('Contato');
+  const [footerTitleAddress, setFooterTitleAddress] = useState('Endereço');
+  const [footerTitleMaps, setFooterTitleMaps] = useState('Ver no Mapa');
+  const [footerTitleStreetView, setFooterTitleStreetView] = useState('Street View');
+  const [footerLabelWhatsapp, setFooterLabelWhatsapp] = useState('WhatsApp');
+  const [footerLabelEmail, setFooterLabelEmail] = useState('E-mail');
+
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [activeTab, setActiveTab] = useState('transmission');
@@ -104,7 +113,9 @@ export default function AdminSettings() {
     if (settings.visualizerIntensity) setVisualizerIntensity(settings.visualizerIntensity);
     if (settings.visualizerThickness) setVisualizerThickness(settings.visualizerThickness);
     if (settings.logoSize) setLogoSize(settings.logoSize);
+    if (settings.logoSizeMobile) setLogoSizeMobile(settings.logoSizeMobile);
     if (settings.headerTextSize) setHeaderTextSize(settings.headerTextSize);
+    if (settings.headerTextSizeMobile) setHeaderTextSizeMobile(settings.headerTextSizeMobile);
     if (settings.headerTextEffect) setHeaderTextEffect(settings.headerTextEffect);
     if (settings.headerTextFont) setHeaderTextFont(settings.headerTextFont);
     if (settings.headerTextColor) setHeaderTextColor(settings.headerTextColor);
@@ -141,6 +152,13 @@ export default function AdminSettings() {
     if (settings.footerIconInstagram) setFooterIconInstagram(settings.footerIconInstagram);
     if (settings.footerIconFacebook) setFooterIconFacebook(settings.footerIconFacebook);
     if (settings.footerIconYoutube) setFooterIconYoutube(settings.footerIconYoutube);
+
+    if (settings.footerTitleContact) setFooterTitleContact(settings.footerTitleContact);
+    if (settings.footerTitleAddress) setFooterTitleAddress(settings.footerTitleAddress);
+    if (settings.footerTitleMaps) setFooterTitleMaps(settings.footerTitleMaps);
+    if (settings.footerTitleStreetView) setFooterTitleStreetView(settings.footerTitleStreetView);
+    if (settings.footerLabelWhatsapp) setFooterLabelWhatsapp(settings.footerLabelWhatsapp);
+    if (settings.footerLabelEmail) setFooterLabelEmail(settings.footerLabelEmail);
 
     if (location.state?.startTour) {
       navigate('.', { replace: true, state: {} });
@@ -183,7 +201,9 @@ export default function AdminSettings() {
 
         playImageSize: playImageSize,
         logoSize: logoSize,
+        logoSizeMobile: logoSizeMobile,
         headerTextSize: headerTextSize,
+        headerTextSizeMobile: headerTextSizeMobile,
         headerTextEffect: headerTextEffect,
         headerTextFont: headerTextFont,
         headerTextColor: headerTextColor,
@@ -216,7 +236,13 @@ export default function AdminSettings() {
         footerIconWhatsapp,
         footerIconInstagram,
         footerIconFacebook,
-        footerIconYoutube
+        footerIconYoutube,
+        footerTitleContact,
+        footerTitleAddress,
+        footerTitleMaps,
+        footerTitleStreetView,
+        footerLabelWhatsapp,
+        footerLabelEmail
       });
       
       setSaved(true);
@@ -429,7 +455,7 @@ export default function AdminSettings() {
             <div className="space-y-1 col-span-2 sm:col-span-1">
               <div className="flex justify-between items-center">
                 <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
-                  <span>Tamanho da Fonte</span>
+                  <span>Tamanho da Fonte (Desktop)</span>
                   <span className="text-blue-400">{headerTextSize}px</span>
                 </label>
                 <button 
@@ -447,6 +473,31 @@ export default function AdminSettings() {
                 max="36"
                 value={headerTextSize}
                 onChange={(e) => setHeaderTextSize(e.target.value)}
+                className="w-full h-8 accent-blue-500"
+              />
+            </div>
+
+            <div className="space-y-1 col-span-2 sm:col-span-1">
+              <div className="flex justify-between items-center">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                  <span>Tamanho da Fonte (Mobile)</span>
+                  <span className="text-blue-400">{headerTextSizeMobile}px</span>
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setHeaderTextSizeMobile('16')}
+                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                  title="Restaurar valor padrão"
+                >
+                  <RotateCcw size={10} /> Padrão
+                </button>
+              </div>
+              <input
+                type="range"
+                min="10"
+                max="28"
+                value={headerTextSizeMobile}
+                onChange={(e) => setHeaderTextSizeMobile(e.target.value)}
                 className="w-full h-8 accent-blue-500"
               />
             </div>
@@ -584,6 +635,63 @@ export default function AdminSettings() {
               />
             </div>
           </div>
+
+          {/* Efeito de barras de Som (Fundo) */}
+          <div className="pt-6 border-t border-white/10 space-y-4">
+            <h3 className="text-white font-bold text-sm flex items-center gap-2">
+              <Radio className="text-blue-500" size={16} /> Efeito de barras de Som (Fundo)
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <div className="flex justify-between items-center">
+                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                    <span>Intensidade / Brilho ({visualizerIntensity}%)</span>
+                  </label>
+                  <button 
+                    type="button" 
+                    onClick={() => setVisualizerIntensity('50')}
+                    className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                    title="Restaurar valor padrão"
+                  >
+                    <RotateCcw size={10} /> Padrão
+                  </button>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={visualizerIntensity}
+                  onChange={(e) => setVisualizerIntensity(e.target.value)}
+                  className="w-full h-8 accent-blue-500"
+                />
+              </div>
+
+              <div className="space-y-1 sm:col-span-2">
+                <div className="flex justify-between items-center">
+                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                    <span>Espessura das Barras ({visualizerThickness}px)</span>
+                  </label>
+                  <button 
+                    type="button" 
+                    onClick={() => setVisualizerThickness('5')}
+                    className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                    title="Restaurar valor padrão"
+                  >
+                    <RotateCcw size={10} /> Padrão
+                  </button>
+                </div>
+                <input
+                  type="range"
+                  min="1"
+                  max="20"
+                  value={visualizerThickness}
+                  onChange={(e) => setVisualizerThickness(e.target.value)}
+                  className="w-full h-8 accent-blue-500"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
@@ -598,11 +706,14 @@ export default function AdminSettings() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* WhatsApp Link & Icon */}
-                <div className="space-y-3">
+                <div className="bg-slate-900/40 p-4 rounded-xl border border-white/5 space-y-4">
+                  <h3 className="text-white font-bold text-sm flex items-center gap-2 pb-2 border-b border-white/5">
+                    <MessageCircle size={16} className="text-green-500" /> WhatsApp
+                  </h3>
                   <div className="space-y-1">
                     <div className="flex justify-between items-center">
                       <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                        <MessageCircle size={14} className="text-green-500" /> Link do WhatsApp
+                        Link do WhatsApp
                       </label>
                       <button 
                         type="button" 
@@ -666,11 +777,14 @@ export default function AdminSettings() {
                 </div>
 
                 {/* Instagram Link & Icon */}
-                <div className="space-y-3">
+                <div className="bg-slate-900/40 p-4 rounded-xl border border-white/5 space-y-4">
+                  <h3 className="text-white font-bold text-sm flex items-center gap-2 pb-2 border-b border-white/5">
+                    <Instagram size={16} className="text-pink-500" /> Instagram
+                  </h3>
                   <div className="space-y-1">
                     <div className="flex justify-between items-center">
                       <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                        <Instagram size={14} className="text-pink-500" /> Link do Instagram
+                        Link do Instagram
                       </label>
                       <button 
                         type="button" 
@@ -734,11 +848,14 @@ export default function AdminSettings() {
                 </div>
 
                 {/* Facebook Link & Icon */}
-                <div className="space-y-3">
+                <div className="bg-slate-900/40 p-4 rounded-xl border border-white/5 space-y-4">
+                  <h3 className="text-white font-bold text-sm flex items-center gap-2 pb-2 border-b border-white/5">
+                    <Facebook size={16} className="text-blue-500" /> Facebook
+                  </h3>
                   <div className="space-y-1">
                     <div className="flex justify-between items-center">
                       <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                        <Facebook size={14} className="text-blue-500" /> Link do Facebook
+                        Link do Facebook
                       </label>
                       <button 
                         type="button" 
@@ -802,11 +919,14 @@ export default function AdminSettings() {
                 </div>
 
                 {/* YouTube Link & Icon */}
-                <div className="space-y-3">
+                <div className="bg-slate-900/40 p-4 rounded-xl border border-white/5 space-y-4">
+                  <h3 className="text-white font-bold text-sm flex items-center gap-2 pb-2 border-b border-white/5">
+                    <Globe size={16} className="text-red-500" /> YouTube
+                  </h3>
                   <div className="space-y-1">
                     <div className="flex justify-between items-center">
                       <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                        <Globe size={14} className="text-red-500" /> Link do YouTube
+                        Link do YouTube
                       </label>
                       <button 
                         type="button" 
@@ -1226,6 +1346,146 @@ export default function AdminSettings() {
                 </div>
               </div>
             </div>
+
+            {/* 5. Customização de Títulos do Rodapé */}
+            <div className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
+              <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
+                <Globe className="text-blue-500" size={18} /> 5. Customização de Títulos do Rodapé
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Contato Title */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Título da Seção de Contato
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setFooterTitleContact('Contato')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={footerTitleContact}
+                    onChange={(e) => setFooterTitleContact(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                  />
+                </div>
+
+                {/* Endereço Title */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Título da Seção de Endereço
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setFooterTitleAddress('Endereço')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={footerTitleAddress}
+                    onChange={(e) => setFooterTitleAddress(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                  />
+                </div>
+
+                {/* Label WhatsApp */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Prefixo do WhatsApp
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setFooterLabelWhatsapp('WhatsApp')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={footerLabelWhatsapp}
+                    onChange={(e) => setFooterLabelWhatsapp(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                  />
+                </div>
+
+                {/* Label Email */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Prefixo do E-mail
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setFooterLabelEmail('E-mail')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={footerLabelEmail}
+                    onChange={(e) => setFooterLabelEmail(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                  />
+                </div>
+
+                {/* Ver no Mapa Title */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Título do Botão "Ver no Mapa"
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setFooterTitleMaps('Ver no Mapa')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={footerTitleMaps}
+                    onChange={(e) => setFooterTitleMaps(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                  />
+                </div>
+
+                {/* Street View Title */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Título do Botão "Street View"
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setFooterTitleStreetView('Street View')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={footerTitleStreetView}
+                    onChange={(e) => setFooterTitleStreetView(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -1282,29 +1542,56 @@ export default function AdminSettings() {
               )}
             </div>
 
-            <div className="space-y-1">
-              <div className="flex justify-between items-center">
-                <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
-                  <span>Tamanho da Logo ({logoSize}px)</span>
-                </label>
-                <button 
-                  type="button" 
-                  onClick={() => setLogoSize('60')}
-                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
-                  title="Restaurar valor padrão"
-                >
-                  <RotateCcw size={10} /> Padrão
-                </button>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <div className="flex justify-between items-center">
+                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                    <span>Tamanho da Logo (Desktop: {logoSize}px)</span>
+                  </label>
+                  <button 
+                    type="button" 
+                    onClick={() => setLogoSize('60')}
+                    className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                    title="Restaurar valor padrão"
+                  >
+                    <RotateCcw size={10} /> Padrão
+                  </button>
+                </div>
+                <input
+                  type="range"
+                  min="30"
+                  max="150"
+                  step="5"
+                  value={logoSize}
+                  onChange={(e) => setLogoSize(e.target.value)}
+                  className="w-full h-8 accent-blue-500"
+                />
               </div>
-              <input
-                type="range"
-                min="30"
-                max="150"
-                step="5"
-                value={logoSize}
-                onChange={(e) => setLogoSize(e.target.value)}
-                className="w-full h-8 accent-blue-500"
-              />
+
+              <div className="space-y-1">
+                <div className="flex justify-between items-center">
+                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                    <span>Tamanho da Logo (Mobile: {logoSizeMobile}px)</span>
+                  </label>
+                  <button 
+                    type="button" 
+                    onClick={() => setLogoSizeMobile('45')}
+                    className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                    title="Restaurar valor padrão"
+                  >
+                    <RotateCcw size={10} /> Padrão
+                  </button>
+                </div>
+                <input
+                  type="range"
+                  min="20"
+                  max="100"
+                  step="5"
+                  value={logoSizeMobile}
+                  onChange={(e) => setLogoSizeMobile(e.target.value)}
+                  className="w-full h-8 accent-blue-500"
+                />
+              </div>
             </div>
 
             <div className="space-y-1">
@@ -1354,63 +1641,6 @@ export default function AdminSettings() {
                 onChange={(e) => setDividerGlow(e.target.value)}
                 className="w-full accent-blue-500"
               />
-            </div>
-
-            {/* Efeito de barras de Som (Fundo) */}
-            <div className="pt-6 border-t border-white/10 space-y-4">
-              <h3 className="text-white font-bold text-sm flex items-center gap-2">
-                <Radio className="text-blue-500" size={16} /> Efeito de barras de Som (Fundo)
-              </h3>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <div className="flex justify-between items-center">
-                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
-                      <span>Intensidade / Brilho ({visualizerIntensity}%)</span>
-                    </label>
-                    <button 
-                      type="button" 
-                      onClick={() => setVisualizerIntensity('50')}
-                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
-                      title="Restaurar valor padrão"
-                    >
-                      <RotateCcw size={10} /> Padrão
-                    </button>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={visualizerIntensity}
-                    onChange={(e) => setVisualizerIntensity(e.target.value)}
-                    className="w-full h-8 accent-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-1 sm:col-span-2">
-                  <div className="flex justify-between items-center">
-                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
-                      <span>Espessura das Barras ({visualizerThickness}px)</span>
-                    </label>
-                    <button 
-                      type="button" 
-                      onClick={() => setVisualizerThickness('5')}
-                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
-                      title="Restaurar valor padrão"
-                    >
-                      <RotateCcw size={10} /> Padrão
-                    </button>
-                  </div>
-                  <input
-                    type="range"
-                    min="1"
-                    max="20"
-                    value={visualizerThickness}
-                    onChange={(e) => setVisualizerThickness(e.target.value)}
-                    className="w-full h-8 accent-blue-500"
-                  />
-                </div>
-              </div>
             </div>
           </div>
         )}

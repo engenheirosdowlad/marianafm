@@ -36,6 +36,13 @@ export function Footer() {
   const iconFacebook = settings.footerIconFacebook || "";
   const iconYoutube = settings.footerIconYoutube || "";
 
+  const titleContact = settings.footerTitleContact || "Contato";
+  const titleAddress = settings.footerTitleAddress || "Endereço";
+  const titleMaps = settings.footerTitleMaps || "Ver no Mapa";
+  const titleStreetView = settings.footerTitleStreetView || "Street View";
+  const labelWhatsapp = settings.footerLabelWhatsapp || "WhatsApp";
+  const labelEmail = settings.footerLabelEmail || "E-mail";
+
   return (
     <footer className="bg-slate-950 pt-8 pb-8 px-4 mt-12 relative border-t border-slate-900">
       {/* Glowing Divider Top */}
@@ -116,7 +123,7 @@ export function Footer() {
                 style={{ color: headerColor, fontSize: `${headerSize}px` }}
                 className="font-extrabold uppercase tracking-widest flex items-center justify-center gap-1.5"
               >
-                <Phone size={Math.max(12, parseInt(headerSize))} style={{ color: headerColor }} /> Contato
+                <Phone size={Math.max(12, parseInt(headerSize))} style={{ color: headerColor }} /> {titleContact}
               </p>
               <div className="flex flex-col items-center gap-1">
                 <a 
@@ -126,7 +133,7 @@ export function Footer() {
                   style={{ color: contentColor, fontSize: `${contentSize}px` }}
                   className="font-semibold hover:text-emerald-400 transition-colors flex items-center gap-1.5"
                 >
-                  <span style={{ color: headerColor }} className="font-bold text-xs uppercase">WhatsApp:</span>
+                  <span style={{ color: headerColor }} className="font-bold text-xs uppercase">{labelWhatsapp}:</span>
                   {links.number}
                 </a>
                 <a 
@@ -134,7 +141,7 @@ export function Footer() {
                   style={{ color: contentColor, fontSize: `${contentSize}px` }}
                   className="font-semibold hover:text-amber-400 transition-colors flex items-center gap-1.5"
                 >
-                  <span style={{ color: headerColor }} className="font-bold text-xs uppercase">E-mail:</span>
+                  <span style={{ color: headerColor }} className="font-bold text-xs uppercase">{labelEmail}:</span>
                   {links.email}
                 </a>
               </div>
@@ -146,7 +153,7 @@ export function Footer() {
                 style={{ color: headerColor, fontSize: `${headerSize}px` }}
                 className="font-extrabold uppercase tracking-widest flex items-center justify-center gap-1.5"
               >
-                <MapPin size={Math.max(12, parseInt(headerSize))} style={{ color: headerColor }} /> Endereço
+                <MapPin size={Math.max(12, parseInt(headerSize))} style={{ color: headerColor }} /> {titleAddress}
               </p>
               <div 
                 style={{ color: contentColor, fontSize: `${contentSize}px` }}
@@ -166,7 +173,7 @@ export function Footer() {
                 rel="noreferrer" 
                 className="text-[11px] font-bold bg-slate-900 hover:bg-slate-800 border border-white/5 hover:border-amber-500/20 text-slate-300 px-5 py-2.5 rounded-full transition-all flex items-center gap-2 shadow-xl hover:shadow-amber-500/5 active:scale-95"
               >
-                <Map size={13} className="text-blue-400 animate-pulse" /> Ver no Mapa
+                <Map size={13} className="text-blue-400 animate-pulse" /> {titleMaps}
               </a>
               <a 
                 href={streetViewUrl} 
@@ -174,7 +181,7 @@ export function Footer() {
                 rel="noreferrer" 
                 className="text-[11px] font-bold bg-slate-900 hover:bg-slate-800 border border-white/5 hover:border-amber-500/20 text-slate-300 px-5 py-2.5 rounded-full transition-all flex items-center gap-2 shadow-xl hover:shadow-amber-500/5 active:scale-95"
               >
-                <Navigation size={13} className="text-orange-400 animate-pulse" /> Street View
+                <Navigation size={13} className="text-orange-400 animate-pulse" /> {titleStreetView}
               </a>
             </div>
           </div>
