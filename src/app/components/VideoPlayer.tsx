@@ -38,9 +38,14 @@ export function VideoPlayer() {
           title="Video Stream"
         ></iframe>
 
-        {/* Camada transparente para bloquear cliques no meio do vídeo e evitar o Pause nativo */}
+        {/* Camadas transparentes para bloquear cliques que causem pause/stop nativos, deixando apenas o volume (canto inferior direito) acessível */}
         {isVideoPlaying && (
-          <div className="absolute inset-x-0 top-0 bottom-12 z-10 bg-transparent" />
+          <>
+            {/* Bloqueia o meio e parte superior */}
+            <div className="absolute inset-x-0 top-0 bottom-12 z-10 bg-transparent" />
+            {/* Bloqueia o canto inferior esquerdo (botão de stop/play do Clappr) */}
+            <div className="absolute left-0 bottom-0 w-[60%] h-12 z-10 bg-transparent" />
+          </>
         )}
         
         {/* Custom Overlay / Splash Screen */}
