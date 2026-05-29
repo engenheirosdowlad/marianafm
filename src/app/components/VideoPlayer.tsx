@@ -37,6 +37,11 @@ export function VideoPlayer() {
           allowFullScreen
           title="Video Stream"
         ></iframe>
+
+        {/* Camada transparente para bloquear cliques no meio do vídeo e evitar o Pause nativo */}
+        {isVideoPlaying && (
+          <div className="absolute inset-x-0 top-0 bottom-12 z-10 bg-transparent" />
+        )}
         
         {/* Custom Overlay / Splash Screen */}
         <AnimatePresence>
