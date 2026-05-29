@@ -32,7 +32,7 @@ export function VideoPlayer() {
       <div className="aspect-video w-full bg-black relative">
         <iframe
           src={isVideoPlaying ? `${videoUrl}&autoplay=true` : ''}
-          className="w-full h-full border-0 absolute inset-0 pointer-events-none"
+          className={`w-full h-full border-0 absolute inset-0 ${isVideoPlaying ? 'pointer-events-auto' : 'pointer-events-none'}`}
           allow="autoplay; encrypted-media; picture-in-picture"
           allowFullScreen
           title="Video Stream"
