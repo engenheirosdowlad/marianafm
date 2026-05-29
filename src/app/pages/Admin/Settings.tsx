@@ -2,8 +2,18 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
-import { Save, Radio, Video, Globe, MessageCircle, Instagram, Facebook, Phone, Upload, Info, RotateCcw, MapPin } from 'lucide-react';
+import { Save, Radio, Video, Globe, MessageCircle, Instagram, Facebook, Phone, Upload, Info, RotateCcw, MapPin, Menu, Eye, EyeOff } from 'lucide-react';
 import { useSettings } from '../../context/SettingsContext';
+
+const defaultMenuItems = [
+  { id: 'radio', label: 'Rádio Ao Vivo', iconName: 'Radio', path: '/', enabled: true, external: false },
+  { id: 'schedule', label: 'Programação', iconName: 'Calendar', path: '/schedule', enabled: true, external: false },
+  { id: 'news', label: 'Notícias', iconName: 'Newspaper', path: '/news', enabled: true, external: false },
+  { id: 'about', label: 'Sobre', iconName: 'Info', path: '/about', enabled: true, external: false },
+  { id: 'team', label: 'Equipe', iconName: 'Users', path: '/team', enabled: true, external: false },
+  { id: 'contact', label: 'Contato', iconName: 'Phone', path: '/contact', enabled: true, external: false },
+  { id: 'whatsapp', label: 'WhatsApp', iconName: 'MessageCircle', path: '', url: '', enabled: true, external: true },
+];
 
 export default function AdminSettings() {
   const location = useLocation();
@@ -79,6 +89,10 @@ export default function AdminSettings() {
   const [footerTitleStreetView, setFooterTitleStreetView] = useState('Street View');
   const [footerLabelWhatsapp, setFooterLabelWhatsapp] = useState('WhatsApp');
   const [footerLabelEmail, setFooterLabelEmail] = useState('E-mail');
+
+  const [sidebarTitle, setSidebarTitle] = useState('CIDADE FM 87,9 MHZ');
+  const [sidebarLogoUrl, setSidebarLogoUrl] = useState('');
+  const [sidebarMenuItems, setSidebarMenuItems] = useState<any[]>(defaultMenuItems);
 
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -159,6 +173,26 @@ export default function AdminSettings() {
     if (settings.footerTitleStreetView) setFooterTitleStreetView(settings.footerTitleStreetView);
     if (settings.footerLabelWhatsapp) setFooterLabelWhatsapp(settings.footerLabelWhatsapp);
     if (settings.footerLabelEmail) setFooterLabelEmail(settings.footerLabelEmail);
+
+    if (settings.sidebarTitle) {
+      setSidebarTitle(settings.sidebarTitle);
+    } else if (settings.siteName) {
+      setSidebarTitle(settings.siteName);
+    }
+    if (settings.sidebarLogoUrl) {
+      setSidebarLogoUrl(settings.sidebarLogoUrl);
+    } else if (settings.logoUrl) {
+      setSidebarLogoUrl(settings.logoUrl);
+    }
+    if (settings.sidebarMenuItems) {
+      try {
+        setSidebarMenuItems(JSON.parse(settings.sidebarMenuItems));
+      } catch (e) {
+        setSidebarMenuItems(defaultMenuItems);
+      }
+    } else {
+      setSidebarMenuItems(defaultMenuItems);
+    }
 
     if (location.state?.startTour) {
       navigate('.', { replace: true, state: {} });
@@ -242,7 +276,10 @@ export default function AdminSettings() {
         footerTitleMaps,
         footerTitleStreetView,
         footerLabelWhatsapp,
-        footerLabelEmail
+        footerLabelEmail,
+        sidebarTitle,
+        sidebarLogoUrl,
+        sidebarMenuItems: JSON.stringify(sidebarMenuItems)
       });
       
       setSaved(true);
@@ -288,6 +325,7 @@ export default function AdminSettings() {
           { id: 'header', label: 'Cabeçalho', icon: Globe },
           { id: 'layout', label: 'Layout', icon: Info },
           { id: 'video', label: 'Áudio / Vídeo', icon: Video },
+          { id: 'sidebar', label: 'Menu Lateral', icon: Menu },
           { id: 'footer', label: 'Rodapé', icon: Phone },
         ].map((tab) => (
           <button
@@ -1984,6 +2022,188 @@ export default function AdminSettings() {
                     className="w-full h-8 accent-blue-500"
                   />
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Menu Lateral Customization */}
+        {activeTab === 'sidebar' && (
+          <div className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
+            <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
+              <Menu className="text-blue-500" size={18} /> Configurações do Menu Lateral
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Sidebar Title */}
+              <div className="space-y-1">
+                <div className="flex justify-between items-center">
+                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                    Título do Menu Lateral
+                  </label>
+                  <button 
+                    type="button" 
+                    onClick={() => setSidebarTitle(siteName)}
+                    className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    title="Usar o nome do site"
+                  >
+                    <RotateCcw size={10} /> Copiar Nome do Site
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  value={sidebarTitle}
+                  onChange={(e) => setSidebarTitle(e.target.value)}
+                  className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                  placeholder="Ex: CIDADE FM 87,9 MHZ"
+                />
+              </div>
+
+              {/* Sidebar Logo */}
+              <div className="space-y-1">
+                <div className="flex justify-between items-center">
+                  <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                    Logo do Menu Lateral (URL ou Upload)
+                  </label>
+                  <button 
+                    type="button" 
+                    onClick={() => setSidebarLogoUrl('')}
+                    className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    title="Usar a logo padrão do site"
+                  >
+                    <RotateCcw size={10} /> Usar Logo do Site
+                  </button>
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={sidebarLogoUrl}
+                    onChange={(e) => setSidebarLogoUrl(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
+                    placeholder="Cole o link ou clique ao lado para upload"
+                  />
+                  <label className="flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white px-4 rounded-lg cursor-pointer transition-colors shrink-0" title="Upload de Imagem">
+                    <Upload size={18} />
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      className="hidden" 
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            setSidebarLogoUrl(reader.result as string);
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }} 
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-white/5 pt-6 space-y-4">
+              <div>
+                <h3 className="text-white font-bold text-base">Seções do Menu</h3>
+                <p className="text-slate-400 text-xs mt-1">Habilite, edite os nomes, ícones e links das seções do menu lateral.</p>
+              </div>
+
+              <div className="space-y-3">
+                {sidebarMenuItems.map((item, idx) => (
+                  <div 
+                    key={item.id} 
+                    className={`p-4 rounded-xl border transition-all flex flex-col md:flex-row md:items-center gap-4 ${
+                      item.enabled !== false 
+                        ? 'bg-slate-900/60 border-white/5' 
+                        : 'bg-slate-950/20 border-white/5 opacity-50'
+                    }`}
+                  >
+                    {/* Habilitado / Visibilidade */}
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newItems = [...sidebarMenuItems];
+                          newItems[idx] = { ...item, enabled: item.enabled === false ? true : false };
+                          setSidebarMenuItems(newItems);
+                        }}
+                        className={`p-2.5 rounded-lg border transition-all ${
+                          item.enabled !== false
+                            ? 'bg-blue-600/10 border-blue-500/20 text-blue-400 hover:bg-blue-600/20'
+                            : 'bg-slate-800/40 border-white/5 text-slate-500 hover:bg-slate-800/80'
+                        }`}
+                        title={item.enabled !== false ? "Ocultar do Menu" : "Mostrar no Menu"}
+                      >
+                        {item.enabled !== false ? <Eye size={18} /> : <EyeOff size={18} />}
+                      </button>
+                      <span className="text-xs font-bold text-slate-400 uppercase tracking-widest md:hidden">
+                        {item.enabled !== false ? "Visível" : "Oculto"}
+                      </span>
+                    </div>
+
+                    {/* Ícone */}
+                    <div className="flex flex-col space-y-1 min-w-[120px]">
+                      <label className="text-[10px] text-slate-500 font-bold uppercase">Ícone</label>
+                      <select
+                        value={item.iconName}
+                        onChange={(e) => {
+                          const newItems = [...sidebarMenuItems];
+                          newItems[idx] = { ...item, iconName: e.target.value };
+                          setSidebarMenuItems(newItems);
+                        }}
+                        className="bg-slate-900 border border-white/5 rounded-lg px-2 py-2 text-white text-xs outline-none focus:border-blue-500"
+                      >
+                        <option value="Radio">📻 Rádio</option>
+                        <option value="Calendar">📅 Programação</option>
+                        <option value="Newspaper">📰 Notícias</option>
+                        <option value="Info">ℹ️ Informações</option>
+                        <option value="Users">👥 Equipe</option>
+                        <option value="Phone">📞 Contato</option>
+                        <option value="MessageCircle">💬 WhatsApp</option>
+                      </select>
+                    </div>
+
+                    {/* Nome da Seção */}
+                    <div className="flex-1 flex flex-col space-y-1">
+                      <label className="text-[10px] text-slate-500 font-bold uppercase">Nome da Seção</label>
+                      <input
+                        type="text"
+                        value={item.label}
+                        onChange={(e) => {
+                          const newItems = [...sidebarMenuItems];
+                          newItems[idx] = { ...item, label: e.target.value };
+                          setSidebarMenuItems(newItems);
+                        }}
+                        className="bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-blue-500 font-bold"
+                        placeholder="Nome no menu"
+                      />
+                    </div>
+
+                    {/* Link de Destino / Rota */}
+                    <div className="flex-1 flex flex-col space-y-1">
+                      <label className="text-[10px] text-slate-500 font-bold uppercase">
+                        {item.external ? "Link Externo (URL)" : "Link Interno (Caminho)"}
+                      </label>
+                      <input
+                        type="text"
+                        value={item.external ? (item.url || '') : item.path}
+                        onChange={(e) => {
+                          const newItems = [...sidebarMenuItems];
+                          if (item.external) {
+                            newItems[idx] = { ...item, url: e.target.value };
+                          } else {
+                            newItems[idx] = { ...item, path: e.target.value };
+                          }
+                          setSidebarMenuItems(newItems);
+                        }}
+                        className="bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-blue-500 font-mono"
+                        placeholder={item.external ? "https://..." : "/exemplo"}
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
