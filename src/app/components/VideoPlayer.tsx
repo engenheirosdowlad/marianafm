@@ -15,6 +15,7 @@ export function VideoPlayer() {
   const videoPlayIconSize = parseInt(settings.videoPlayIconSize || '100');
   const videoPlayText = settings.videoPlayText || 'ASSISTA';
   const videoPlayTextSize = parseInt(settings.videoPlayTextSize || '16');
+  const videoChannelName = settings.videoChannelName || 'Mariana FM - TV';
 
   const toggleFullscreen = () => {
     if (!containerRef.current) return;
@@ -97,17 +98,9 @@ export function VideoPlayer() {
            >
              {isVideoPlaying ? <Pause size={14} /> : <Play size={14} className="text-blue-400" />}
            </button>
-           <span className="text-blue-400 text-[10px] font-black uppercase tracking-widest ml-1">Mariana FM - TV</span>
+           <span className="text-blue-400 text-[10px] font-black uppercase tracking-widest ml-1">{videoChannelName}</span>
         </div>
         <div className="flex items-center gap-3">
-            <a 
-              href={videoUrl} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-slate-400 hover:text-white transition-colors p-1.5 hover:bg-white/5 rounded-lg"
-            >
-              <ExternalLink size={16} />
-            </a>
             <button 
               onClick={toggleFullscreen}
               className="text-slate-400 hover:text-white transition-colors p-1.5 hover:bg-white/5 rounded-lg"

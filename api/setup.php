@@ -74,7 +74,14 @@ $queries = [
     ('headerTextSize', '24'),
     ('headerTextEffect', 'fade'),
     ('headerTextFont', 'sans'),
-    ('headerTextColor', '#ffffff')
+    ('headerTextColor', '#ffffff'),
+    ('videoChannelName', 'Mariana FM - TV'),
+    ('footerWhatsappColor', '#cbd5e1'),
+    ('footerEmailColor', '#cbd5e1'),
+    ('footerStreetColor', '#ffffff'),
+    ('footerDetailsColor', '#cbd5e1'),
+    ('footerCityColor', '#cbd5e1'),
+    ('footerCopyrightColor', '#cbd5e1')
     ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)",
 
     // Inserir Top 5 padrão da Cidade FM 87,9 MHZ

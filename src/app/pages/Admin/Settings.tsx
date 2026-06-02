@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { Save, Radio, Video, Globe, MessageCircle, Instagram, Facebook, Phone, Upload, Info, RotateCcw, MapPin, Menu, Eye, EyeOff } from 'lucide-react';
 import { useSettings } from '../../context/SettingsContext';
+import defaultLogoPreview from '../../../assets/logo.png';
 
 const defaultMenuItems = [
   { id: 'radio', label: 'Rádio Ao Vivo', iconName: 'Radio', path: '/', enabled: true, external: false },
@@ -50,6 +51,8 @@ export default function AdminSettings() {
   const [headerTextSize, setHeaderTextSize] = useState('24');
   const [headerTextSizeMobile, setHeaderTextSizeMobile] = useState('16');
   const [headerTextEffect, setHeaderTextEffect] = useState('fade');
+  const [headerAnimationType, setHeaderAnimationType] = useState('blur');
+  const [headerAnimationDirection, setHeaderAnimationDirection] = useState('both');
   const [headerTextFont, setHeaderTextFont] = useState('sans');
   const [headerTextColor, setHeaderTextColor] = useState('#ffffff');
 
@@ -57,6 +60,7 @@ export default function AdminSettings() {
   const [videoPlayIconSize, setVideoPlayIconSize] = useState('100');
   const [videoPlayText, setVideoPlayText] = useState('ASSISTA');
   const [videoPlayTextSize, setVideoPlayTextSize] = useState('16');
+  const [videoChannelName, setVideoChannelName] = useState('Mariana FM - TV');
   
   const [audioPlayTitle, setAudioPlayTitle] = useState('CIDADE FM 87,9 MHZ');
   const [audioPlaySubtitle, setAudioPlaySubtitle] = useState('Onde nasce o sucesso!');
@@ -66,6 +70,9 @@ export default function AdminSettings() {
   const [audioSubtitleSize, setAudioSubtitleSize] = useState('14');
   const [audioSubtitleColor, setAudioSubtitleColor] = useState('#cbd5e1');
   const [audioSubtitleFont, setAudioSubtitleFont] = useState('sans');
+  const [audioTextStopped,    setAudioTextStopped]    = useState('Ouça Ao Vivo!');
+  const [audioTextPlaying,    setAudioTextPlaying]    = useState('No Ar Agora');
+  const [audioTextNowPlaying, setAudioTextNowPlaying] = useState('Now Playing');
   const [footerAddressStreet, setFooterAddressStreet] = useState('Avenida Cronge da Silveira, nº 805');
   const [footerAddressDetails, setFooterAddressDetails] = useState('Altos, Sala 02 — Centro');
   const [footerAddressCity, setFooterAddressCity] = useState('CEP: 67400-112 — Barcarena, Pará');
@@ -78,17 +85,47 @@ export default function AdminSettings() {
   const [footerContentSize, setFooterContentSize] = useState('14');
   const [footerIconSize, setFooterIconSize] = useState('18');
   const [footerIconColor, setFooterIconColor] = useState('#94a3b8');
+  const [footerMapsIconColor, setFooterMapsIconColor] = useState('#60a5fa');
+  const [footerStreetViewIconColor, setFooterStreetViewIconColor] = useState('#fb923c');
+  const [footerWhatsappColor, setFooterWhatsappColor] = useState('#cbd5e1');
+  const [footerEmailColor, setFooterEmailColor] = useState('#cbd5e1');
+  const [footerStreetColor, setFooterStreetColor] = useState('#ffffff');
+  const [footerDetailsColor, setFooterDetailsColor] = useState('#cbd5e1');
+  const [footerCityColor, setFooterCityColor] = useState('#cbd5e1');
+  const [footerCopyrightColor, setFooterCopyrightColor] = useState('#cbd5e1');
   const [footerIconWhatsapp, setFooterIconWhatsapp] = useState('');
   const [footerIconInstagram, setFooterIconInstagram] = useState('');
   const [footerIconFacebook, setFooterIconFacebook] = useState('');
   const [footerIconYoutube, setFooterIconYoutube] = useState('');
 
   const [footerTitleContact, setFooterTitleContact] = useState('Contato');
+  const [footerTitleContactColor, setFooterTitleContactColor] = useState('#f59e0b');
   const [footerTitleAddress, setFooterTitleAddress] = useState('Endereço');
+  const [footerTitleAddressColor, setFooterTitleAddressColor] = useState('#f59e0b');
   const [footerTitleMaps, setFooterTitleMaps] = useState('Ver no Mapa');
+  const [footerTitleMapsColor, setFooterTitleMapsColor] = useState('#f59e0b');
   const [footerTitleStreetView, setFooterTitleStreetView] = useState('Street View');
+  const [footerTitleStreetViewColor, setFooterTitleStreetViewColor] = useState('#f59e0b');
   const [footerLabelWhatsapp, setFooterLabelWhatsapp] = useState('WhatsApp');
   const [footerLabelEmail, setFooterLabelEmail] = useState('E-mail');
+  const [footerColumnSpacing, setFooterColumnSpacing] = useState('40');
+  const [footerDividerThickness, setFooterDividerThickness] = useState('1');
+
+  const [audioLogoUrl, setAudioLogoUrl] = useState('');
+  const [audioLogoSize, setAudioLogoSize] = useState('100');
+  const [audioLogoX, setAudioLogoX] = useState('50');
+  const [audioLogoY, setAudioLogoY] = useState('40');
+  const [audioLogoOffsetX, setAudioLogoOffsetX] = useState('0');
+  const [audioLogoOffsetY, setAudioLogoOffsetY] = useState('0');
+  const [isDraggingLogo, setIsDraggingLogo] = useState(false);
+  const audioPreviewRef = useRef<HTMLDivElement>(null);
+  const logoOffsetDragRef = useRef<{ x: number; y: number; ox: number; oy: number } | null>(null);
+
+  const [audioPauseLogoUrl, setAudioPauseLogoUrl] = useState('');
+  const [audioPauseLogoSize, setAudioPauseLogoSize] = useState('100');
+  const [audioPauseLogoOffsetX, setAudioPauseLogoOffsetX] = useState('0');
+  const [audioPauseLogoOffsetY, setAudioPauseLogoOffsetY] = useState('0');
+  const pauseLogoDragRef = useRef(null);
 
   const [sidebarTitle, setSidebarTitle] = useState('CIDADE FM 87,9 MHZ');
   const [sidebarLogoUrl, setSidebarLogoUrl] = useState('');
@@ -97,6 +134,24 @@ export default function AdminSettings() {
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [activeTab, setActiveTab] = useState('transmission');
+
+  const handleAudioLogoUpload = (e: any) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setAudioLogoUrl(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleAudioPauseLogoUpload = (e: any) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setAudioPauseLogoUrl(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
 
   useEffect(() => {
     if (settings.audioStreamUrl) setAudioStream(settings.audioStreamUrl);
@@ -131,6 +186,8 @@ export default function AdminSettings() {
     if (settings.headerTextSize) setHeaderTextSize(settings.headerTextSize);
     if (settings.headerTextSizeMobile) setHeaderTextSizeMobile(settings.headerTextSizeMobile);
     if (settings.headerTextEffect) setHeaderTextEffect(settings.headerTextEffect);
+    if (settings.headerAnimationType) setHeaderAnimationType(settings.headerAnimationType);
+    if (settings.headerAnimationDirection) setHeaderAnimationDirection(settings.headerAnimationDirection);
     if (settings.headerTextFont) setHeaderTextFont(settings.headerTextFont);
     if (settings.headerTextColor) setHeaderTextColor(settings.headerTextColor);
     if (settings.headerTextDuration) setHeaderTextDuration(settings.headerTextDuration);
@@ -140,6 +197,7 @@ export default function AdminSettings() {
     if (settings.videoPlayIconSize) setVideoPlayIconSize(settings.videoPlayIconSize);
     if (settings.videoPlayText) setVideoPlayText(settings.videoPlayText);
     if (settings.videoPlayTextSize) setVideoPlayTextSize(settings.videoPlayTextSize);
+    if (settings.videoChannelName) setVideoChannelName(settings.videoChannelName);
 
     if (settings.audioPlayTitle) setAudioPlayTitle(settings.audioPlayTitle);
     if (settings.audioPlaySubtitle) setAudioPlaySubtitle(settings.audioPlaySubtitle);
@@ -149,6 +207,9 @@ export default function AdminSettings() {
     if (settings.audioSubtitleSize) setAudioSubtitleSize(settings.audioSubtitleSize);
     if (settings.audioSubtitleColor) setAudioSubtitleColor(settings.audioSubtitleColor);
     if (settings.audioSubtitleFont) setAudioSubtitleFont(settings.audioSubtitleFont);
+    if (settings.audioTextStopped)    setAudioTextStopped(settings.audioTextStopped);
+    if (settings.audioTextPlaying)    setAudioTextPlaying(settings.audioTextPlaying);
+    if (settings.audioTextNowPlaying) setAudioTextNowPlaying(settings.audioTextNowPlaying);
 
     if (settings.footerAddressStreet) setFooterAddressStreet(settings.footerAddressStreet);
     if (settings.footerAddressDetails) setFooterAddressDetails(settings.footerAddressDetails);
@@ -162,17 +223,42 @@ export default function AdminSettings() {
     if (settings.footerContentSize) setFooterContentSize(settings.footerContentSize);
     if (settings.footerIconSize) setFooterIconSize(settings.footerIconSize);
     if (settings.footerIconColor) setFooterIconColor(settings.footerIconColor);
+    if (settings.footerMapsIconColor) setFooterMapsIconColor(settings.footerMapsIconColor);
+    if (settings.footerStreetViewIconColor) setFooterStreetViewIconColor(settings.footerStreetViewIconColor);
+    if (settings.footerWhatsappColor) setFooterWhatsappColor(settings.footerWhatsappColor);
+    if (settings.footerEmailColor) setFooterEmailColor(settings.footerEmailColor);
+    if (settings.footerStreetColor) setFooterStreetColor(settings.footerStreetColor);
+    if (settings.footerDetailsColor) setFooterDetailsColor(settings.footerDetailsColor);
+    if (settings.footerCityColor) setFooterCityColor(settings.footerCityColor);
+    if (settings.footerCopyrightColor) setFooterCopyrightColor(settings.footerCopyrightColor);
     if (settings.footerIconWhatsapp) setFooterIconWhatsapp(settings.footerIconWhatsapp);
     if (settings.footerIconInstagram) setFooterIconInstagram(settings.footerIconInstagram);
     if (settings.footerIconFacebook) setFooterIconFacebook(settings.footerIconFacebook);
     if (settings.footerIconYoutube) setFooterIconYoutube(settings.footerIconYoutube);
 
     if (settings.footerTitleContact) setFooterTitleContact(settings.footerTitleContact);
+    if (settings.footerTitleContactColor) setFooterTitleContactColor(settings.footerTitleContactColor);
     if (settings.footerTitleAddress) setFooterTitleAddress(settings.footerTitleAddress);
+    if (settings.footerTitleAddressColor) setFooterTitleAddressColor(settings.footerTitleAddressColor);
     if (settings.footerTitleMaps) setFooterTitleMaps(settings.footerTitleMaps);
+    if (settings.footerTitleMapsColor) setFooterTitleMapsColor(settings.footerTitleMapsColor);
     if (settings.footerTitleStreetView) setFooterTitleStreetView(settings.footerTitleStreetView);
+    if (settings.footerTitleStreetViewColor) setFooterTitleStreetViewColor(settings.footerTitleStreetViewColor);
     if (settings.footerLabelWhatsapp) setFooterLabelWhatsapp(settings.footerLabelWhatsapp);
     if (settings.footerLabelEmail) setFooterLabelEmail(settings.footerLabelEmail);
+    if (settings.footerColumnSpacing) setFooterColumnSpacing(settings.footerColumnSpacing);
+    if (settings.footerDividerThickness) setFooterDividerThickness(settings.footerDividerThickness);
+    if (settings.audioLogoUrl !== undefined) setAudioLogoUrl(settings.audioLogoUrl);
+    if (settings.audioLogoSize) setAudioLogoSize(settings.audioLogoSize);
+    if (settings.audioLogoX) setAudioLogoX(settings.audioLogoX);
+    if (settings.audioLogoY) setAudioLogoY(settings.audioLogoY);
+    if (settings.audioLogoOffsetX !== undefined) setAudioLogoOffsetX(settings.audioLogoOffsetX);
+    if (settings.audioLogoOffsetY !== undefined) setAudioLogoOffsetY(settings.audioLogoOffsetY);
+
+    if (settings.audioPauseLogoUrl) setAudioPauseLogoUrl(settings.audioPauseLogoUrl);
+    if (settings.audioPauseLogoSize) setAudioPauseLogoSize(settings.audioPauseLogoSize);
+    if (settings.audioPauseLogoOffsetX) setAudioPauseLogoOffsetX(settings.audioPauseLogoOffsetX);
+    if (settings.audioPauseLogoOffsetY) setAudioPauseLogoOffsetY(settings.audioPauseLogoOffsetY);
 
     if (settings.sidebarTitle) {
       setSidebarTitle(settings.sidebarTitle);
@@ -239,6 +325,8 @@ export default function AdminSettings() {
         headerTextSize: headerTextSize,
         headerTextSizeMobile: headerTextSizeMobile,
         headerTextEffect: headerTextEffect,
+        headerAnimationType,
+        headerAnimationDirection,
         headerTextFont: headerTextFont,
         headerTextColor: headerTextColor,
         headerTextDuration: headerTextDuration,
@@ -247,6 +335,7 @@ export default function AdminSettings() {
         videoPlayIconSize,
         videoPlayText,
         videoPlayTextSize,
+        videoChannelName,
         audioPlayTitle,
         audioPlaySubtitle,
         audioTitleSize,
@@ -255,6 +344,9 @@ export default function AdminSettings() {
         audioSubtitleSize,
         audioSubtitleColor,
         audioSubtitleFont,
+        audioTextStopped,
+        audioTextPlaying,
+        audioTextNowPlaying,
         footerAddressStreet,
         footerAddressDetails,
         footerAddressCity,
@@ -267,16 +359,40 @@ export default function AdminSettings() {
         footerContentSize,
         footerIconSize,
         footerIconColor,
+        footerMapsIconColor,
+        footerStreetViewIconColor,
+        footerWhatsappColor,
+        footerEmailColor,
+        footerStreetColor,
+        footerDetailsColor,
+        footerCityColor,
+        footerCopyrightColor,
         footerIconWhatsapp,
         footerIconInstagram,
         footerIconFacebook,
         footerIconYoutube,
         footerTitleContact,
+        footerTitleContactColor,
         footerTitleAddress,
+        footerTitleAddressColor,
         footerTitleMaps,
+        footerTitleMapsColor,
         footerTitleStreetView,
+        footerTitleStreetViewColor,
         footerLabelWhatsapp,
         footerLabelEmail,
+        footerColumnSpacing,
+        footerDividerThickness,
+        audioLogoUrl,
+        audioLogoSize,
+        audioLogoX,
+        audioLogoY,
+        audioLogoOffsetX,
+        audioLogoOffsetY,
+        audioPauseLogoUrl,
+        audioPauseLogoSize,
+        audioPauseLogoOffsetX,
+        audioPauseLogoOffsetY,
         sidebarTitle,
         sidebarLogoUrl,
         sidebarMenuItems: JSON.stringify(sidebarMenuItems)
@@ -596,29 +712,64 @@ export default function AdminSettings() {
               </select>
             </div>
 
-            <div className="space-y-1 col-span-2 sm:col-span-1">
+            {/* Animar (Header Animation Settings) */}
+            <div className="col-span-2 space-y-4 pt-4 border-t border-white/5">
               <div className="flex justify-between items-center">
-                <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
-                  Efeito Visual
+                <label className="text-white font-bold text-sm uppercase tracking-wider flex items-center gap-2">
+                  ✨ Animar (Efeitos de Texto)
                 </label>
-                <button 
-                  type="button" 
-                  onClick={() => setHeaderTextEffect('fade')}
-                  className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
-                  title="Restaurar valor padrão"
-                >
-                  <RotateCcw size={10} /> Padrão
-                </button>
               </div>
-              <select
-                value={headerTextEffect}
-                onChange={(e) => setHeaderTextEffect(e.target.value)}
-                className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
-              >
-                <option value="fade">Desvanecer (Fade)</option>
-                <option value="pulse">Pulsar (Glow)</option>
-                <option value="static">Estático (Sem Efeito)</option>
-              </select>
+
+              {/* Grid of Animation Types */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {[
+                  { id: 'elevate', label: 'Elevação', icon: '↑' },
+                  { id: 'pan', label: 'Panorama', icon: '↔' },
+                  { id: 'pop', label: 'Surgir', icon: '↗' },
+                  { id: 'bounce', label: 'Quicar', icon: '⤻' },
+                  { id: 'stream', label: 'Correnteza', icon: '≈' },
+                  { id: 'blur', label: 'Desfoque', icon: '⚏' },
+                ].map((anim) => (
+                  <button
+                    key={anim.id}
+                    type="button"
+                    onClick={() => setHeaderAnimationType(anim.id)}
+                    className={`flex flex-col items-center justify-center p-4 rounded-xl border transition-all ${
+                      headerAnimationType === anim.id
+                        ? 'border-purple-500 bg-purple-500/10 text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.2)]'
+                        : 'border-white/10 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:border-white/20'
+                    }`}
+                  >
+                    <span className="text-2xl mb-2">{anim.icon}</span>
+                    <span className="text-[11px] font-bold">{anim.label}</span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Animation Direction */}
+              <div className="space-y-2 pt-2">
+                <label className="text-slate-400 text-xs font-black uppercase tracking-wider">Animar</label>
+                <div className="flex gap-3">
+                  {[
+                    { id: 'both', label: 'Ambos' },
+                    { id: 'in', label: 'Entrando' },
+                    { id: 'out', label: 'Saindo' },
+                  ].map((dir) => (
+                    <button
+                      key={dir.id}
+                      type="button"
+                      onClick={() => setHeaderAnimationDirection(dir.id)}
+                      className={`flex-1 py-2 rounded-lg border font-bold text-sm transition-all ${
+                        headerAnimationDirection === dir.id
+                          ? 'border-purple-500 text-purple-400 bg-purple-500/10'
+                          : 'border-white/10 bg-slate-900 text-slate-300 hover:bg-slate-800'
+                      }`}
+                    >
+                      {dir.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
 
             <div className="space-y-1 col-span-2 sm:col-span-1">
@@ -1035,130 +1186,176 @@ export default function AdminSettings() {
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-1">
-                  <div className="flex justify-between items-center">
-                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                      Número do WhatsApp (Exibição)
-                    </label>
-                    <button 
-                      type="button" 
-                      onClick={() => setWhatsappNumber('(91) 98273-6292')}
-                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
-                    >
-                      <RotateCcw size={10} /> Padrão
-                    </button>
+                {/* Card de Contato */}
+                <div className="bg-slate-900/40 p-4 rounded-xl border border-white/5 space-y-4">
+                  <h3 className="text-white font-bold text-sm flex items-center gap-2 pb-2 border-b border-white/5">Seção de Contato</h3>
+                  
+                  {/* Título de Contato */}
+                  <div className="space-y-1">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">Título Principal</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={footerTitleContact}
+                        onChange={(e) => setFooterTitleContact(e.target.value)}
+                        className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                      />
+                      <input
+                        type="color"
+                        value={footerTitleContactColor}
+                        onChange={(e) => setFooterTitleContactColor(e.target.value)}
+                        className="w-12 h-12 bg-slate-900 border border-white/5 rounded-lg cursor-pointer p-0 border-0 shrink-0"
+                        title="Cor do Título de Contato"
+                      />
+                    </div>
                   </div>
-                  <input
-                    type="text"
-                    value={whatsappNumber}
-                    onChange={(e) => setWhatsappNumber(e.target.value)}
-                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
-                  />
+
+                  {/* WhatsApp */}
+                  <div className="space-y-1">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">WhatsApp (Exibição)</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={whatsappNumber}
+                        onChange={(e) => setWhatsappNumber(e.target.value)}
+                        className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                      />
+                      <input
+                        type="color"
+                        value={footerWhatsappColor}
+                        onChange={(e) => setFooterWhatsappColor(e.target.value)}
+                        className="w-12 h-12 bg-slate-900 border border-white/5 rounded-lg cursor-pointer p-0 border-0 shrink-0"
+                        title="Cor do WhatsApp"
+                      />
+                    </div>
+                  </div>
+
+                  {/* E-mail */}
+                  <div className="space-y-1">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">E-mail de Contato</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="email"
+                        value={contactEmail}
+                        onChange={(e) => setContactEmail(e.target.value)}
+                        className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                      />
+                      <input
+                        type="color"
+                        value={footerEmailColor}
+                        onChange={(e) => setFooterEmailColor(e.target.value)}
+                        className="w-12 h-12 bg-slate-900 border border-white/5 rounded-lg cursor-pointer p-0 border-0 shrink-0"
+                        title="Cor do E-mail"
+                      />
+                    </div>
+                  </div>
                 </div>
 
-                <div className="space-y-1">
-                  <div className="flex justify-between items-center">
-                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                      E-mail de Contato
-                    </label>
-                    <button 
-                      type="button" 
-                      onClick={() => setContactEmail('contato@cidadefmpa.com.br')}
-                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
-                    >
-                      <RotateCcw size={10} /> Padrão
-                    </button>
+                {/* Card de Endereço */}
+                <div className="bg-slate-900/40 p-4 rounded-xl border border-white/5 space-y-4">
+                  <h3 className="text-white font-bold text-sm flex items-center gap-2 pb-2 border-b border-white/5">Seção de Endereço</h3>
+                  
+                  {/* Título de Endereço */}
+                  <div className="space-y-1">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">Título Principal</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={footerTitleAddress}
+                        onChange={(e) => setFooterTitleAddress(e.target.value)}
+                        className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                      />
+                      <input
+                        type="color"
+                        value={footerTitleAddressColor}
+                        onChange={(e) => setFooterTitleAddressColor(e.target.value)}
+                        className="w-12 h-12 bg-slate-900 border border-white/5 rounded-lg cursor-pointer p-0 border-0 shrink-0"
+                        title="Cor do Título de Endereço"
+                      />
+                    </div>
                   </div>
-                  <input
-                    type="email"
-                    value={contactEmail}
-                    onChange={(e) => setContactEmail(e.target.value)}
-                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
-                  />
+
+                  {/* Rua */}
+                  <div className="space-y-1">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">Endereço (Rua e Número)</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={footerAddressStreet}
+                        onChange={(e) => setFooterAddressStreet(e.target.value)}
+                        className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                      />
+                      <input
+                        type="color"
+                        value={footerStreetColor}
+                        onChange={(e) => setFooterStreetColor(e.target.value)}
+                        className="w-12 h-12 bg-slate-900 border border-white/5 rounded-lg cursor-pointer p-0 border-0 shrink-0"
+                        title="Cor da Rua"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Altos */}
+                  <div className="space-y-1">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">Endereço (Complemento)</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={footerAddressDetails}
+                        onChange={(e) => setFooterAddressDetails(e.target.value)}
+                        className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                      />
+                      <input
+                        type="color"
+                        value={footerDetailsColor}
+                        onChange={(e) => setFooterDetailsColor(e.target.value)}
+                        className="w-12 h-12 bg-slate-900 border border-white/5 rounded-lg cursor-pointer p-0 border-0 shrink-0"
+                        title="Cor do Complemento"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Cidade */}
+                  <div className="space-y-1">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">Endereço (CEP e Cidade)</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={footerAddressCity}
+                        onChange={(e) => setFooterAddressCity(e.target.value)}
+                        className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                      />
+                      <input
+                        type="color"
+                        value={footerCityColor}
+                        onChange={(e) => setFooterCityColor(e.target.value)}
+                        className="w-12 h-12 bg-slate-900 border border-white/5 rounded-lg cursor-pointer p-0 border-0 shrink-0"
+                        title="Cor da Cidade"
+                      />
+                    </div>
+                  </div>
                 </div>
 
-                <div className="space-y-1">
+                {/* Copyright isolado abaixo */}
+                <div className="col-span-1 md:col-span-2 space-y-1 pt-4">
                   <div className="flex justify-between items-center">
-                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
-                      Endereço (Rua e Número)
-                    </label>
-                    <button 
-                      type="button" 
-                      onClick={() => setFooterAddressStreet('Avenida Cronge da Silveira, nº 805')}
-                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
-                    >
-                      <RotateCcw size={10} /> Padrão
-                    </button>
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">Texto do Copyright</label>
                   </div>
-                  <input
-                    type="text"
-                    value={footerAddressStreet}
-                    onChange={(e) => setFooterAddressStreet(e.target.value)}
-                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <div className="flex justify-between items-center">
-                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
-                      Endereço (Altos / Sala / Bairro)
-                    </label>
-                    <button 
-                      type="button" 
-                      onClick={() => setFooterAddressDetails('Altos, Sala 02 — Centro')}
-                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
-                    >
-                      <RotateCcw size={10} /> Padrão
-                    </button>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={footerCopyrightText}
+                      onChange={(e) => setFooterCopyrightText(e.target.value)}
+                      className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                    />
+                    <input
+                      type="color"
+                      value={footerCopyrightColor}
+                      onChange={(e) => setFooterCopyrightColor(e.target.value)}
+                      className="w-12 h-12 bg-slate-900 border border-white/5 rounded-lg cursor-pointer p-0 border-0 shrink-0 animate-scaleIn"
+                      title="Escolher Cor do Copyright"
+                    />
                   </div>
-                  <input
-                    type="text"
-                    value={footerAddressDetails}
-                    onChange={(e) => setFooterAddressDetails(e.target.value)}
-                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <div className="flex justify-between items-center">
-                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
-                      Endereço (CEP / Cidade / Estado)
-                    </label>
-                    <button 
-                      type="button" 
-                      onClick={() => setFooterAddressCity('CEP: 67400-112 — Barcarena, Pará')}
-                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
-                    >
-                      <RotateCcw size={10} /> Padrão
-                    </button>
-                  </div>
-                  <input
-                    type="text"
-                    value={footerAddressCity}
-                    onChange={(e) => setFooterAddressCity(e.target.value)}
-                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <div className="flex justify-between items-center">
-                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
-                      Texto do Copyright (Rodapé)
-                    </label>
-                    <button 
-                      type="button" 
-                      onClick={() => setFooterCopyrightText('Cidade FM PA. Todos os direitos reservados.')}
-                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
-                    >
-                      <RotateCcw size={10} /> Padrão
-                    </button>
-                  </div>
-                  <input
-                    type="text"
-                    value={footerCopyrightText}
-                    onChange={(e) => setFooterCopyrightText(e.target.value)}
-                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
-                  />
                 </div>
               </div>
             </div>
@@ -1169,7 +1366,7 @@ export default function AdminSettings() {
                 <MapPin className="text-blue-500" size={18} /> 3. Integração com Mapas
               </h2>
 
-              <div className="grid grid-cols-1 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-1">
                   <div className="flex justify-between items-center">
                     <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
@@ -1194,6 +1391,35 @@ export default function AdminSettings() {
                 <div className="space-y-1">
                   <div className="flex justify-between items-center">
                     <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Cor do Ícone de Mapa
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setFooterMapsIconColor('#60a5fa')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={footerMapsIconColor}
+                      onChange={(e) => setFooterMapsIconColor(e.target.value)}
+                      className="w-12 h-10 bg-slate-900 border border-white/5 rounded-lg cursor-pointer p-0 border-0"
+                    />
+                    <input
+                      type="text"
+                      value={footerMapsIconColor}
+                      onChange={(e) => setFooterMapsIconColor(e.target.value)}
+                      className="w-full bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-white text-sm outline-none font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
                       Link do Street View
                     </label>
                     <button 
@@ -1210,6 +1436,35 @@ export default function AdminSettings() {
                     onChange={(e) => setFooterStreetViewUrl(e.target.value)}
                     className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
                   />
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Cor do Ícone de Street View
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setFooterStreetViewIconColor('#fb923c')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={footerStreetViewIconColor}
+                      onChange={(e) => setFooterStreetViewIconColor(e.target.value)}
+                      className="w-12 h-10 bg-slate-900 border border-white/5 rounded-lg cursor-pointer p-0 border-0"
+                    />
+                    <input
+                      type="text"
+                      value={footerStreetViewIconColor}
+                      onChange={(e) => setFooterStreetViewIconColor(e.target.value)}
+                      className="w-full bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-white text-sm outline-none font-mono"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -1524,6 +1779,70 @@ export default function AdminSettings() {
                 </div>
               </div>
             </div>
+
+            {/* 6. Layout das Colunas do Rodapé */}
+            <div className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
+              <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
+                <MapPin className="text-blue-500" size={18} /> 6. Posicionamento e Layout do Rodapé
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                {/* Footer Column Spacing */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                      <span>Espaçamento entre colunas ({footerColumnSpacing}px)</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setFooterColumnSpacing('40')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                      title="Restaurar valor padrão"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="range"
+                    min="8"
+                    max="120"
+                    step="4"
+                    value={footerColumnSpacing}
+                    onChange={(e) => setFooterColumnSpacing(e.target.value)}
+                    className="w-full h-8 accent-blue-500"
+                  />
+                  <p className="text-slate-500 text-[10px]">Controla o gap entre a coluna Contato, a barra divisória central e a coluna Endereço.</p>
+                </div>
+
+                {/* Footer Divider Thickness */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
+                      <span>Espessura da barra vertical ({footerDividerThickness}px)</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setFooterDividerThickness('1')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors shrink-0"
+                      title="Restaurar valor padrão"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="range"
+                    min="1"
+                    max="8"
+                    step="1"
+                    value={footerDividerThickness}
+                    onChange={(e) => setFooterDividerThickness(e.target.value)}
+                    className="w-full h-8 accent-blue-500"
+                  />
+                  <p className="text-slate-500 text-[10px]">Espessura da linha vertical que divide as colunas Contato e Endereço no rodapé.</p>
+                </div>
+
+              </div>
+            </div>
           </div>
         )}
 
@@ -1739,6 +2058,54 @@ export default function AdminSettings() {
                   />
                 </div>
 
+                {/* --- Texto do cabeçalho (parado) --- */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Texto quando Parado
+                    </label>
+                    <button type="button" onClick={() => setAudioTextStopped('Ouça Ao Vivo!')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors">
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input type="text" value={audioTextStopped} onChange={(e) => setAudioTextStopped(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                    placeholder="Ex: Ouça Ao Vivo!" />
+                </div>
+
+                {/* --- Texto do cabeçalho (tocando) --- */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Texto quando Tocando
+                    </label>
+                    <button type="button" onClick={() => setAudioTextPlaying('No Ar Agora')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors">
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input type="text" value={audioTextPlaying} onChange={(e) => setAudioTextPlaying(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                    placeholder="Ex: No Ar Agora" />
+                </div>
+
+                {/* --- Texto "Now Playing" --- */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Label "Now Playing"
+                    </label>
+                    <button type="button" onClick={() => setAudioTextNowPlaying('Now Playing')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors">
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input type="text" value={audioTextNowPlaying} onChange={(e) => setAudioTextNowPlaying(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                    placeholder="Ex: Now Playing" />
+                </div>
+
                 <div className="space-y-1">
                   <div className="flex justify-between items-center">
                     <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex justify-between w-full pr-4">
@@ -1901,6 +2268,210 @@ export default function AdminSettings() {
               </div>
             </div>
 
+            {/* ── Logo do Player de Áudio ── */}
+            <div className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-8">
+              <h2 className="text-white font-bold text-lg mb-2 flex items-center gap-2">
+                <Radio className="text-blue-500" size={18} /> Logos do Player de Áudio
+              </h2>
+              <p className="text-slate-500 text-xs -mt-4">Configure a logo exibida durante a reprodução e durante a pausa.</p>
+
+              {/* ── PLAY logo ── */}
+              <div className="space-y-4 border border-white/5 rounded-xl p-4">
+                <h3 className="text-white font-semibold text-sm flex items-center gap-2">
+                  <span className="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center text-[10px]">▶</span>
+                  Logo de Play (reproduzindo)
+                </h3>
+
+                {/* Upload */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">Imagem</label>
+                    <button type="button" onClick={() => setAudioLogoUrl('')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors">
+                      <RotateCcw size={10} /> Limpar
+                    </button>
+                  </div>
+                  <div className="flex gap-2">
+                    <input type="text" value={audioLogoUrl} onChange={(e) => setAudioLogoUrl(e.target.value)}
+                      className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
+                      placeholder="Deixe vazio para a logo padrão" />
+                    <label className="flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white px-4 rounded-lg cursor-pointer transition-colors shrink-0" title="Upload">
+                      <Upload size={16} />
+                      <input type="file" accept="image/*" className="hidden" onChange={handleAudioLogoUpload} />
+                    </label>
+                  </div>
+                  {audioLogoUrl && audioLogoUrl.startsWith('data:image') && (
+                    <p className="text-[10px] text-green-400">✓ Imagem carregada do computador.</p>
+                  )}
+                </div>
+
+                {/* Size */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">Tamanho ({audioLogoSize}px)</label>
+                    <button type="button" onClick={() => setAudioLogoSize('100')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors">
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input type="range" min="40" max="200" step="4" value={audioLogoSize}
+                    onChange={(e) => setAudioLogoSize(e.target.value)} className="w-full h-8 accent-blue-500" />
+                </div>
+
+                {/* Drag circle */}
+                <div className="flex flex-col items-center gap-2">
+                  <div className="flex items-center justify-between w-full">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">Posição dentro do círculo</label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-slate-500 text-[10px] font-mono">
+                        {Number(audioLogoOffsetX) >= 0 ? '+' : ''}{audioLogoOffsetX}px / {Number(audioLogoOffsetY) >= 0 ? '+' : ''}{audioLogoOffsetY}px
+                      </span>
+                      <button type="button" onClick={() => { setAudioLogoOffsetX('0'); setAudioLogoOffsetY('0'); }}
+                        className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors">
+                        <RotateCcw size={10} /> Centralizar
+                      </button>
+                    </div>
+                  </div>
+                  {(() => {
+                    const PREVIEW = 140;
+                    const actual = Number(audioLogoSize) + 8;
+                    const scale = PREVIEW / actual;
+                    const dispOX = Number(audioLogoOffsetX) * scale;
+                    const dispOY = Number(audioLogoOffsetY) * scale;
+                    const imgPx = Number(audioLogoSize) * scale;
+                    return (
+                      <div
+                        className="rounded-full bg-gradient-to-br from-slate-700 to-slate-900 border border-slate-600 shadow-[inset_0_2px_10px_rgba(255,255,255,0.08),_0_10px_24px_rgba(0,0,0,0.6)] overflow-hidden relative cursor-grab active:cursor-grabbing select-none"
+                        style={{ width: PREVIEW, height: PREVIEW }}
+                        onMouseDown={(e) => {
+                          logoOffsetDragRef.current = { x: e.clientX, y: e.clientY, ox: Number(audioLogoOffsetX), oy: Number(audioLogoOffsetY) };
+                          e.preventDefault();
+                        }}
+                        onMouseMove={(e) => {
+                          if (!logoOffsetDragRef.current) return;
+                          const dx = (e.clientX - logoOffsetDragRef.current.x) / scale;
+                          const dy = (e.clientY - logoOffsetDragRef.current.y) / scale;
+                          setAudioLogoOffsetX(String(Math.round(logoOffsetDragRef.current.ox + dx)));
+                          setAudioLogoOffsetY(String(Math.round(logoOffsetDragRef.current.oy + dy)));
+                        }}
+                        onMouseUp={() => { logoOffsetDragRef.current = null; }}
+                        onMouseLeave={() => { logoOffsetDragRef.current = null; }}
+                      >
+                        <div className="absolute top-1/2 left-0 right-0 h-px bg-white/10 pointer-events-none" />
+                        <div className="absolute left-1/2 top-0 bottom-0 w-px bg-white/10 pointer-events-none" />
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                          <img src={audioLogoUrl || defaultLogoPreview} alt="Play preview" draggable={false}
+                            className="object-contain"
+                            style={{ width: imgPx, height: imgPx, transform: `translate(${dispOX}px, ${dispOY}px)` }} />
+                        </div>
+                      </div>
+                    );
+                  })()}
+                  <p className="text-slate-600 text-[10px] text-center">Arraste para reposicionar dentro do círculo.</p>
+                </div>
+              </div>
+
+              {/* ── PAUSE logo ── */}
+              <div className="space-y-4 border border-white/5 rounded-xl p-4">
+                <h3 className="text-white font-semibold text-sm flex items-center gap-2">
+                  <span className="w-5 h-5 rounded-full bg-slate-600 flex items-center justify-center text-[10px]">⏸</span>
+                  Logo de Pause (pausado / parado)
+                </h3>
+
+                {/* Upload */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">Imagem</label>
+                    <button type="button" onClick={() => setAudioPauseLogoUrl('')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors">
+                      <RotateCcw size={10} /> Limpar
+                    </button>
+                  </div>
+                  <div className="flex gap-2">
+                    <input type="text" value={audioPauseLogoUrl} onChange={(e) => setAudioPauseLogoUrl(e.target.value)}
+                      className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
+                      placeholder="Deixe vazio para usar a logo de play" />
+                    <label className="flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white px-4 rounded-lg cursor-pointer transition-colors shrink-0" title="Upload">
+                      <Upload size={16} />
+                      <input type="file" accept="image/*" className="hidden" onChange={handleAudioPauseLogoUpload} />
+                    </label>
+                  </div>
+                  {audioPauseLogoUrl && audioPauseLogoUrl.startsWith('data:image') && (
+                    <p className="text-[10px] text-green-400">✓ Imagem carregada do computador.</p>
+                  )}
+                  {!audioPauseLogoUrl && (
+                    <p className="text-[10px] text-slate-600">↳ Nenhuma imagem definida — usará a logo de play como fallback.</p>
+                  )}
+                </div>
+
+                {/* Size */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">Tamanho ({audioPauseLogoSize}px)</label>
+                    <button type="button" onClick={() => setAudioPauseLogoSize('100')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors">
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input type="range" min="40" max="200" step="4" value={audioPauseLogoSize}
+                    onChange={(e) => setAudioPauseLogoSize(e.target.value)} className="w-full h-8 accent-blue-500" />
+                </div>
+
+                {/* Drag circle */}
+                <div className="flex flex-col items-center gap-2">
+                  <div className="flex items-center justify-between w-full">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">Posição dentro do círculo</label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-slate-500 text-[10px] font-mono">
+                        {Number(audioPauseLogoOffsetX) >= 0 ? '+' : ''}{audioPauseLogoOffsetX}px / {Number(audioPauseLogoOffsetY) >= 0 ? '+' : ''}{audioPauseLogoOffsetY}px
+                      </span>
+                      <button type="button" onClick={() => { setAudioPauseLogoOffsetX('0'); setAudioPauseLogoOffsetY('0'); }}
+                        className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors">
+                        <RotateCcw size={10} /> Centralizar
+                      </button>
+                    </div>
+                  </div>
+                  {(() => {
+                    const PREVIEW = 140;
+                    const actual = Number(audioPauseLogoSize) + 8;
+                    const scale = PREVIEW / actual;
+                    const dispOX = Number(audioPauseLogoOffsetX) * scale;
+                    const dispOY = Number(audioPauseLogoOffsetY) * scale;
+                    const imgPx = Number(audioPauseLogoSize) * scale;
+                    const pauseSrc = audioPauseLogoUrl || audioLogoUrl || defaultLogoPreview;
+                    return (
+                      <div
+                        className="rounded-full bg-gradient-to-br from-slate-700 to-slate-900 border border-slate-600 shadow-[inset_0_2px_10px_rgba(255,255,255,0.08),_0_10px_24px_rgba(0,0,0,0.6)] overflow-hidden relative cursor-grab active:cursor-grabbing select-none opacity-75"
+                        style={{ width: PREVIEW, height: PREVIEW }}
+                        onMouseDown={(e) => {
+                          pauseLogoDragRef.current = { x: e.clientX, y: e.clientY, ox: Number(audioPauseLogoOffsetX), oy: Number(audioPauseLogoOffsetY) };
+                          e.preventDefault();
+                        }}
+                        onMouseMove={(e) => {
+                          if (!pauseLogoDragRef.current) return;
+                          const dx = (e.clientX - pauseLogoDragRef.current.x) / scale;
+                          const dy = (e.clientY - pauseLogoDragRef.current.y) / scale;
+                          setAudioPauseLogoOffsetX(String(Math.round(pauseLogoDragRef.current.ox + dx)));
+                          setAudioPauseLogoOffsetY(String(Math.round(pauseLogoDragRef.current.oy + dy)));
+                        }}
+                        onMouseUp={() => { pauseLogoDragRef.current = null; }}
+                        onMouseLeave={() => { pauseLogoDragRef.current = null; }}
+                      >
+                        <div className="absolute top-1/2 left-0 right-0 h-px bg-white/10 pointer-events-none" />
+                        <div className="absolute left-1/2 top-0 bottom-0 w-px bg-white/10 pointer-events-none" />
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                          <img src={pauseSrc} alt="Pause preview" draggable={false}
+                            className="object-contain"
+                            style={{ width: imgPx, height: imgPx, transform: `translate(${dispOX}px, ${dispOY}px)` }} />
+                        </div>
+                      </div>
+                    );
+                  })()}
+                  <p className="text-slate-600 text-[10px] text-center">Arraste para reposicionar dentro do círculo.</p>
+                </div>
+              </div>
+            </div>
+
             {/* Player de Vídeo */}
             <div className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-white/5 shadow-2xl p-6 space-y-6">
               <h2 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
@@ -1996,6 +2567,29 @@ export default function AdminSettings() {
                     onChange={(e) => setVideoPlayText(e.target.value)}
                     className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
                     placeholder="Ex: ASSISTA"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                      Nome do Canal (Player de Vídeo)
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setVideoChannelName('Mariana FM - TV')}
+                      className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                      title="Restaurar valor padrão"
+                    >
+                      <RotateCcw size={10} /> Padrão
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={videoChannelName}
+                    onChange={(e) => setVideoChannelName(e.target.value)}
+                    className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                    placeholder="Ex: Mariana FM - TV"
                   />
                 </div>
 
