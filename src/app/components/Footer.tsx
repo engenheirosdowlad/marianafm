@@ -130,14 +130,14 @@ export function Footer() {
                 <Phone size={Math.max(12, parseInt(headerSize))} style={{ verticalAlign: 'middle' }} /> {titleContact}
               </p>
               <div className="flex flex-col items-center md:items-end text-center md:text-right gap-1.5">
-                {settings.commercialNumber && (
+                {settings.commercialNumber?.trim() && (
                   <a 
-                    href={`tel:${settings.commercialNumber.replace(/\D/g, '')}`}
+                    href={`tel:${settings.commercialNumber.trim().replace(/\D/g, '')}`}
                     style={{ color: settings.footerWhatsappColor || contentColor, fontSize: `${contentSize}px` }}
-                    className="font-semibold hover:text-blue-400 transition-colors flex items-center justify-end gap-1.5"
+                    className="font-semibold hover:text-blue-400 transition-colors flex items-center justify-end gap-1.5 whitespace-nowrap"
                   >
-                    <span style={{ color: headerColor }} className="font-bold text-xs uppercase">{settings.footerLabelCommercial || 'Comercial'}:</span>
-                    {settings.commercialNumber}
+                    <span style={{ color: headerColor }} className="font-bold text-xs uppercase">{(settings.footerLabelCommercial || 'Comercial').trim()}:</span>
+                    {settings.commercialNumber.trim()}
                   </a>
                 )}
                 <a 
@@ -145,28 +145,28 @@ export function Footer() {
                   target="_blank" 
                   rel="noopener noreferrer"
                   style={{ color: settings.footerWhatsappColor || contentColor, fontSize: `${contentSize}px` }}
-                  className="font-semibold hover:text-emerald-400 transition-colors flex items-center justify-end gap-1.5"
+                  className="font-semibold hover:text-emerald-400 transition-colors flex items-center justify-end gap-1.5 whitespace-nowrap"
                 >
                   <span style={{ color: headerColor }} className="font-bold text-xs uppercase">{labelWhatsapp}:</span>
-                  {links.number}
+                  {links.number?.trim()}
                 </a>
                 <div className="flex items-start gap-1.5 justify-center md:justify-end">
                   <span style={{ color: headerColor }} className="font-bold text-xs uppercase mt-0.5">{labelEmail}:</span>
-                  <div className="flex flex-col items-center md:items-start gap-0.5">
+                  <div className="flex flex-col items-center md:items-end gap-0.5">
                     <a 
                       href={`mailto:${links.email}`} 
                       style={{ color: settings.footerEmailColor || contentColor, fontSize: `${contentSize}px` }}
-                      className="font-semibold hover:text-amber-400 transition-colors"
+                      className="font-semibold hover:text-amber-400 transition-colors whitespace-nowrap"
                     >
-                      {links.email}
+                      {links.email?.trim()}
                     </a>
-                    {settings.contactEmail2 && (
+                    {settings.contactEmail2?.trim() && (
                       <a 
-                        href={`mailto:${settings.contactEmail2}`} 
+                        href={`mailto:${settings.contactEmail2.trim()}`} 
                         style={{ color: settings.footerEmailColor || contentColor, fontSize: `${contentSize}px` }}
-                        className="font-semibold hover:text-amber-400 transition-colors"
+                        className="font-semibold hover:text-amber-400 transition-colors whitespace-nowrap"
                       >
-                        {settings.contactEmail2}
+                        {settings.contactEmail2.trim()}
                       </a>
                     )}
                   </div>
