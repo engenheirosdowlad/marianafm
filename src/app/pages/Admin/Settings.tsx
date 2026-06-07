@@ -32,10 +32,15 @@ export default function AdminSettings() {
   const [headerTransitionSpeed, setHeaderTransitionSpeed] = useState('700');
   const [whatsappUrl, setWhatsappUrl] = useState('');
   const [whatsappNumber, setWhatsappNumber] = useState('');
+  const [whatsappCardTitle, setWhatsappCardTitle] = useState('Participe');
+  const [whatsappCardBtnText, setWhatsappCardBtnText] = useState('MANDE SUA MENSAGEM');
+  const [commercialNumber, setCommercialNumber] = useState('');
+  const [footerLabelCommercial, setFooterLabelCommercial] = useState('Comercial');
   const [instagramUrl, setInstagramUrl] = useState('');
   const [facebookUrl, setFacebookUrl] = useState('');
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [contactEmail, setContactEmail] = useState('');
+  const [contactEmail2, setContactEmail2] = useState('');
 
   
   const [dividerThickness, setDividerThickness] = useState('1');
@@ -169,10 +174,15 @@ export default function AdminSettings() {
     if (settings.headerSubtitle) setHeaderSubtitle(settings.headerSubtitle);
     if (settings.whatsappUrl) setWhatsappUrl(settings.whatsappUrl);
     if (settings.whatsappNumber) setWhatsappNumber(settings.whatsappNumber);
+    if (settings.whatsappCardTitle !== undefined) setWhatsappCardTitle(settings.whatsappCardTitle);
+    if (settings.whatsappCardBtnText !== undefined) setWhatsappCardBtnText(settings.whatsappCardBtnText);
+    if (settings.commercialNumber !== undefined) setCommercialNumber(settings.commercialNumber);
+    if (settings.footerLabelCommercial !== undefined) setFooterLabelCommercial(settings.footerLabelCommercial);
     if (settings.instagramUrl) setInstagramUrl(settings.instagramUrl);
     if (settings.facebookUrl) setFacebookUrl(settings.facebookUrl);
     if (settings.youtubeUrl) setYoutubeUrl(settings.youtubeUrl);
     if (settings.contactEmail) setContactEmail(settings.contactEmail);
+    if (settings.contactEmail2 !== undefined) setContactEmail2(settings.contactEmail2);
 
     
     if (settings.dividerThickness) setDividerThickness(settings.dividerThickness);
@@ -309,10 +319,15 @@ export default function AdminSettings() {
         headerSubtitle: headerSubtitle,
         whatsappUrl: whatsappUrl,
         whatsappNumber: whatsappNumber,
+        whatsappCardTitle: whatsappCardTitle,
+        whatsappCardBtnText: whatsappCardBtnText,
+        commercialNumber: commercialNumber,
+        footerLabelCommercial: footerLabelCommercial,
         instagramUrl: instagramUrl,
         facebookUrl: facebookUrl,
         youtubeUrl: youtubeUrl,
         contactEmail: contactEmail,
+        contactEmail2: contactEmail2,
         dividerThickness: dividerThickness,
         dividerGlow: dividerGlow,
         visualizerColor: visualizerColor,
@@ -924,6 +939,52 @@ export default function AdminSettings() {
 
                   <div className="space-y-1">
                     <div className="flex justify-between items-center">
+                      <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                        Título do Card de WhatsApp
+                      </label>
+                      <button 
+                        type="button" 
+                        onClick={() => setWhatsappCardTitle('Participe')}
+                        className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                        title="Restaurar valor padrão"
+                      >
+                        <RotateCcw size={10} /> Padrão
+                      </button>
+                    </div>
+                    <input
+                      type="text"
+                      value={whatsappCardTitle}
+                      onChange={(e) => setWhatsappCardTitle(e.target.value)}
+                      className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                      placeholder="Ex: Participe"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center">
+                      <label className="text-slate-400 text-xs font-black uppercase tracking-wider">
+                        Texto do Botão
+                      </label>
+                      <button 
+                        type="button" 
+                        onClick={() => setWhatsappCardBtnText('MANDE SUA MENSAGEM')}
+                        className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                        title="Restaurar valor padrão"
+                      >
+                        <RotateCcw size={10} /> Padrão
+                      </button>
+                    </div>
+                    <input
+                      type="text"
+                      value={whatsappCardBtnText}
+                      onChange={(e) => setWhatsappCardBtnText(e.target.value)}
+                      className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                      placeholder="Ex: MANDE SUA MENSAGEM"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center">
                       <label className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">
                         Ícone WhatsApp (Upload ou URL)
                       </label>
@@ -1210,6 +1271,33 @@ export default function AdminSettings() {
                     </div>
                   </div>
 
+                  {/* Contato Comercial */}
+                  <div className="space-y-2 border-t border-white/5 pt-2">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">Contato Comercial</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="space-y-1">
+                        <label className="text-slate-500 text-[10px] uppercase">Rótulo (ex: Comercial)</label>
+                        <input
+                          type="text"
+                          value={footerLabelCommercial}
+                          onChange={(e) => setFooterLabelCommercial(e.target.value)}
+                          className="w-full bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-white text-xs focus:border-blue-500 outline-none transition-colors"
+                          placeholder="Ex: Comercial"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-slate-500 text-[10px] uppercase">Número comercial</label>
+                        <input
+                          type="text"
+                          value={commercialNumber}
+                          onChange={(e) => setCommercialNumber(e.target.value)}
+                          className="w-full bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-white text-xs focus:border-blue-500 outline-none transition-colors"
+                          placeholder="Ex: (91) 98273-6292"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
                   {/* WhatsApp */}
                   <div className="space-y-1">
                     <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">WhatsApp (Exibição)</label>
@@ -1248,6 +1336,18 @@ export default function AdminSettings() {
                         title="Cor do E-mail"
                       />
                     </div>
+                  </div>
+
+                  {/* E-mail 2 */}
+                  <div className="space-y-1">
+                    <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">E-mail de Contato 2</label>
+                    <input
+                      type="email"
+                      value={contactEmail2}
+                      onChange={(e) => setContactEmail2(e.target.value)}
+                      className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                      placeholder="Ex: comercial@cidadefmpa.com.br"
+                    />
                   </div>
                 </div>
 

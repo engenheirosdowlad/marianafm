@@ -160,7 +160,7 @@ export function ProgramCards() {
 
       {/* Card 3: Peça sua Música */}
       <div className="bg-slate-800/50 backdrop-blur-md rounded-xl p-6 border border-white/5 shadow-2xl flex flex-col items-center justify-between">
-        <p className="text-slate-400 text-xs font-black uppercase tracking-wider mb-2 text-center w-full">Participe</p>
+        <p className="text-slate-400 text-xs font-black uppercase tracking-wider mb-2 text-center w-full">{settings.whatsappCardTitle || 'Participe'}</p>
         
         <div className="flex-1 flex items-center justify-center py-6">
           <svg viewBox="0 0 24 24" fill="currentColor" className="w-20 h-20 text-green-500 drop-shadow-[0_0_15px_rgba(34,197,94,0.4)]">
@@ -174,7 +174,7 @@ export function ProgramCards() {
           rel="noopener noreferrer"
           className="w-full bg-gradient-to-b from-blue-500 to-blue-700 hover:from-blue-400 hover:to-blue-600 text-white font-black py-3 px-4 rounded-xl transition-all text-[11px] uppercase tracking-wider shadow-lg shadow-blue-900/50 border-t border-blue-400/30 text-center block"
         >
-          MANDE SUA MENSAGEM
+          {settings.whatsappCardTitle ? settings.whatsappCardBtnText : 'MANDE SUA MENSAGEM'}
         </a>
       </div>
     </div>

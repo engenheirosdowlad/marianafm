@@ -130,6 +130,16 @@ export function Footer() {
                 <Phone size={Math.max(12, parseInt(headerSize))} style={{ verticalAlign: 'middle' }} /> {titleContact}
               </p>
               <div className="flex flex-col items-center md:items-end text-center md:text-right gap-2">
+                {settings.commercialNumber && (
+                  <a 
+                    href={`tel:${settings.commercialNumber.replace(/\D/g, '')}`}
+                    style={{ color: settings.footerWhatsappColor || contentColor, fontSize: `${contentSize}px` }}
+                    className="font-semibold hover:text-blue-400 transition-colors flex items-center justify-end gap-1.5"
+                  >
+                    <span style={{ color: headerColor }} className="font-bold text-xs uppercase">{settings.footerLabelCommercial || 'Comercial'}:</span>
+                    {settings.commercialNumber}
+                  </a>
+                )}
                 <a 
                   href={links.whatsapp} 
                   target="_blank" 
@@ -148,6 +158,16 @@ export function Footer() {
                   <span style={{ color: headerColor }} className="font-bold text-xs uppercase">{labelEmail}:</span>
                   {links.email}
                 </a>
+                {settings.contactEmail2 && (
+                  <a 
+                    href={`mailto:${settings.contactEmail2}`} 
+                    style={{ color: settings.footerEmailColor || contentColor, fontSize: `${contentSize}px` }}
+                    className="font-semibold hover:text-amber-400 transition-colors flex items-center justify-end gap-1.5"
+                  >
+                    <span style={{ color: headerColor }} className="font-bold text-xs uppercase">{labelEmail}:</span>
+                    {settings.contactEmail2}
+                  </a>
+                )}
               </div>
             </div>
             {/* Seção Endereço */}
