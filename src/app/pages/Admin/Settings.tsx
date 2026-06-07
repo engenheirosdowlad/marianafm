@@ -10,7 +10,7 @@ const defaultMenuItems = [
   { id: 'radio', label: 'Rádio Ao Vivo', iconName: 'Radio', path: '/', enabled: true, external: false },
   { id: 'schedule', label: 'Programação', iconName: 'Calendar', path: '/schedule', enabled: true, external: false },
   { id: 'news', label: 'Notícias', iconName: 'Newspaper', path: '/news', enabled: true, external: false },
-  { id: 'about', label: 'Sobre', iconName: 'Info', path: '/about', enabled: true, external: false },
+  { id: 'about', label: 'Nossa História', iconName: 'Info', path: '/about', enabled: true, external: false },
   { id: 'team', label: 'Equipe', iconName: 'Users', path: '/team', enabled: true, external: false },
   { id: 'contact', label: 'Contato', iconName: 'Phone', path: '/contact', enabled: true, external: false },
   { id: 'whatsapp', label: 'WhatsApp', iconName: 'MessageCircle', path: '', url: '', enabled: true, external: true },

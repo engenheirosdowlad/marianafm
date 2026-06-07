@@ -25,7 +25,7 @@ const defaultMenuItems = [
   { id: 'radio', label: 'Rádio Ao Vivo', iconName: 'Radio', path: '/' },
   { id: 'schedule', label: 'Programação', iconName: 'Calendar', path: '/schedule' },
   { id: 'news', label: 'Notícias', iconName: 'Newspaper', path: '/news' },
-  { id: 'about', label: 'Sobre', iconName: 'Info', path: '/about' },
+  { id: 'about', label: 'Nossa História', iconName: 'Info', path: '/about' },
   { id: 'team', label: 'Equipe', iconName: 'Users', path: '/team' },
   { id: 'contact', label: 'Contato', iconName: 'Phone', path: '/contact' },
   { id: 'whatsapp', label: 'WhatsApp', iconName: 'MessageCircle', path: '', url: '', external: true },
