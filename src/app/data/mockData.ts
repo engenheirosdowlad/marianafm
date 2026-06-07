@@ -1,7 +1,7 @@
 export interface TeamMember {
   id: string;
   name: string;
-  role: 'locutor' | 'administrador' | 'usuario';
+  role: string;
   photo: string;
   program?: string;
   facebook?: string;

@@ -3,9 +3,10 @@ import { useLocation, useNavigate } from 'react-router';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { teamData as initialTeamData, TeamMember } from '../../data/mockData';
-import { Edit2, Trash2, UserPlus, Shield, User, Radio, X, Camera } from 'lucide-react';
+import { Edit2, Trash2, UserPlus, Shield, User, Radio, X, Camera, Plus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Cropper from 'react-easy-crop';
+import { useSettings } from '../../context/SettingsContext';
 
 const createImage = (url: string): Promise<HTMLImageElement> =>
   new Promise((resolve, reject) => {
@@ -43,6 +44,12 @@ export default function AdminTeam() {
   const [team, setTeam] = useState(initialTeamData);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
+
+  const { settings, saveSettings } = useSettings();
+  const [categories, setCategories] = useState<string[]>(['Usuário', 'Administrador', 'Locutor']);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [showAddCategoryForm, setShowAddCategoryForm] = useState(false);
+
   const [formData, setFormData] = useState<TeamMember>({
     id: '',
     name: '',
@@ -51,7 +58,9 @@ export default function AdminTeam() {
     program: '',
     facebook: '',
     instagram: '',
-    twitter: ''
+    twitter: '',
+    email: '',
+    password: ''
   });
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -110,23 +119,62 @@ export default function AdminTeam() {
     }
   }, [location, navigate]);
 
+  useEffect(() => {
+    if (settings.teamCategories) {
+      try {
+        const parsed = JSON.parse(settings.teamCategories);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setCategories(parsed);
+        }
+      } catch (e) {
+        console.error("Failed to parse teamCategories", e);
+      }
+    }
+  }, [settings.teamCategories]);
+
+  const handleAddCategory = async () => {
+    if (!newCategoryName.trim()) return;
+    const name = newCategoryName.trim();
+
+    // Evitar duplicados (case insensitive)
+    if (categories.some(c => c.toLowerCase() === name.toLowerCase())) {
+      alert("Esta categoria já existe.");
+      return;
+    }
+
+    const updatedCategories = [...categories, name];
+    setCategories(updatedCategories);
+    setFormData(prev => ({ ...prev, role: name.toLowerCase() }));
+    setNewCategoryName('');
+    setShowAddCategoryForm(false);
+
+    try {
+      await saveSettings({
+        teamCategories: JSON.stringify(updatedCategories)
+      });
+    } catch (e) {
+      console.error("Erro ao salvar categorias", e);
+      localStorage.setItem('teamCategories', JSON.stringify(updatedCategories));
+    }
+  };
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const getRoleIcon = (role: string) => {
-    switch (role) {
+    switch (role?.toLowerCase()) {
       case 'administrador': return <Shield size={14} className="text-red-400" />;
       case 'locutor': return <Radio size={14} className="text-blue-400" />;
       case 'usuario': return <User size={14} className="text-slate-400" />;
-      default: return <User size={14} />;
+      default: return <User size={14} className="text-purple-400" />;
     }
   };
 
   const getRoleBadgeColor = (role: string) => {
-    switch (role) {
+    switch (role?.toLowerCase()) {
       case 'administrador': return 'bg-red-500/10 text-red-400 border-red-500/20';
       case 'locutor': return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
       case 'usuario': return 'bg-slate-500/10 text-slate-400 border-slate-500/20';
-      default: return 'bg-slate-500/10 text-slate-400 border-slate-500/20';
+      default: return 'bg-purple-500/10 text-purple-400 border-purple-500/20';
     }
   };
 
@@ -161,8 +209,12 @@ export default function AdminTeam() {
       program: '',
       facebook: '',
       instagram: '',
-      twitter: ''
+      twitter: '',
+      email: '',
+      password: ''
     });
+    setShowAddCategoryForm(false);
+    setNewCategoryName('');
     setIsModalOpen(true);
   };
 
@@ -172,8 +224,12 @@ export default function AdminTeam() {
       ...member,
       facebook: member.facebook || '',
       instagram: member.instagram || '',
-      twitter: member.twitter || ''
+      twitter: member.twitter || '',
+      email: member.email || '',
+      password: member.password || ''
     });
+    setShowAddCategoryForm(false);
+    setNewCategoryName('');
     setIsModalOpen(true);
   };
 
@@ -312,7 +368,7 @@ export default function AdminTeam() {
                 </button>
               </div>
               
-              <div className="p-6 space-y-4">
+              <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar">
                 {imageToCrop ? (
                   <div className="space-y-4">
                     <div className="relative w-full h-64 bg-slate-800 rounded-lg overflow-hidden">
@@ -411,16 +467,59 @@ export default function AdminTeam() {
 
                     {/* Category/Role */}
                     <div className="space-y-1">
-                      <label className="text-slate-400 text-xs font-black uppercase tracking-wider">Categoria</label>
-                      <select
-                        value={formData.role}
-                        onChange={(e) => setFormData({ ...formData, role: e.target.value as any })}
-                        className="w-full bg-slate-800 border border-white/5 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none transition-colors"
-                      >
-                        <option value="usuario">Usuário</option>
-                        <option value="administrador">Administrador</option>
-                        <option value="locutor">Locutor</option>
-                      </select>
+                      <div className="flex justify-between items-center mb-1">
+                        <label className="text-slate-400 text-xs font-black uppercase tracking-wider">Categoria</label>
+                        {!showAddCategoryForm && (
+                          <button
+                            type="button"
+                            onClick={() => setShowAddCategoryForm(true)}
+                            className="text-blue-500 hover:text-blue-400 text-xs font-bold flex items-center gap-1"
+                          >
+                            <Plus size={12} /> Nova Categoria
+                          </button>
+                        )}
+                      </div>
+                      {showAddCategoryForm ? (
+                        <div className="flex gap-2 bg-slate-800/40 p-2 rounded-lg border border-white/5">
+                          <input
+                            type="text"
+                            value={newCategoryName}
+                            onChange={(e) => setNewCategoryName(e.target.value)}
+                            placeholder="Nova categoria..."
+                            className="flex-1 bg-slate-800 border border-white/5 rounded-md px-2.5 py-1.5 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                            autoFocus
+                          />
+                          <button
+                            type="button"
+                            onClick={handleAddCategory}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-md text-xs font-bold transition-colors"
+                          >
+                            Adicionar
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowAddCategoryForm(false);
+                              setNewCategoryName('');
+                            }}
+                            className="text-slate-400 hover:text-white px-2 py-1.5 text-xs transition-colors"
+                          >
+                            Cancelar
+                          </button>
+                        </div>
+                      ) : (
+                        <select
+                          value={formData.role}
+                          onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                          className="w-full bg-slate-800 border border-white/5 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none transition-colors"
+                        >
+                          {categories.map((cat) => (
+                            <option key={cat} value={cat.toLowerCase()}>
+                              {cat}
+                            </option>
+                          ))}
+                        </select>
+                      )}
                     </div>
 
                     {/* Program (Conditional) */}
@@ -479,7 +578,7 @@ export default function AdminTeam() {
                     </div>
 
                     {/* Dados de Acesso (Sub-área) */}
-                    {(formData.role === 'administrador' || formData.role === 'locutor') && (
+                    {formData.role === 'administrador' && (
                       <div className="border-t border-white/5 pt-4 mt-4 space-y-3">
                         <p className="text-slate-400 text-xs font-black uppercase tracking-wider mb-2">Dados de Acesso</p>
                         
@@ -487,6 +586,8 @@ export default function AdminTeam() {
                           <label className="text-slate-500 text-[10px] font-black uppercase tracking-wider">Email</label>
                           <input
                             type="email"
+                            value={formData.email || ''}
+                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                             className="w-full bg-slate-800 border border-white/5 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none transition-colors"
                             placeholder="email@radio.com"
                           />
@@ -496,6 +597,8 @@ export default function AdminTeam() {
                           <label className="text-slate-500 text-[10px] font-black uppercase tracking-wider">Senha</label>
                           <input
                             type="password"
+                            value={formData.password || ''}
+                            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                             className="w-full bg-slate-800 border border-white/5 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none transition-colors"
                             placeholder="••••••••"
                           />
