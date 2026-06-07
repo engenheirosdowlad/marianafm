@@ -63,6 +63,26 @@ export default function Contact() {
               </div>
             </motion.div>
 
+            {settings.commercialNumber?.trim() && (
+              <motion.a
+                href={`tel:${settings.commercialNumber.trim().replace(/\D/g, '')}`}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.15 }}
+                className="block bg-slate-900/50 backdrop-blur-md border border-white/5 p-6 rounded-2xl hover:bg-slate-800/40 hover:border-blue-500/25 transition-all group shadow-xl"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-blue-600/10 rounded-xl text-blue-500 group-hover:scale-110 transition-transform">
+                    <Phone size={24} />
+                  </div>
+                  <div>
+                    <h3 className="text-slate-400 text-xs font-black uppercase tracking-wider">{settings.footerLabelCommercial || 'Comercial'}</h3>
+                    <p className="text-white font-bold text-sm mt-0.5">{settings.commercialNumber.trim()}</p>
+                  </div>
+                </div>
+              </motion.a>
+            )}
+
             <motion.a
               href={whatsappUrl}
               target="_blank"
