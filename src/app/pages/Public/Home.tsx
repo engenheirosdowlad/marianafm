@@ -115,19 +115,23 @@ export default function Home() {
       <GlowingDivider className="my-12" />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-8 pb-12">
-        <div className="space-y-6">
+        <div className="space-y-6 flex flex-col">
           <h3 className="text-white font-bold text-xl uppercase tracking-wider flex items-center gap-2">
             Últimas Notícias
             <span className="flex-1 h-[1px] bg-slate-700/50"></span>
           </h3>
-          <NewsSection />
+          <div className="flex-1 flex flex-col">
+            <NewsSection />
+          </div>
         </div>
-        <div className="space-y-6">
+        <div className="space-y-6 flex flex-col">
           <h3 className="text-white font-bold text-xl uppercase tracking-wider flex items-center gap-2">
             TOP 5
             <span className="flex-1 h-[1px] bg-slate-700/50"></span>
           </h3>
-          <TopRequests />
+          <div className="flex-1 flex flex-col">
+            <TopRequests />
+          </div>
         </div>
       </div>
     </motion.div>

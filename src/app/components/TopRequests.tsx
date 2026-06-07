@@ -58,8 +58,8 @@ export function TopRequests() {
   };
 
   return (
-    <div className="glass-card p-5 h-full border border-white/5">
-      <div className="flex items-center justify-between mb-6">
+    <div className="glass-card p-5 h-full border border-white/5 flex flex-col">
+      <div className="flex items-center justify-between mb-6 flex-shrink-0">
         <h2 className="text-white font-black text-xs uppercase tracking-[0.2em] flex items-center gap-2">
           <Trophy className="text-yellow-500" size={16} />
           TOP 5
@@ -67,7 +67,7 @@ export function TopRequests() {
         <TrendingUp className="text-blue-500" size={16} />
       </div>
 
-      <div className="space-y-3">
+      <div className="flex-1 flex flex-col gap-3">
         {requests.map((request, index) => {
           const ytId = extractYoutubeId(request.youtubeUrl);
           const thumbUrl = ytId ? `https://img.youtube.com/vi/${ytId}/default.jpg` : null;
@@ -81,7 +81,7 @@ export function TopRequests() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="flex items-center gap-4 bg-slate-900/50 backdrop-blur-sm border border-white/5 rounded-xl p-3 hover:bg-slate-800/80 transition-all group"
+              className="flex-1 flex items-center gap-4 bg-slate-900/50 backdrop-blur-sm border border-white/5 rounded-xl p-3 hover:bg-slate-800/80 transition-all group min-h-[64px]"
             >
               <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 font-black text-sm 
                 ${request.position === 1 ? 'bg-yellow-500 text-slate-950' : 'bg-slate-800 text-slate-400 group-hover:text-white group-hover:bg-blue-600 transition-colors'}`}>
