@@ -6,15 +6,19 @@ export default function Contact() {
   const { settings } = useSettings();
   
   const email = settings.contactEmail || "contato@cidadefmpa.com.br";
+  const email2 = settings.contactEmail2;
   const whatsappNum = settings.whatsappNumber || "(91) 98273-6292";
   const whatsappUrl = settings.whatsappUrl || "https://wa.me/5591982736292";
   
-  const address = "Avenida Cronge da Silveira n°:805 Altos Sala 02, Bairro: Centro - Cep: 67400-112 Barcarena Pará";
+  const addressStreet = settings.footerAddressStreet || "Avenida Cronge da Silveira, nº 805";
+  const addressDetails = settings.footerAddressDetails || "Altos, Sala 02 — Centro";
+  const addressCity = settings.footerAddressCity || "CEP: 67400-112 — Barcarena, Pará";
+  const address = `${addressStreet}, ${addressDetails} - ${addressCity}`;
   
   // Google Maps Search Query
-  const mapsSearchQuery = "Avenida Cronge da Silveira, 805 - Centro, Barcarena - PA, 67400-112";
+  const mapsSearchQuery = settings.footerMapsQuery || "Avenida Cronge da Silveira, 805 - Centro, Barcarena - PA, 67400-112";
   const mapsEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(mapsSearchQuery)}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
-  const streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=-1.5058,-48.6258`; // Fallback coordinates or search query
+  const streetViewUrl = settings.footerStreetViewUrl || `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=-1.5058,-48.6258`;
   const mapsDirectUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapsSearchQuery)}`;
 
   return (
@@ -37,23 +41,27 @@ export default function Contact() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Contact Cards */}
           <div className="space-y-6 lg:col-span-1">
-            <motion.a
-              href={`mailto:${email}`}
+            <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1 }}
-              className="block bg-slate-900/50 backdrop-blur-md border border-white/5 p-6 rounded-2xl hover:bg-slate-800/40 hover:border-blue-500/25 transition-all group shadow-xl"
+              className="bg-slate-900/50 backdrop-blur-md border border-white/5 p-6 rounded-2xl hover:bg-slate-800/40 hover:border-blue-500/25 transition-all group shadow-xl"
             >
-              <div className="flex items-center gap-4">
+              <div className="flex items-start gap-4">
                 <div className="p-3 bg-blue-600/10 rounded-xl text-blue-500 group-hover:scale-110 transition-transform">
                   <Mail size={24} />
                 </div>
-                <div>
+                <div className="flex-1 min-w-0">
                   <h3 className="text-slate-400 text-xs font-black uppercase tracking-wider">E-mail</h3>
-                  <p className="text-white font-bold text-sm mt-0.5 truncate">{email}</p>
+                  <div className="flex flex-col gap-1.5 mt-1">
+                    <a href={`mailto:${email}`} className="text-white font-bold text-sm hover:text-blue-400 transition-colors block truncate">{email}</a>
+                    {email2 && (
+                      <a href={`mailto:${email2}`} className="text-white font-bold text-sm hover:text-blue-400 transition-colors block truncate">{email2}</a>
+                    )}
+                  </div>
                 </div>
               </div>
-            </motion.a>
+            </motion.div>
 
             <motion.a
               href={whatsappUrl}
