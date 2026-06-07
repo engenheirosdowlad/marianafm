@@ -129,7 +129,7 @@ export function Footer() {
               >
                 <Phone size={Math.max(12, parseInt(headerSize))} style={{ verticalAlign: 'middle' }} /> {titleContact}
               </p>
-              <div className="flex flex-col items-center md:items-end text-center md:text-right gap-2">
+              <div className="flex flex-col items-center md:items-end text-center md:text-right gap-1.5">
                 {settings.commercialNumber && (
                   <a 
                     href={`tel:${settings.commercialNumber.replace(/\D/g, '')}`}
@@ -150,24 +150,27 @@ export function Footer() {
                   <span style={{ color: headerColor }} className="font-bold text-xs uppercase">{labelWhatsapp}:</span>
                   {links.number}
                 </a>
-                <a 
-                  href={`mailto:${links.email}`} 
-                  style={{ color: settings.footerEmailColor || contentColor, fontSize: `${contentSize}px` }}
-                  className="font-semibold hover:text-amber-400 transition-colors flex items-center justify-end gap-1.5"
-                >
-                  <span style={{ color: headerColor }} className="font-bold text-xs uppercase">{labelEmail}:</span>
-                  {links.email}
-                </a>
-                {settings.contactEmail2 && (
-                  <a 
-                    href={`mailto:${settings.contactEmail2}`} 
-                    style={{ color: settings.footerEmailColor || contentColor, fontSize: `${contentSize}px` }}
-                    className="font-semibold hover:text-amber-400 transition-colors flex items-center justify-end gap-1.5"
-                  >
-                    <span style={{ color: headerColor }} className="font-bold text-xs uppercase">{labelEmail}:</span>
-                    {settings.contactEmail2}
-                  </a>
-                )}
+                <div className="flex items-start gap-1.5 justify-center md:justify-end">
+                  <span style={{ color: headerColor }} className="font-bold text-xs uppercase mt-0.5">{labelEmail}:</span>
+                  <div className="flex flex-col items-center md:items-start gap-0.5">
+                    <a 
+                      href={`mailto:${links.email}`} 
+                      style={{ color: settings.footerEmailColor || contentColor, fontSize: `${contentSize}px` }}
+                      className="font-semibold hover:text-amber-400 transition-colors"
+                    >
+                      {links.email}
+                    </a>
+                    {settings.contactEmail2 && (
+                      <a 
+                        href={`mailto:${settings.contactEmail2}`} 
+                        style={{ color: settings.footerEmailColor || contentColor, fontSize: `${contentSize}px` }}
+                        className="font-semibold hover:text-amber-400 transition-colors"
+                      >
+                        {settings.contactEmail2}
+                      </a>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
             {/* Seção Endereço */}
