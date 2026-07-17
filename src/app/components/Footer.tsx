@@ -1,4 +1,4 @@
-import { MessageCircle, Instagram, Facebook, Youtube, MapPin, Map, Navigation, Mail, Phone } from 'lucide-react';
+import { MessageCircle, Instagram, Facebook, Youtube, MapPin, Map, Navigation, Mail, Phone, Play, Apple } from 'lucide-react';
 import { GlowingDivider } from './ui/GlowingDivider';
 import { useSettings } from '../context/SettingsContext';
 
@@ -35,6 +35,11 @@ export function Footer() {
   const iconInstagram = settings.footerIconInstagram || "";
   const iconFacebook = settings.footerIconFacebook || "";
   const iconYoutube = settings.footerIconYoutube || "";
+  const iconAndroid = settings.footerIconAndroid || "";
+  const iconApple = settings.footerIconApple || "";
+
+  const androidUrl = settings.androidUrl || "#";
+  const appleUrl = settings.appleUrl || "#";
 
   const titleContact = settings.footerTitleContact || "Contato";
   const titleContactColor = settings.footerTitleContactColor || headerColor;
@@ -49,6 +54,18 @@ export function Footer() {
 
   return (
     <footer className="bg-slate-950 pt-8 pb-8 px-4 mt-12 relative border-t border-slate-900">
+      {/* Responsive overrides for inline styles on mobile */}
+      <style>{`
+        @media (max-width: 767px) {
+          .responsive-footer-contact {
+            padding-right: 0 !important;
+            border-right: none !important;
+          }
+          .responsive-footer-address {
+            padding-left: 0 !important;
+          }
+        }
+      `}</style>
       {/* Glowing Divider Top */}
       <GlowingDivider className="absolute top-0 left-0 right-0" />
       <div className="max-w-6xl mx-auto">
@@ -118,14 +135,46 @@ export function Footer() {
                 <Youtube size={iconSize} />
               )}
             </a>
+
+            {/* Android */}
+            <a
+              href={androidUrl}
+              target={androidUrl !== '#' ? '_blank' : '_self'}
+              rel="noopener noreferrer"
+              className="w-10 h-10 rounded-full bg-slate-900 border border-white/5 flex items-center justify-center hover:text-emerald-400 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 active:scale-95"
+              aria-label="Android"
+              style={{ color: iconColor }}
+            >
+              {iconAndroid ? (
+                <img src={iconAndroid} alt="Android" className="object-contain" style={{ width: `${iconSize}px`, height: `${iconSize}px` }} />
+              ) : (
+                <Play size={iconSize} />
+              )}
+            </a>
+
+            {/* Apple */}
+            <a
+              href={appleUrl}
+              target={appleUrl !== '#' ? '_blank' : '_self'}
+              rel="noopener noreferrer"
+              className="w-10 h-10 rounded-full bg-slate-900 border border-white/5 flex items-center justify-center hover:text-slate-100 hover:border-slate-100/30 hover:shadow-lg hover:shadow-white/10 transition-all duration-300 active:scale-95"
+              aria-label="Apple Store"
+              style={{ color: iconColor }}
+            >
+              {iconApple ? (
+                <img src={iconApple} alt="Apple Store" className="object-contain" style={{ width: `${iconSize}px`, height: `${iconSize}px` }} />
+              ) : (
+                <Apple size={iconSize} />
+              )}
+            </a>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 w-full max-w-6xl px-4 gap-8 md:gap-0">
             {/* Seção Contato */}
-            <div className="flex flex-col items-center md:items-end space-y-3 md:border-r border-slate-700" style={{ paddingRight: `${Math.round(parseInt(settings.footerColumnSpacing || '40') / 2)}px`, borderRightWidth: `${settings.footerDividerThickness || '1'}px` }}>
+            <div className="flex flex-col items-center md:items-end space-y-3 md:border-r border-slate-700 responsive-footer-contact" style={{ paddingRight: `${Math.round(parseInt(settings.footerColumnSpacing || '40') / 2)}px`, borderRightWidth: `${settings.footerDividerThickness || '1'}px` }}>
               <p 
                 style={{ color: titleContactColor, fontSize: `${headerSize}px` }}
-                className="font-extrabold uppercase tracking-widest flex items-center justify-end gap-1.5"
+                className="font-extrabold uppercase tracking-widest flex items-center justify-center md:justify-end gap-1.5"
               >
                 <Phone size={Math.max(12, parseInt(headerSize))} style={{ verticalAlign: 'middle' }} /> {titleContact}
               </p>
@@ -134,7 +183,7 @@ export function Footer() {
                   <a 
                     href={`tel:${settings.commercialNumber.trim().replace(/\D/g, '')}`}
                     style={{ color: settings.footerWhatsappColor || contentColor, fontSize: `${contentSize}px` }}
-                    className="font-semibold hover:text-blue-400 transition-colors flex items-center justify-end gap-1.5 whitespace-nowrap"
+                    className="font-semibold hover:text-blue-400 transition-colors flex items-center justify-center md:justify-end gap-1.5 whitespace-nowrap"
                   >
                     <span style={{ color: headerColor }} className="font-bold text-xs uppercase">{(settings.footerLabelCommercial || 'Comercial').trim()}:</span>
                     {settings.commercialNumber.trim()}
@@ -145,7 +194,7 @@ export function Footer() {
                   target="_blank" 
                   rel="noopener noreferrer"
                   style={{ color: settings.footerWhatsappColor || contentColor, fontSize: `${contentSize}px` }}
-                  className="font-semibold hover:text-emerald-400 transition-colors flex items-center justify-end gap-1.5 whitespace-nowrap"
+                  className="font-semibold hover:text-emerald-400 transition-colors flex items-center justify-center md:justify-end gap-1.5 whitespace-nowrap"
                 >
                   <span style={{ color: headerColor }} className="font-bold text-xs uppercase">{labelWhatsapp}:</span>
                   {links.number?.trim()}
@@ -174,7 +223,7 @@ export function Footer() {
               </div>
             </div>
             {/* Seção Endereço */}
-            <div className="flex flex-col items-center md:items-start space-y-3 md:pl-8" style={{ paddingLeft: `${Math.round(parseInt(settings.footerColumnSpacing || '40') / 2)}px` }}>
+            <div className="flex flex-col items-center md:items-start space-y-3 md:pl-8 responsive-footer-address" style={{ paddingLeft: `${Math.round(parseInt(settings.footerColumnSpacing || '40') / 2)}px` }}>
               <p 
                 style={{ color: titleAddressColor, fontSize: `${headerSize}px` }}
                 className="font-extrabold uppercase tracking-widest flex items-center justify-start gap-1.5"

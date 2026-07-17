@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
-import { Save, Radio, Video, Globe, MessageCircle, Instagram, Facebook, Phone, Upload, Info, RotateCcw, MapPin, Menu, Eye, EyeOff } from 'lucide-react';
+import { Save, Radio, Video, Globe, MessageCircle, Instagram, Facebook, Phone, Upload, Info, RotateCcw, MapPin, Menu, Eye, EyeOff, Play, Apple } from 'lucide-react';
 import { useSettings } from '../../context/SettingsContext';
 import defaultLogoPreview from '../../../assets/logo.png';
 
@@ -102,6 +102,10 @@ export default function AdminSettings() {
   const [footerIconInstagram, setFooterIconInstagram] = useState('');
   const [footerIconFacebook, setFooterIconFacebook] = useState('');
   const [footerIconYoutube, setFooterIconYoutube] = useState('');
+  const [androidUrl, setAndroidUrl] = useState('');
+  const [footerIconAndroid, setFooterIconAndroid] = useState('');
+  const [appleUrl, setAppleUrl] = useState('');
+  const [footerIconApple, setFooterIconApple] = useState('');
 
   const [footerTitleContact, setFooterTitleContact] = useState('Contato');
   const [footerTitleContactColor, setFooterTitleContactColor] = useState('#f59e0b');
@@ -245,6 +249,10 @@ export default function AdminSettings() {
     if (settings.footerIconInstagram) setFooterIconInstagram(settings.footerIconInstagram);
     if (settings.footerIconFacebook) setFooterIconFacebook(settings.footerIconFacebook);
     if (settings.footerIconYoutube) setFooterIconYoutube(settings.footerIconYoutube);
+    if (settings.androidUrl) setAndroidUrl(settings.androidUrl);
+    if (settings.footerIconAndroid) setFooterIconAndroid(settings.footerIconAndroid);
+    if (settings.appleUrl) setAppleUrl(settings.appleUrl);
+    if (settings.footerIconApple) setFooterIconApple(settings.footerIconApple);
 
     if (settings.footerTitleContact) setFooterTitleContact(settings.footerTitleContact);
     if (settings.footerTitleContactColor) setFooterTitleContactColor(settings.footerTitleContactColor);
@@ -386,6 +394,10 @@ export default function AdminSettings() {
         footerIconInstagram,
         footerIconFacebook,
         footerIconYoutube,
+        androidUrl,
+        footerIconAndroid,
+        appleUrl,
+        footerIconApple,
         footerTitleContact,
         footerTitleContactColor,
         footerTitleAddress,
@@ -1232,6 +1244,148 @@ export default function AdminSettings() {
                               reader.readAsDataURL(file);
                             }
                           }} 
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Android Link & Icon */}
+                <div className="bg-slate-900/40 p-4 rounded-xl border border-white/5 space-y-4">
+                  <h3 className="text-white font-bold text-sm flex items-center gap-2 pb-2 border-b border-white/5">
+                    <Play size={16} className="text-emerald-500" /> Google Play (Android)
+                  </h3>
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center">
+                      <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                        Link do App na Google Play
+                      </label>
+                      <button 
+                        type="button" 
+                        onClick={() => setAndroidUrl('')}
+                        className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                        title="Restaurar valor padrão"
+                      >
+                        <RotateCcw size={10} /> Limpar
+                      </button>
+                    </div>
+                    <input
+                      type="text"
+                      value={androidUrl}
+                      onChange={(e) => setAndroidUrl(e.target.value)}
+                      className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
+                      placeholder="https://play.google.com/store/apps/details?id=..."
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center">
+                      <label className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+                        Ícone Android (Upload ou URL)
+                      </label>
+                      <button 
+                        type="button" 
+                        onClick={() => setFooterIconAndroid('')}
+                        className="text-[9px] text-slate-500 hover:text-blue-400 flex items-center gap-0.5 transition-colors"
+                      >
+                        <RotateCcw size={8} /> Padrão
+                      </button>
+                    </div>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={footerIconAndroid}
+                        onChange={(e) => setFooterIconAndroid(e.target.value)}
+                        className="w-full bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-white text-xs focus:border-blue-500 outline-none transition-colors font-mono"
+                        placeholder="Deixe em branco para ícone padrão"
+                      />
+                      <label className="flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white px-3 rounded-lg cursor-pointer transition-colors shrink-0" title="Upload de Ícone">
+                        <Upload size={14} />
+                        <input 
+                           type="file" 
+                           accept="image/*" 
+                           className="hidden" 
+                           onChange={(e) => {
+                             const file = e.target.files?.[0];
+                             if (file) {
+                               const reader = new FileReader();
+                               reader.onloadend = () => {
+                                 setFooterIconAndroid(reader.result as string);
+                               };
+                               reader.readAsDataURL(file);
+                             }
+                           }} 
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Apple Link & Icon */}
+                <div className="bg-slate-900/40 p-4 rounded-xl border border-white/5 space-y-4">
+                  <h3 className="text-white font-bold text-sm flex items-center gap-2 pb-2 border-b border-white/5">
+                    <Apple size={16} className="text-slate-300" /> App Store (Apple)
+                  </h3>
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center">
+                      <label className="text-slate-400 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                        Link do App na App Store
+                      </label>
+                      <button 
+                        type="button" 
+                        onClick={() => setAppleUrl('')}
+                        className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
+                        title="Restaurar valor padrão"
+                      >
+                        <RotateCcw size={10} /> Limpar
+                      </button>
+                    </div>
+                    <input
+                      type="text"
+                      value={appleUrl}
+                      onChange={(e) => setAppleUrl(e.target.value)}
+                      className="w-full bg-slate-900 border border-white/5 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-500 outline-none transition-colors font-mono"
+                      placeholder="https://apps.apple.com/app/..."
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center">
+                      <label className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+                        Ícone Apple (Upload ou URL)
+                      </label>
+                      <button 
+                        type="button" 
+                        onClick={() => setFooterIconApple('')}
+                        className="text-[9px] text-slate-500 hover:text-blue-400 flex items-center gap-0.5 transition-colors"
+                      >
+                        <RotateCcw size={8} /> Padrão
+                      </button>
+                    </div>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={footerIconApple}
+                        onChange={(e) => setFooterIconApple(e.target.value)}
+                        className="w-full bg-slate-900 border border-white/5 rounded-lg px-3 py-2 text-white text-xs focus:border-blue-500 outline-none transition-colors font-mono"
+                        placeholder="Deixe em branco para ícone padrão"
+                      />
+                      <label className="flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white px-3 rounded-lg cursor-pointer transition-colors shrink-0" title="Upload de Ícone">
+                        <Upload size={14} />
+                        <input 
+                           type="file" 
+                           accept="image/*" 
+                           className="hidden" 
+                           onChange={(e) => {
+                             const file = e.target.files?.[0];
+                             if (file) {
+                               const reader = new FileReader();
+                               reader.onloadend = () => {
+                                 setFooterIconApple(reader.result as string);
+                               };
+                               reader.readAsDataURL(file);
+                             }
+                           }} 
                         />
                       </label>
                     </div>
