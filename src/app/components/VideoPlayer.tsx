@@ -9,7 +9,10 @@ export function VideoPlayer() {
   const { settings } = useSettings();
   const containerRef = useRef<HTMLDivElement>(null);
   const isVideoPlaying = isPlaying && activePlayer === 'video';
-  const videoUrl = "https://player.radiosnaweb.com/clappr/video.php?urlplayer=https://5a57bda70564a.streamlock.net/marianafm/marianafm.sdp/playlist.m3u8";
+  const rawVideoUrl = settings.videoStreamUrl || "https://5a2b083e9f360.streamlock.net/cidadefmpa/cidadefmpa.sdp/playlist.m3u8";
+  const videoUrl = rawVideoUrl.includes('player.radiosnaweb.com') 
+    ? rawVideoUrl 
+    : `https://player.radiosnaweb.com/clappr/video.php?urlplayer=${rawVideoUrl}`;
 
   const videoPlayIcon = settings.videoPlayIcon || '/favicon.png';
   const videoPlayIconSize = parseInt(settings.videoPlayIconSize || '100');

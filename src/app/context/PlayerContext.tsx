@@ -30,7 +30,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const isFirstRender = useRef(true);
   const { settings } = useSettings();
-  const streamUrl = settings.audioStreamUrl || "https://link.radio.br:18630/stream";
+  const streamUrl = settings.audioStreamUrl || "https://link.radio.br:17304/stream";
   const location = useLocation();
 
   // Pausa o player automaticamente ao entrar em rotas administrativas (/admin)

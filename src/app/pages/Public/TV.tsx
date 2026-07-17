@@ -1,17 +1,24 @@
 import { useState, useEffect, useRef } from 'react';
 import { usePlayer } from '../../context/PlayerContext';
+import { useSettings } from '../../context/SettingsContext';
 import { teamData, programData, Program } from '../../data/mockData';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Capacitor } from '@capacitor/core';
 
 export default function TV() {
   const { isPlaying, setIsPlaying, activePlayer, setActivePlayer } = usePlayer();
+  const { settings } = useSettings();
   const [programs, setPrograms] = useState<Program[]>([]);
   const [team, setTeam] = useState<any[]>([]);
   const [showUI, setShowUI] = useState(true);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const isNative = Capacitor.isNativePlatform();
+  
+  const rawVideoUrl = settings.videoStreamUrl || "https://5a2b083e9f360.streamlock.net/cidadefmpa/cidadefmpa.sdp/playlist.m3u8";
+  const videoUrl = rawVideoUrl.includes('player.radiosnaweb.com') 
+    ? rawVideoUrl 
+    : `https://player.radiosnaweb.com/clappr/video.php?urlplayer=${rawVideoUrl}`;
 
   // Auto-play vídeo na TV (e não o áudio nativo em background)
   useEffect(() => {
@@ -144,7 +151,7 @@ export default function TV() {
         {/* Vídeo em Tela Cheia no Fundo */}
         <div className="absolute inset-0 z-0">
           <iframe 
-            src="https://player.radiosnaweb.com/clappr/video.php?urlplayer=https://5a57bda70564a.streamlock.net/marianafm/marianafm.sdp/playlist.m3u8&autoplay=true"
+            src={`${videoUrl}&autoplay=true`}
             className="w-full h-full border-0 absolute inset-0"
             allow="autoplay; encrypted-media"
             allowFullScreen
@@ -192,7 +199,7 @@ export default function TV() {
       {/* Vídeo em Tela Cheia no Fundo */}
       <div className="absolute inset-0 z-0">
         <iframe 
-          src="https://player.radiosnaweb.com/clappr/video.php?urlplayer=https://5a57bda70564a.streamlock.net/marianafm/marianafm.sdp/playlist.m3u8&autoplay=true"
+          src={`${videoUrl}&autoplay=true`}
           className="w-full h-full object-cover"
           allow="autoplay; encrypted-media"
           allowFullScreen

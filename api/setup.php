@@ -56,8 +56,8 @@ $queries = [
     // Inserir configurações padrão da Cidade FM 87,9 MHZ
     "INSERT INTO settings (setting_key, setting_value) VALUES 
     ('siteName', 'CIDADE FM 87,9 MHZ'),
-    ('audioStreamUrl', 'https://link.radio.br:18630/stream'),
-    ('videoStreamUrl', 'https://link.radio.br:18630/video'),
+    ('audioStreamUrl', 'https://link.radio.br:17304/stream'),
+    ('videoStreamUrl', 'https://5a2b083e9f360.streamlock.net/cidadefmpa/cidadefmpa.sdp/playlist.m3u8'),
     ('whatsappNumber', '(91) 98273-6292'),
     ('whatsappUrl', 'https://wa.me/5591982736292'),
     ('instagramUrl', 'https://www.instagram.com/marianafmdigital'),

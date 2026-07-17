@@ -21,8 +21,8 @@ export default function AdminSettings() {
   const navigate = useNavigate();
   const { settings, saveSettings } = useSettings();
   
-  const [audioStream, setAudioStream] = useState('https://link.radio.br:18630/stream');
-  const [videoStream, setVideoStream] = useState('https://link.radio.br:18630/video');
+  const [audioStream, setAudioStream] = useState('https://link.radio.br:17304/stream');
+  const [videoStream, setVideoStream] = useState('https://5a2b083e9f360.streamlock.net/cidadefmpa/cidadefmpa.sdp/playlist.m3u8');
   const [siteName, setSiteName] = useState('CIDADE FM 87,9 MHZ');
   const [logoUrl, setLogoUrl] = useState('');
   const [headerPhrases, setHeaderPhrases] = useState('Seja bem-vindo a Cidade FM');
@@ -512,7 +512,7 @@ export default function AdminSettings() {
                 </label>
                 <button 
                   type="button" 
-                  onClick={() => setAudioStream('https://link.radio.br:18630/stream')}
+                  onClick={() => setAudioStream('https://link.radio.br:17304/stream')}
                   className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
                   title="Restaurar valor padrão"
                 >
@@ -534,7 +534,7 @@ export default function AdminSettings() {
                 </label>
                 <button 
                   type="button" 
-                  onClick={() => setVideoStream('https://link.radio.br:18630/video')}
+                  onClick={() => setVideoStream('https://5a2b083e9f360.streamlock.net/cidadefmpa/cidadefmpa.sdp/playlist.m3u8')}
                   className="text-[10px] text-slate-500 hover:text-blue-400 flex items-center gap-1 transition-colors"
                   title="Restaurar valor padrão"
                 >
